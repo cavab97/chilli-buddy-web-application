@@ -1,0 +1,6 @@
+[submodule "marslab-library-react"]
+	path = marslab-library-react
+	url = https://gitlab.com/development-team13/marslibrary/react.git
+[submodule "src/marslab-library-react"]
+	path = src/marslab-library-react
+	url = https://gitlab.com/development-team13/marslibrary/react.git

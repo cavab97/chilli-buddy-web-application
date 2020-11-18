@@ -1,0 +1,7 @@
+{
+  "projects": {
+    "default": "gogogain-gogogain",
+    "dev": "gogogain-dev",
+    "staging": "gogogain-stanging"
+  }
+}
