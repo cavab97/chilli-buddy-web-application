@@ -2,8 +2,8 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import actions from "../../../redux/shops/actions";
 import Form from "../../../components/templates/shops/ShopForm";
-import { Bcrumb, BcrumbItem } from 'marslab-library-react/components/atoms';
-import { ScreenHolder } from 'marslab-library-react/components/molecules';
+import { Bcrumb, BcrumbItem } from "marslab-library-react/components/atoms";
+import { ScreenHolder } from "marslab-library-react/components/molecules";
 import ContentBox from "marslab-library-react/components/organisms/ContentBox";
 import InnerSidebar from "marslab-library-react/components/organisms/InnerSideBar";
 import clone from "clone";
@@ -16,28 +16,20 @@ import { geohashEncode } from "marslab-library-react/utils/common/geohash";
 
 const countriesList = require("assets/address/countries.json");
 const statesList = require("assets/address/Malaysia/states.json");
-const days = [
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday",
-    "Sunday"
-];
+const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
 class ShopForm extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      innerHide: {display: "none"},
+      innerHide: { display: "none" },
     };
   }
 
   componentDidMount() {
     const { shopID = null } = this.props.match.params;
     this.props.readSpecifiedRecord(shopID);
-    
+
     const errorReturn = {};
     this.props.errorUpdate(errorReturn);
   }
@@ -55,61 +47,56 @@ class ShopForm extends Component {
       nextProps.submitResult.message
     ) {
       notification("success", nextProps.submitResult.message);
-      if(submitResult.action === "Delete shop")
-      {
+      if (submitResult.action === "Delete shop") {
         this.props.history.push(`/home/shopList`);
-      }else if(submitResult.action === "Create shop"){
-
+      } else if (submitResult.action === "Create shop") {
         this.props.history.push(`/home/shopList/${shop.id}/setting`);
       }
     }
   }
 
-  urlCheck(params, url){
-    const allRoute = url.split('/');
+  urlCheck(params, url) {
+    const allRoute = url.split("/");
     const lastRoute = allRoute[allRoute.length - 1];
 
-    if(params !== lastRoute){
+    if (params !== lastRoute) {
       const oldUrl = url.substring(0, url.lastIndexOf("/"));
 
       return oldUrl;
-    }else{
+    } else {
       return url;
     }
   }
 
-  jumpBack(key){
+  jumpBack(key) {
     const { params } = this.props.match;
 
-
-    switch(key){
-        case "shopList": 
-
-            this.props.history.push(`/home/shopList`);
+    switch (key) {
+      case "shopList":
+        this.props.history.push(`/home/shopList`);
         break;
-        case "shop":
-        
-            this.props.history.push(`/home/shopList/${params.shopID}`);
+      case "shop":
+        this.props.history.push(`/home/shopList/${params.shopID}`);
         break;
     }
   }
 
   onClick = () => {
-    if(this.state.innerHide.display === "block"){
-      this.setState({innerHide: {display: "none"}});
-    }else{
-      this.setState({innerHide: {display: "block"}});
+    if (this.state.innerHide.display === "block") {
+      this.setState({ innerHide: { display: "none" } });
+    } else {
+      this.setState({ innerHide: { display: "block" } });
     }
-  }
+  };
 
   handleRecord = async (actionName, shop) => {
     let { errorReturn } = this.props;
-    
+
     if (shop.key && actionName !== "delete") {
       actionName = "update";
     }
 
-    if(shop.dateJoined === null){
+    if (shop.dateJoined === null) {
       shop.dateJoined = moment();
     }
 
@@ -128,7 +115,7 @@ class ShopForm extends Component {
       postcode: shop.address.postcode,
       line2: shop.address.line2,
       line1: shop.address.line1,
-    }
+    };
 
     const defaultValidate = {
       l: { type: "geopoint" },
@@ -147,9 +134,9 @@ class ShopForm extends Component {
       line1: { required: true },
     };
 
-    if(shop.whatsapp){
+    if (shop.whatsapp) {
       recordCheck["whatsapp"] = shop.whatsapp;
-      defaultValidate["whatsapp"] = { type: "phone" }
+      defaultValidate["whatsapp"] = { type: "phone" };
     }
 
     errorReturn = validation(recordCheck, defaultValidate);
@@ -171,8 +158,8 @@ class ShopForm extends Component {
 
   onSelectChange = ({ key, nestedKey }, value) => {
     let { shop } = clone(this.props);
-    
-    if(key === "categories"){
+
+    if (key === "categories") {
       shop["tags"] = [];
     }
 
@@ -194,8 +181,8 @@ class ShopForm extends Component {
     const location = {
       l: {
         _lat: latitude,
-        _long: longitude
-      }
+        _long: longitude,
+      },
     };
 
     const errorReturn = validation(location, { l: "geopoint" });
@@ -205,10 +192,7 @@ class ShopForm extends Component {
       return;
     }
 
-    window.open(
-      `http://www.google.com/maps/place/${latitude},${longitude}`,
-      "_blank"
-    );
+    window.open(`http://www.google.com/maps/place/${latitude},${longitude}`, "_blank");
   };
 
   onLocationChange(key, event) {
@@ -245,7 +229,7 @@ class ShopForm extends Component {
   //  console.log(shop)
   //   shop.operatingHour[day].open = timeString[0].replace(":", "");
   //   shop.operatingHour[day].close = timeString[1].replace(":", "");
-    
+
   //   this.props.update(shop);
   // }
 
@@ -253,68 +237,65 @@ class ShopForm extends Component {
     let { shop } = clone(this.props);
     if (key && nestedKey) {
       shop[key][array][nestedKey] = moment(time).format("HHmm");
-    }
-    else if (key) 
-      shop[key] = moment(time).format("HHmm");
+    } else if (key) shop[key] = moment(time).format("HHmm");
     this.props.update(shop);
   }
 
-  onUploadFile({ key = null, target = null },{ file = null} ){
+  onUploadFile({ key = null, target = null }, { file = null }) {
     this.props.uploadFile({ key, shopId: target, file });
   }
 
   render() {
     const { url, params } = this.props.match;
     const {
-        readSpecifiedRecordLoading,
-        submitLoading,
-        shop_categories,
-        shop_tags,
-        uploadKey,
-        uploadLoading,
-        uploadProgress,
-        uploadResult,
-        errorReturn,
+      readSpecifiedRecordLoading,
+      submitLoading,
+      shop_categories,
+      shop_tags,
+      uploadKey,
+      uploadLoading,
+      uploadProgress,
+      uploadResult,
+      errorReturn,
     } = this.props;
     const optionUrl = this.urlCheck(params.shopID, url);
 
     const { shop } = clone(this.props);
 
-    const malaysiaStates = statesList.map(state => {
-        return { data: state, label: state };
+    const malaysiaStates = statesList.map((state) => {
+      return { data: state, label: state };
     });
 
-    const allCountry = countriesList.map(country => {
-    return { data: country.country, label: country.country };
+    const allCountry = countriesList.map((country) => {
+      return { data: country.country, label: country.country };
     });
 
     const shopCategories =
       shop_categories &&
-      Object.values(shop_categories).map(categories => {
+      Object.values(shop_categories).map((categories) => {
         return { data: categories.id, label: categories.title };
       });
 
-    function compare( a, b ) {
-      if ( a.label < b.label ){
+    console.log(shopCategories);
+    function compare(a, b) {
+      if (a.label < b.label) {
         return -1;
       }
-      if ( a.label > b.label ){
+      if (a.label > b.label) {
         return 1;
       }
-        return 0;
-      }
-      
-      shopCategories.sort( compare );
-
-      let tagsOfShop = [];
-    if (shop.categories.length !== 0) {
-      tagsOfShop = Object.values(shop_categories[shop.categories].tags).map(
-        tag => {
-          return { data: tag, label: shop_tags[tag].title };
-        }
-      );
+      return 0;
     }
-    
+
+    shopCategories.sort(compare);
+
+    let tagsOfShop = [];
+    if (shop.categories.length !== 0) {
+      tagsOfShop = Object.values(shop_categories[shop.categories].tags).map((tag) => {
+        return { data: tag, label: shop_tags[tag].title };
+      });
+    }
+
     return (
       <ScreenHolder>
         <InnerSidebar
@@ -327,59 +308,57 @@ class ShopForm extends Component {
           title={
             <Bcrumb separator="/">
               <BcrumbItem onClick={this.jumpBack.bind(this, "shopList")}>Shops</BcrumbItem>
-              { params.shopID &&
-                <BcrumbItem>Shop</BcrumbItem>
-              }
+              {params.shopID && <BcrumbItem>Shop</BcrumbItem>}
             </Bcrumb>
           }
           onClick={this.onClick.bind(this)}
         >
-            <Form
-                loading={readSpecifiedRecordLoading}
-                dataSource={shop}
-                errorReturn={errorReturn}
-                onRecordChange={this.onRecordChange.bind(this)}
-                onSelectChange={this.onSelectChange.bind(this)}
-                onDateChange={this.onDateChange.bind(this)}
-                onLocationChange={this.onLocationChange.bind(this)}
-                //onOperatingChange={this.onOperatingChange.bind(this)}
-                onTimeChange={this.onTimeChange.bind(this)}
-                onLocationCheckPress={this.onLocationCheckPress.bind(this)}
-                onOperatingClick={this.onOperatingClick.bind(this)}
-                onUploadFile={this.onUploadFile.bind(this)}
-                onSubmit={
-                    shop.id ? 
-                    this.handleRecord.bind(this, "update", shop) : 
-                    this.handleRecord.bind(this, "insert", shop)
-                }
-                onSubmitLoading={submitLoading}
-                onDelete={this.handleRecord.bind(this, "delete", shop)}
-                onDeleteLoading={submitLoading}
-                uploadKey={uploadKey}
-                uploadLoading={uploadLoading}
-                uploadProgress={uploadProgress}
-                uploadResult={uploadResult}
-                malaysiaStates={malaysiaStates}
-                allCountry={allCountry}
-                days={days}
-                shopCategories={shopCategories}
-                tagsOfShop={tagsOfShop}
-            />
-          </ContentBox>
+          <Form
+            loading={readSpecifiedRecordLoading}
+            dataSource={shop}
+            errorReturn={errorReturn}
+            onRecordChange={this.onRecordChange.bind(this)}
+            onSelectChange={this.onSelectChange.bind(this)}
+            onDateChange={this.onDateChange.bind(this)}
+            onLocationChange={this.onLocationChange.bind(this)}
+            //onOperatingChange={this.onOperatingChange.bind(this)}
+            onTimeChange={this.onTimeChange.bind(this)}
+            onLocationCheckPress={this.onLocationCheckPress.bind(this)}
+            onOperatingClick={this.onOperatingClick.bind(this)}
+            onUploadFile={this.onUploadFile.bind(this)}
+            onSubmit={
+              shop.id
+                ? this.handleRecord.bind(this, "update", shop)
+                : this.handleRecord.bind(this, "insert", shop)
+            }
+            onSubmitLoading={submitLoading}
+            onDelete={this.handleRecord.bind(this, "delete", shop)}
+            onDeleteLoading={submitLoading}
+            uploadKey={uploadKey}
+            uploadLoading={uploadLoading}
+            uploadProgress={uploadProgress}
+            uploadResult={uploadResult}
+            malaysiaStates={malaysiaStates}
+            allCountry={allCountry}
+            days={days}
+            shopCategories={shopCategories}
+            tagsOfShop={tagsOfShop}
+          />
+        </ContentBox>
       </ScreenHolder>
     );
   }
 }
 
-const mapStatetoprops = state => {
-    const shop_tags = state.ShopTags.tags;
-    const shop_categories = state.ShopCategories.categories;
+const mapStatetoprops = (state) => {
+  const shop_tags = state.ShopTags.tags;
+  const shop_categories = state.ShopCategories.categories;
 
-    return { 
-        ...state.Shops,
-        shop_tags,
-        shop_categories
-    };
+  return {
+    ...state.Shops,
+    shop_tags,
+    shop_categories,
+  };
 };
 
 export default connect(mapStatetoprops, actions)(ShopForm);

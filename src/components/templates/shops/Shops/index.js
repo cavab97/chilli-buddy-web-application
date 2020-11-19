@@ -54,23 +54,23 @@ export default ({
       },
       ...getColumnSearchProps("displayTitle"),
     },
-    {
-      title: "Category",
-      dataIndex: "categories",
-      key: "categories",
-      width: "120x",
-      //   render: (data) => {
-      //     //console.log(data);
-      //     if (data === ["1576652646288"]) return "yes";
-      //     //console.log(data);
-      //   },
-      sorter: (a, b) => {
-        if (a.categories < b.categories) return -1;
-        if (a.categories > b.categories) return 1;
-        return 0;
-      },
-      ...getColumnSearchProps("categories"),
-    },
+    // {  //display shop category in shop list
+    //   title: "Category",
+    //   dataIndex: "categories",
+    //   key: "categories",
+    //   width: "120x",
+    //   //   render: (data) => {
+    //   //     //console.log(data);
+    //   //     if (data === ["1576652646288"]) return "yes";
+    //   //     //console.log(data);
+    //   //   },
+    //   sorter: (a, b) => {
+    //     if (a.categories < b.categories) return -1;
+    //     if (a.categories > b.categories) return 1;
+    //     return 0;
+    //   },
+    //   ...getColumnSearchProps("categories"),
+    // },
     // {
     //     title: "Promotion Status",
     //     dataIndex: "isPromote",

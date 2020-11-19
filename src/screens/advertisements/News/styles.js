@@ -1,7 +1,7 @@
-import styled from 'styled-components';
-import { palette } from 'styled-theme';
-import {Button} from 'marslab-library-react/components/atoms';
-import Table from '../../antTable.style';
+import styled from "styled-components";
+import { palette } from "styled-theme";
+import { Button } from "marslab-library-react/components/atoms";
+import Table from "../../antTable.style";
 
 const TableWrapper = styled(Table)`
   @media only screen and (min-width: 780px) and (max-width: 1680px) {
@@ -35,17 +35,17 @@ const ActionBtn = styled(Button)`
     &:last-child {
       margin-right: 0;
     }
-    border-color:${palette('primary', 5)};
-    background-color:${palette('primary', 6)};
+    border-color: ${palette("primary", 5)};
+    background-color: ${palette("primary", 6)};
 
     i {
       font-size: 17px;
-      color: ${palette('text', 1)};
+      color: ${palette("text", 1)};
     }
 
     &:hover {
-      background-color:${palette('primary', 5)};
-      border-color:${palette('primary', 6)};
+      background-color: ${palette("primary", 5)};
+      border-color: ${palette("primary", 6)};
       i {
         color: inherit;
       }
@@ -69,11 +69,11 @@ const FieldsetStyle = {
   flexDirection: "column",
   alignItems: "flex-start",
   marginBottom: 10,
-}
+};
 
 const Label = styled.label`
   font-size: 13px;
-  color: ${palette('text', 1)};
+  color: ${palette("text", 1)};
   line-height: 1.5;
   font-weight: 500;
   padding: 0;
@@ -92,19 +92,19 @@ const ActionWrapper = styled.div`
 
     i {
       font-size: 18px;
-      color: ${palette('primary', 0)};
+      color: ${palette("primary", 0)};
 
       &:hover {
-        color: ${palette('primary', 4)};
+        color: ${palette("primary", 4)};
       }
     }
 
     &.deleteBtn {
       i {
-        color: ${palette('error', 0)};
+        color: ${palette("error", 0)};
 
         &:hover {
-          color: ${palette('error', 2)};
+          color: ${palette("error", 2)};
         }
       }
     }
@@ -128,58 +128,59 @@ const errorStyle = {
 
   textareaStyle: {
     borderColor: "red",
-  }
-}
+  },
+};
 
 const ErrorMsgFieldsetStyle = {
   marginTop: -10,
   paddingLeft: 5,
-}
+};
 
 const ErrorMsgLabelStyle = {
   fontSize: 13,
-  color: "red"
-}
+  color: "red",
+};
 
 const ErrorInputStyle = {
   borderRadius: 4,
   borderColor: "red",
-  width: "100%"
-}
+  width: "100%",
+};
 
 const UploadStyle = {
   marginTop: 10,
   width: "100%",
-}
+};
 
 const ButtonStyle = {
-  width: '100%',
-}
+  width: "100%",
+};
 
 const InputStyle = {
   borderRadius: 4,
-}
+};
 
 const DatePickerStyle = {
-  width: '100%',
-}
+  width: "100%",
+};
 
 const RowHolderStyle = {
   marginBottom: 0,
   flexDirection: "row",
-}
+  //overflow: "hidden",
+};
 
 const LabelStyle = {
   fontSize: 13,
   lineHeight: 1.5,
   fontWeight: 500,
-  padding: 0
-}
+  padding: 0,
+};
 
 const SelectStyle = {
   flex: 1,
-  width: '100%',
-}
+  width: 470,
+};
 
 export {
   ActionBtn,
@@ -191,7 +192,6 @@ export {
   ActionWrapper,
   TableWrapper,
   errorStyle,
-  
   ErrorMsgFieldsetStyle,
   ErrorMsgLabelStyle,
   ErrorInputStyle,
@@ -201,5 +201,5 @@ export {
   DatePickerStyle,
   RowHolderStyle,
   LabelStyle,
-  SelectStyle
+  SelectStyle,
 };

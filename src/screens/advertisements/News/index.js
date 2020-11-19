@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import actions from "../../../redux/advertisements/actions";
+import actionsShop from "../../../redux/shops/actions";
 import {
   Form as FormSet,
   Button,
@@ -48,6 +49,7 @@ import uuid from "uuid/v4";
 import { validation } from "marslab-library-react/utils/validation";
 
 const FormItem = FormSet.Item;
+const readFromDatabaseShops = actionsShop.readFromDatabase;
 
 class advertisements extends Component {
   constructor(props) {
@@ -65,6 +67,7 @@ class advertisements extends Component {
 
   componentDidMount() {
     this.props.loadFromFireStore();
+    this.props.readFromDatabaseShops();
   }
   componentWillReceiveProps(nextProps) {
     if (
@@ -110,17 +113,19 @@ class advertisements extends Component {
     delete advertisement["subImage3"];
 
     const recordCheck = {
+      shopID: advertisement.shopID,
       title: advertisement.title,
-      merchantDesc: advertisement.merchantDesc,
-      description: advertisement.description,
+      // merchantDesc: advertisement.merchantDesc,
+      // description: advertisement.description,
       startDate: advertisement.startDate,
       endDate: advertisement.endDate,
     };
 
     const defaultValidate = {
+      shopID: { required: true },
       title: { required: true, type: "stringLength", max: 80 },
-      merchantDesc: { required: true },
-      description: { required: true },
+      //merchantDesc: { required: true },
+      //description: { required: true },
       startDate: { required: true, after: advertisement.endDate },
       endDate: { required: true, before: advertisement.startDate },
     };
@@ -153,6 +158,13 @@ class advertisements extends Component {
     let { advertisement } = clone(this.props);
     if (key && nestedKey) advertisement[key][nestedKey] = event.target.value;
     else if (key) advertisement[key] = event.target.value;
+    this.props.update(advertisement);
+  };
+
+  onShopIDChange = ({ key, nestedKey }, event) => {
+    let { advertisement } = clone(this.props);
+    if (key && nestedKey) advertisement[key][nestedKey] = event;
+    else if (key) advertisement[key] = event;
     this.props.update(advertisement);
   };
 
@@ -200,6 +212,7 @@ class advertisements extends Component {
       Object.keys(advertisements).map((advertisement, index) => {
         return advertisementArray.push({
           ...advertisements[advertisement],
+          isPopUp: advertisements[advertisement].isPopUp === true ? "Yes" : "No",
           startDate: advertisements[advertisement].startDate
             ? advertisements[advertisement].startDate.toDate()
             : "",
@@ -272,21 +285,30 @@ class advertisements extends Component {
       submitLoading,
       isCheckingShop,
       isLoading,
+      readSpecifiedRecordLoading,
       uploadKey,
       uploadLoading,
       uploadProgress,
       uploadResult,
       errorReturn,
+      shop_shops,
     } = this.props;
     const { advertisement } = clone(this.props);
     const optionUrl = this.urlChange(url);
     const dataSource = [];
+
+    const shopLists =
+      shop_shops &&
+      Object.values(shop_shops).map((shops) => {
+        return { data: shops.id, label: shops.title };
+      });
 
     Object.keys(advertisements).map((advertisement, index) => {
       return dataSource.push({
         ...advertisements[advertisement],
         keyString: advertisements[advertisement].key,
         startDate: advertisements[advertisement].startDate,
+        isPopUp: advertisements[advertisement].isPopUp === true ? "Yes" : "No",
         endDate: advertisements[advertisement].endDate,
         createAtString: advertisements[advertisement].createAt.format("hh:mm a YYYY-MM-DD"),
         startDateString: advertisements[advertisement].startDate.format("YYYY-MM-DD"),
@@ -311,6 +333,30 @@ class advertisements extends Component {
           return 0;
         },
         ...this.getColumnSearchProps("title", "title"),
+      },
+      {
+        title: "Pop Up",
+        dataIndex: "isPopUp",
+        key: "isPopUp",
+        width: "120x",
+        filters: [
+          {
+            text: "Yes",
+            value: "Yes",
+          },
+          {
+            text: "No",
+            value: "No",
+          },
+        ],
+        onFilter: (value, record) => record.isPopUp.indexOf(value) === 0,
+        sorter: (a, b) => {
+          if (a.isPopUp < b.isPopUp) return -1;
+          if (a.isPopUp > b.isPopUp) return 1;
+          return 0;
+        },
+
+        //...this.getColumnSearchProps("isPopUp", "pop up"),
       },
       {
         title: "Key",
@@ -400,8 +446,51 @@ class advertisements extends Component {
     const formItem = [
       [
         {
-          type: "text",
+          type: "label",
+          label: "Shop *",
+        },
+      ],
+      [
+        {
+          type: "select",
+          //label: "Shop ID *",
+          placeholder: "Enter Shop ID",
+          data: advertisement.shopID,
+          onChange: this.onShopIDChange.bind(this, { key: "shopID" }),
+          option: shopLists,
+          optionTitle: "label",
+          optionValue: "data",
+          showSearch: true,
+          styles: SelectStyle,
+          optionFilterProp: "children",
+          filterOption: (input, option) => {
+            return option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+          },
+          InputStyle: errorReturn.title ? ErrorInputStyle : null,
+          iconRigth: errorReturn.title ? (
+            <AntdIcon.CloseCircleFilled style={{ color: "red" }} />
+          ) : null,
+        },
+      ],
+      [
+        {
+          type: "label",
+          label: errorReturn.shopID ? "*" + errorReturn.shopID : "",
+          FieldsetStyle: ErrorMsgFieldsetStyle,
+          LabelStyle: ErrorMsgLabelStyle,
+          hide: errorReturn.shopID ? false : true,
+        },
+      ],
+      [
+        {
+          type: "label",
           label: "Title * (maximum 80 character)",
+        },
+      ],
+      [
+        {
+          type: "text",
+          //label: "Title * (maximum 80 character)",
           placeholder: "Enter Title",
           data: advertisement.title,
           onChange: this.onRecordChange.bind(this, { key: "title" }),
@@ -420,62 +509,62 @@ class advertisements extends Component {
           hide: errorReturn.title ? false : true,
         },
       ],
-      [
-        {
-          type: "textArea",
-          label: "Merchant Description *",
-          placeholder: "Enter Merchant Description",
-          data: advertisement.merchantDesc,
-          autoSize: { minRows: 3, maxRows: 3 },
-          onChange: this.onRecordChange.bind(this, { key: "merchantDesc" }),
-          InputStyle: errorReturn.merchantDesc ? ErrorInputStyle : null,
-          iconRigth: errorReturn.merchantDesc ? (
-            <AntdIcon.CloseCircleFilled style={{ color: "red" }} />
-          ) : null,
-        },
-      ],
-      [
-        {
-          type: "label",
-          label: errorReturn.merchantDesc ? "*" + errorReturn.merchantDesc : "",
-          FieldsetStyle: ErrorMsgFieldsetStyle,
-          LabelStyle: ErrorMsgLabelStyle,
-          hide: errorReturn.merchantDesc ? false : true,
-        },
-      ],
-      [
-        {
-          type: "textArea",
-          label: "Description *",
-          placeholder: "Enter Description",
-          data: advertisement.description,
-          autoSize: { minRows: 3, maxRows: 3 },
-          onChange: this.onRecordChange.bind(this, { key: "description" }),
-          InputStyle: errorReturn.description ? ErrorInputStyle : null,
-          iconRigth: errorReturn.description ? (
-            <AntdIcon.CloseCircleFilled style={{ color: "red" }} />
-          ) : null,
-        },
-      ],
-      [
-        {
-          type: "label",
-          label: errorReturn.description ? "*" + errorReturn.description : "",
-          FieldsetStyle: ErrorMsgFieldsetStyle,
-          LabelStyle: ErrorMsgLabelStyle,
-          hide: errorReturn.description ? false : true,
-        },
-      ],
-      [
-        {
-          type: "textArea",
-          label: "Terms & Conditions",
-          placeholder: "Enter Terms & Conditions",
-          data: advertisement.termAndCon,
-          autoSize: { minRows: 3, maxRows: 3 },
-          onChange: this.onRecordChange.bind(this, { key: "termAndCon" }),
-        },
-      ],
+      // [
+      //   {
+      //     type: "textArea",
+      //     label: "Merchant Description *",
+      //     placeholder: "Enter Merchant Description",
+      //     data: advertisement.merchantDesc,
+      //     autoSize: { minRows: 3, maxRows: 3 },
+      //     onChange: this.onRecordChange.bind(this, { key: "merchantDesc" }),
+      //     InputStyle: errorReturn.merchantDesc ? ErrorInputStyle : null,
+      //     iconRigth: errorReturn.merchantDesc ? (
+      //       <AntdIcon.CloseCircleFilled style={{ color: "red" }} />
+      //     ) : null,
+      //   },
+      // ],
+      // [
+      //   {
+      //     type: "label",
+      //     label: errorReturn.merchantDesc ? "*" + errorReturn.merchantDesc : "",
+      //     FieldsetStyle: ErrorMsgFieldsetStyle,
+      //     LabelStyle: ErrorMsgLabelStyle,
+      //     hide: errorReturn.merchantDesc ? false : true,
+      //   },
+      // ],
+      // [
+      //   {
+      //     type: "textArea",
+      //     label: "Description *",
+      //     placeholder: "Enter Description",
+      //     data: advertisement.description,
+      //     autoSize: { minRows: 3, maxRows: 3 },
+      //     onChange: this.onRecordChange.bind(this, { key: "description" }),
+      //     InputStyle: errorReturn.description ? ErrorInputStyle : null,
+      //     iconRigth: errorReturn.description ? (
+      //       <AntdIcon.CloseCircleFilled style={{ color: "red" }} />
+      //     ) : null,
+      //   },
+      // ],
+      // [
+      //   {
+      //     type: "label",
+      //     label: errorReturn.description ? "*" + errorReturn.description : "",
+      //     FieldsetStyle: ErrorMsgFieldsetStyle,
+      //     LabelStyle: ErrorMsgLabelStyle,
+      //     hide: errorReturn.description ? false : true,
+      //   },
+      // ],
+      // [
+      //   {
+      //     type: "textArea",
+      //     label: "Terms & Conditions",
+      //     placeholder: "Enter Terms & Conditions",
+      //     data: advertisement.termAndCon,
+      //     autoSize: { minRows: 3, maxRows: 3 },
+      //     onChange: this.onRecordChange.bind(this, { key: "termAndCon" }),
+      //   },
+      // ],
       [
         {
           type: "label",
@@ -541,16 +630,25 @@ class advertisements extends Component {
           onUploadFile: this.onUploadFile.bind(this, {
             key: "coverPic",
             target: advertisement.key,
-          }), // , {sectionName: "Cover Picture" }),
+          }),
           uploadLoading: uploadLoading,
           uploadProgress: uploadProgress,
           uploadResult: uploadResult,
           onChange: this.onSelectChange.bind(this, "coverPic"),
           defaultFileList: advertisement.coverPic,
           maxFiles: 1,
-          label: "Cover Picture (800 x 600)",
+          label: "Cover Picture (800 x 600) (Main Page Header Image Slider)",
           disabled: uploadKey && uploadKey !== "coverPic",
           UploadStyle: UploadStyle,
+        },
+      ],
+      [
+        {
+          type: "label",
+          label: errorReturn.coverPic ? "*" + errorReturn.coverPic : "",
+          FieldsetStyle: ErrorMsgFieldsetStyle,
+          LabelStyle: ErrorMsgLabelStyle,
+          hide: errorReturn.coverPic ? false : true,
         },
       ],
       [
@@ -558,20 +656,39 @@ class advertisements extends Component {
           type: "upload",
           uploadType: "pictureWall",
           onUploadFile: this.onUploadFile.bind(this, {
-            key: "subImage",
+            key: "popUpImage",
             target: advertisement.key,
-          }), //{sectionName: "Sub Image"}),
+          }),
           uploadLoading: uploadLoading,
           uploadProgress: uploadProgress,
           uploadResult: uploadResult,
-          onChange: this.onSelectChange.bind(this, "subImage"),
-          defaultFileList: advertisement.subImage,
-          maxFiles: 3,
-          label: "Sub Image (800 x 600)",
-          disabled: uploadKey && uploadKey !== "subImage",
+          onChange: this.onSelectChange.bind(this, "popUpImage"),
+          defaultFileList: advertisement.popUpImage,
+          maxFiles: 1,
+          label: "Pop Up Advertisement Image (800 x 1407.41) (Pop Up Advertisement Image)",
+          disabled: uploadKey && uploadKey !== "popUpImage",
           UploadStyle: UploadStyle,
         },
       ],
+      //   [
+      //     {
+      //       type: "upload",
+      //       uploadType: "pictureWall",
+      //       onUploadFile: this.onUploadFile.bind(this, {
+      //         key: "subImage",
+      //         target: advertisement.key,
+      //       }),
+      //       uploadLoading: uploadLoading,
+      //       uploadProgress: uploadProgress,
+      //       uploadResult: uploadResult,
+      //       onChange: this.onSelectChange.bind(this, "subImage"),
+      //       defaultFileList: advertisement.subImage,
+      //       maxFiles: 3,
+      //       label: "Sub Image (800 x 600)",
+      //       disabled: uploadKey && uploadKey !== "subImage",
+      //       UploadStyle: UploadStyle,
+      //     },
+      //   ],
     ];
     const stepDetails = [
       {
@@ -587,7 +704,7 @@ class advertisements extends Component {
           nextPage: 0,
           data: null,
         }),
-        confirmLoading: submitLoading, //false x loading, true is loading
+        confirmLoading: submitLoading || readSpecifiedRecordLoading, //false x loading, true is loading
       },
       {
         title: "Photo",
@@ -689,9 +806,24 @@ class advertisements extends Component {
   }
 }
 
-export default connect(
-  (state) => ({
+// export default connect(
+//   (state) => ({
+//     ...state.Advertisements,
+//   }),
+//   actions
+// )(advertisements);
+
+const mapStatetoprops = (state) => {
+  const { shop, readSpecifiedRecordLoading, readSpecifiedRecordError } = state.Shops;
+  const shop_shops = state.Shops.shops;
+
+  return {
     ...state.Advertisements,
-  }),
-  actions
-)(advertisements);
+    shop,
+    readSpecifiedRecordLoading,
+    readSpecifiedRecordError,
+    shop_shops,
+  };
+};
+
+export default connect(mapStatetoprops, { ...actions, readFromDatabaseShops })(advertisements);

@@ -1,17 +1,15 @@
-import { all, takeEvery, put, call, select, take } from 'redux-saga/effects';
+import { all, takeEvery, put, call, select, take } from "redux-saga/effects";
 import { eventChannel, END } from "redux-saga";
-import actions from './actions';
-import FirebaseHelper from 'marslab-library-react/utils/helper/firebase';
-import omit from 'lodash/omit';
-import { notification } from 'marslab-library-react/components/organisms';
-import firebase from 'firebase';
-import uuid from 'uuid/v4';
+import actions from "./actions";
+import FirebaseHelper from "marslab-library-react/utils/helper/firebase";
+import omit from "lodash/omit";
+import { notification } from "marslab-library-react/components/organisms";
+import firebase from "firebase";
+import uuid from "uuid/v4";
 import { backend, database as databaseHelper } from "../../marslab-library-react/utils/helper";
 import { advertisementStorageServices } from "services/storage";
 
-
-export const getAdvertisements = (state) => state.Advertisements
-
+export const getAdvertisements = (state) => state.Advertisements;
 
 const {
   database,
@@ -21,42 +19,54 @@ const {
   processFireStoreCollection,
 } = FirebaseHelper;
 
- 
 /**
  * DOC: https://redux-saga-firebase.js.org/reference/dev/firestore
  */
 
-const COLLECTION_NAME = 'posts'; // change your collection
-const ORDER_BY = 'createAt';
-const ORDER = 'desc';
+const COLLECTION_NAME = "posts"; // change your collection
+const ORDER_BY = "createAt";
+const ORDER = "desc";
 
 function* loadFromFirestore() {
-  console.log("sagas-loadFromFirestore")
   try {
     const collections = database
       .collection(COLLECTION_NAME)
-      .where('deleted_at', '==', null)
+      .where("deleted_at", "==", null)
       .orderBy(ORDER_BY, ORDER);
     const snapshot = yield call(rsfFirestore.getCollection, collections);
     let data = processFireStoreCollection(snapshot);
 
     let result = {};
 
-    Object.keys(data).forEach(recordId => {
+    Object.keys(data).forEach((recordId) => {
       const parent = databaseHelper.processData({ data: data[recordId] });
       const created = databaseHelper.processData({ data: data[recordId].created });
       const updated = databaseHelper.processData({ data: data[recordId].updated });
 
-      const coverPic = data[recordId].coverPic === "" || data[recordId].coverPic === null || data[recordId].coverPic.length === 0 ? [] : [data[recordId].coverPic];
-      let subImage = [];
+      const coverPic =
+        data[recordId].coverPic === "" ||
+        data[recordId].coverPic === null ||
+        data[recordId].coverPic.length === 0
+          ? []
+          : [data[recordId].coverPic];
 
-      data[recordId].subImage.forEach((picUrl)=>{
-        if( picUrl !== "" && picUrl !== null ){
-          subImage.push(picUrl);
-        }
-      })
+      const popUpImage =
+        data[recordId].popUpImage === undefined ||
+        data[recordId].popUpImage === "" ||
+        data[recordId].popUpImage === null ||
+        data[recordId].popUpImage.length === 0
+          ? []
+          : [data[recordId].popUpImage];
 
-      const processedData = { ...parent, created, updated, coverPic, subImage};
+      //let subImage = [];
+
+      // data[recordId].subImage.forEach((picUrl) => {
+      //   if (picUrl !== "" && picUrl !== null) {
+      //     subImage.push(picUrl);
+      //   }
+      // });
+
+      const processedData = { ...parent, created, updated, coverPic, popUpImage };
 
       result = {
         ...result,
@@ -64,7 +74,7 @@ function* loadFromFirestore() {
       };
     });
 
-      yield put(actions.loadFromFireStoreSuccess(result));
+    yield put(actions.loadFromFireStoreSuccess(result));
   } catch (error) {
     console.log(error);
     yield put(actions.loadFromFireStoreError(error));
@@ -72,29 +82,24 @@ function* loadFromFirestore() {
 }
 
 function* loadDeletedUserFromFireStore() {
-  console.log("sagas-loadDeletedFromFirestore")
-
   try {
     const collections = database
       .collection(COLLECTION_NAME)
-      .where('deleted_at', '>', 0)
-      .orderBy('deleted_at', 'asc');
+      .where("deleted_at", ">", 0)
+      .orderBy("deleted_at", "asc");
     const snapshot = yield call(rsfFirestore.getCollection, collections);
     let data = processFireStoreCollection(snapshot);
-    console.log(data + "deleted")
     yield put(actions.loadFromFireStoreSuccess(data));
   } catch (error) {
     yield put(actions.loadFromFireStoreError(error));
   }
 }
 
-function* storeIntoFirestore({ payload }) { 
-  console.log("sagas-storeIntoFirestore")
-
-  const { data, actionName , item, deleted_at} = payload;
+function* storeIntoFirestore({ payload }) {
+  const { data, actionName, item, deleted_at } = payload;
   //const { key, title, merchantDesc, description, createAt, endDate, startDate} = data;
-  
-  const postsRef = database.collection('posts').doc();
+
+  const postsRef = database.collection("posts").doc();
   const newKey = postsRef.id;
 
   let resultFirst = {};
@@ -106,36 +111,42 @@ function* storeIntoFirestore({ payload }) {
   const updated = backend.processDataV2({ data: data.updated });
 
   const coverPic = data.coverPic.length === 0 ? "" : data.coverPic[0];
-  let subImage = [];
+  const popUpImage = data.popUpImage.length === 0 ? "" : data.popUpImage[0];
+  const isPopUp = data.popUpImage[0] ? true : false;
+  // let subImage = [];
 
-  for( let i = 0 ; i < 3; i++){
-    if( data.subImage[i] === null || data.subImage[i] === undefined || data.subImage[i] === "" ){
-      subImage.push("")
-    }else{
-      subImage.push(data.subImage[i])
-    }
-  }
+  // for (let i = 0; i < 3; i++) {
+  //   if (data.subImage[i] === null || data.subImage[i] === undefined || data.subImage[i] === "") {
+  //     subImage.push("");
+  //   } else {
+  //     subImage.push(data.subImage[i]);
+  //   }
+  // }
 
-  result = { 
+  result = {
     ...resultFirst,
     created,
     updated,
     coverPic,
-    subImage
+    popUpImage,
+    isPopUp,
+    //subImage,
     // startDate: new Date(resultFirst.startDate),
     // endDate: new Date(resultFirst.endDate),
-  }
+  };
 
-  resultCreate = { 
+  resultCreate = {
     ...resultFirst,
     key: newKey,
     created,
     updated,
     coverPic,
-    subImage
+    popUpImage,
+    isPopUp,
+    //subImage,
     // startDate: new Date(resultFirst.startDate),
     // endDate: new Date(resultFirst.endDate),
-  }
+  };
 
   // throw null;
 
@@ -143,42 +154,50 @@ function* storeIntoFirestore({ payload }) {
 
   try {
     switch (actionName) {
-      case 'delete':
-        submitData=yield call(rsfFirestore.updateDocument, `${COLLECTION_NAME}/${result.key}`, {
-          ...omit(result, ['key']),
+      case "delete":
+        submitData = yield call(rsfFirestore.updateDocument, `${COLLECTION_NAME}/${result.key}`, {
+          ...omit(result, ["key"]),
           deleted_at: new Date().getTime(),
         });
         break;
-      case 'restore':
-        submitData=yield call(rsfFirestore.updateDocument, `${COLLECTION_NAME}/${result.key}`, {
-            ...omit(result, ['key']),
-            deleted_at: null,
-          });
+      case "restore":
+        submitData = yield call(rsfFirestore.updateDocument, `${COLLECTION_NAME}/${result.key}`, {
+          ...omit(result, ["key"]),
+          deleted_at: null,
+        });
         break;
-      case 'update':
-        submitData=yield call(rsfFirestore.updateDocument, `${COLLECTION_NAME}/${result.key}`, {
-          ...omit(result, ['key']),
+      case "update":
+        submitData = yield call(rsfFirestore.updateDocument, `${COLLECTION_NAME}/${result.key}`, {
+          ...omit(result, ["key"]),
           key: result.key,
-          });
-          break;
+        });
+        break;
       default:
-        submitData = yield call(rsfFirestore.setDocument, `${COLLECTION_NAME}/${newKey}`, resultCreate)
+        submitData = yield call(
+          rsfFirestore.setDocument,
+          `${COLLECTION_NAME}/${newKey}`,
+          resultCreate
+        );
 
         yield put(actions.saveIntoFireStoreSuccess({ key: newKey }));
 
         break;
     }
 
-    
-    
-    if(["update", "insert"].includes(actionName))
-    {
+    if (["update", "insert"].includes(actionName)) {
       let advertisements = yield select(getAdvertisements);
-      const nextPage = advertisements.modalCurrentPage + 1
-      yield put(actions.toggleModal({ toggle: nextPage > 1 , nextPage: nextPage > 1 ? 0: nextPage}));
+      const nextPage = advertisements.modalCurrentPage + 1;
+      yield put(
+        actions.toggleModal({ toggle: nextPage > 1, nextPage: nextPage > 1 ? 0 : nextPage })
+      );
     }
 
-    yield put({type:  data.deleted_at !== null? actions.LOAD_DELETED_USER_FROM_FIRESTORE: actions.LOAD_FROM_FIRESTORE });
+    yield put({
+      type:
+        data.deleted_at !== null
+          ? actions.LOAD_DELETED_USER_FROM_FIRESTORE
+          : actions.LOAD_FROM_FIRESTORE,
+    });
   } catch (error) {
     yield put(actions.saveIntoFireStoreError(error));
   }
@@ -213,20 +232,19 @@ const readAllFirestoreDocuments = async () =>
   await database
     .collection(COLLECTION_NAME)
     .get()
-    .then(querySnapshot => {
+    .then((querySnapshot) => {
       const documents = [];
       try {
-        querySnapshot.forEach(doc => {
+        querySnapshot.forEach((doc) => {
           documents.push(doc.id);
         });
       } catch (e) {}
       return documents;
     });
 
-function*  handleUploadLogo ( { payload } ) {
+function* handleUploadLogo({ payload }) {
   const { data } = payload;
   const { advertisementId, file } = data;
-  console.log("handleUploadLogo");
   const channel = yield call(uploadProgressChannel, advertisementId, file);
 
   try {
@@ -247,17 +265,15 @@ function*  handleUploadLogo ( { payload } ) {
 }
 
 function uploadProgressChannel(advertisementId, file) {
-  return eventChannel(emit => {
+  return eventChannel((emit) => {
     const progressListener = advertisementStorageServices
       .uploadFile({
         advertisementId,
         file,
-        progressListener: snap => {
-          const progress = Math.round(
-            (snap.bytesTransferred / snap.totalBytes) * 100
-          );
+        progressListener: (snap) => {
+          const progress = Math.round((snap.bytesTransferred / snap.totalBytes) * 100);
           emit({ progress });
-        }
+        },
       })
       .then(({ url }) => {
         emit({ url });
@@ -276,6 +292,5 @@ export default function* rootSaga() {
     takeEvery(actions.SAVE_INTO_FIRESTORE, storeIntoFirestore),
     //takeEvery(actions.SHOP_ID_CHECK, checkShopID),
     takeEvery(actions.HANDLE_UPLOAD_LOGO, handleUploadLogo),
-
   ]);
 }
