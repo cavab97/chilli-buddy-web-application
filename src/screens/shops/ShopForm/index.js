@@ -276,7 +276,6 @@ class ShopForm extends Component {
         return { data: categories.id, label: categories.title };
       });
 
-    console.log(shopCategories);
     function compare(a, b) {
       if (a.label < b.label) {
         return -1;

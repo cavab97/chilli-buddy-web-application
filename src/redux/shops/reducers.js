@@ -11,20 +11,20 @@ const initState = {
   submitError: {
     code: null,
     message: null,
-    details: null
+    details: null,
   },
   submitResult: {
     objectName: null,
     ids: null,
     status: null,
     action: null,
-    message: null
+    message: null,
   },
 
-  uploadKey:null,
+  uploadKey: null,
   uploadLoading: false,
   uploadResult: {
-    url: null
+    url: null,
   },
   uploadError: false,
   uploadProgress: 0,
@@ -41,7 +41,7 @@ const initState = {
     images: [],
     facebookUrl: null,
     instagramUrl: null,
-    whatsapp:null,
+    whatsapp: null,
     websiteUrl: null,
     phoneNumber: null,
     email: null,
@@ -59,7 +59,7 @@ const initState = {
       { close: "2200", day: "thu", open: "1000", operate: true },
       { close: "2200", day: "fri", open: "1000", operate: true },
       { close: "2200", day: "sat", open: "1000", operate: true },
-      { close: "2200", day: "sun", open: "1000", operate: true }
+      { close: "2200", day: "sun", open: "1000", operate: true },
     ],
     merchants: [],
     manager: [],
@@ -74,8 +74,8 @@ const initState = {
     deleted: { at: null, by: null },
     updated: { at: null, by: null },
     l: { _lat: 0, _long: 0 },
-    g: null
-  }
+    g: null,
+  },
 };
 
 export default function reducer(state = initState, { type, payload }) {
@@ -91,42 +91,42 @@ export default function reducer(state = initState, { type, payload }) {
         ...state,
         readLoading: false,
         shops: payload.data,
-        readError: false
+        readError: false,
       };
     case actions.READ_FROM_DATABASE_ERROR:
       return {
         ...state,
         readLoading: false,
-        readError: payload.error
+        readError: payload.error,
       };
     case actions.READ_SPECIFIED_RECORD:
       return {
-          ...state,
-          shop: initState.shop,
-          readSpecifiedRecordLoading: true,
-          readSpecifiedRecordError: false
+        ...state,
+        shop: initState.shop,
+        readSpecifiedRecordLoading: true,
+        readSpecifiedRecordError: false,
       };
     case actions.READ_SPECIFIED_RECORD_SUCCESS:
       return {
-          ...state,
-          readSpecifiedRecordLoading: false,
-          shop: payload.data ? payload.data : initState.shop,
-          readSpecifiedRecordError: false
+        ...state,
+        readSpecifiedRecordLoading: false,
+        shop: payload.data ? payload.data : initState.shop,
+        readSpecifiedRecordError: false,
       };
     case actions.READ_SPECIFIED_RECORD_ERROR:
       return {
-          ...state,
-          shop: initState.shop,
-          readSpecifiedRecordLoading: false,
-          readError: payload.error
+        ...state,
+        shop: initState.shop,
+        readSpecifiedRecordLoading: false,
+        readError: payload.error,
       };
     case actions.SUBMIT_TO_BACKEND:
-      console.log("submitBackend")
+      console.log("submitBackend");
       return {
         ...state,
         submitLoading: true,
         submitError: initState.submitError,
-        submitResult: initState.submitResult
+        submitResult: initState.submitResult,
       };
     case actions.SUBMIT_TO_BACKEND_SUCCESS:
       return {
@@ -134,7 +134,7 @@ export default function reducer(state = initState, { type, payload }) {
         submitLoading: false,
         submitError: initState.submitError,
         submitResult: payload.data,
-        shop: { ...state.shop, id: payload.data.ids[0] }
+        shop: { ...state.shop, id: payload.data.ids[0] },
       };
 
     case actions.SUBMIT_TO_BACKEND_ERROR:
@@ -142,11 +142,11 @@ export default function reducer(state = initState, { type, payload }) {
         ...state,
         submitLoading: false,
         submitError: payload.error,
-        submitResult: initState.submitResult
+        submitResult: initState.submitResult,
       };
 
     case actions.UPLOAD_TO_STORAGE:
-      console.log("uploadStorage")
+      console.log("uploadStorage");
       return {
         ...state,
         uploadKey: payload.data.key,
@@ -154,7 +154,6 @@ export default function reducer(state = initState, { type, payload }) {
         uploadProgress: initState.uploadProgress,
         uploadResult: initState.uploadResult,
         uploadError: initState.uploadError,
-        
       };
 
     case actions.UPLOAD_TO_STORAGE_SUCCESS:
@@ -164,7 +163,7 @@ export default function reducer(state = initState, { type, payload }) {
         uploadLoading: false,
         uploadProgress: initState.uploadProgress,
         uploadResult: payload.data,
-        uploadError: initState.uploadError
+        uploadError: initState.uploadError,
       };
 
     case actions.UPLOAD_TO_STORAGE_ERROR:
@@ -174,21 +173,20 @@ export default function reducer(state = initState, { type, payload }) {
         uploadLoading: false,
         uploadProgress: initState.uploadProgress,
         uploadResult: initState.uploadResult,
-        uploadError: payload.error
+        uploadError: payload.error,
       };
 
     case actions.UPDATE_UPLOAD_PROGRESS:
       return {
         ...state,
-        uploadProgress: payload.data
+        uploadProgress: payload.data,
       };
 
     case actions.MODAL_CONTROL:
-      console.log("modalControl")
+      console.log("modalControl");
       return {
         ...state,
-        modalActive:
-          payload.toggle ? !state.modalActive : state.modalActive,
+        modalActive: payload.toggle ? !state.modalActive : state.modalActive,
         modalCurrentPage: payload.nextPage,
         shop: payload.toggle
           ? state.modalActive
@@ -196,7 +194,7 @@ export default function reducer(state = initState, { type, payload }) {
             : payload.data
             ? payload.data
             : initState.shop
-          : state.shop
+          : state.shop,
       };
     case actions.ERROR_UPDATE:
       return {
@@ -204,11 +202,9 @@ export default function reducer(state = initState, { type, payload }) {
         errorReturn: payload.data,
       };
     case actions.STATE_UPDATE:
-      console.log("stateUpdate")
-      console.log(payload.data)
       return {
         ...state,
-        shop: payload.data
+        shop: payload.data,
       };
     default:
       return state;

@@ -21,13 +21,13 @@ export default ({
 }) => {
   const categoriesArray = [];
 
-  //Shop category in shop list
-  //   Object.keys(shopCategories).map((category, index) => {
-  //     console.log(shopCategories[category].label);
-  //     return categoriesArray.push({
-  //       ...shopCategories[category].label,
-  //     });
+  // //Shop category in shop list
+  // Object.keys(shopCategories).map((category, index) => {
+  //   console.log(shopCategories[category].label);
+  //   return categoriesArray.push({
+  //     ...shopCategories[category].label,
   //   });
+  // });
 
   const columns = [
     {
