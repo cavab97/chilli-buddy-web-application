@@ -8,6 +8,7 @@ import firebase from "firebase";
 import uuid from "uuid/v4";
 import { backend, database as databaseHelper } from "../../marslab-library-react/utils/helper";
 import { advertisementStorageServices } from "services/storage";
+import moment from "moment";
 
 export const getAdvertisements = (state) => state.Advertisements;
 

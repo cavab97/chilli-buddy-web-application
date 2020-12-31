@@ -176,9 +176,20 @@ class advertisements extends Component {
 
   onDateChange({ key, nestedKey }, date, dateString) {
     let { advertisement } = clone(this.props);
-
-    if (key && nestedKey) advertisement[key][nestedKey] = date;
-    else if (key) advertisement[key] = date;
+    const newDate = date.toDate();
+    if (key === "startDate") {
+      newDate.setHours(0);
+      newDate.setMinutes(0);
+      newDate.setSeconds(0);
+      newDate.setMilliseconds(0);
+    } else {
+      newDate.setHours(23);
+      newDate.setMinutes(59);
+      newDate.setSeconds(59);
+      newDate.setMilliseconds(999);
+    }
+    if (key && nestedKey) advertisement[key][nestedKey] = moment(newDate.getTime());
+    else if (key) advertisement[key] = moment(newDate.getTime());
     this.props.update(advertisement);
   }
 
