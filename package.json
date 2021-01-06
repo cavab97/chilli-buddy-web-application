@@ -126,6 +126,7 @@
   "scripts": {
     "start": "env-cmd -f ./.env.development react-app-rewired start",
     "staging": "env-cmd -f ./.env.staging react-app-rewired start",
+    "production": "env-cmd -f ./.env.production react-app-rewired start",
     "devBuild": "env-cmd -f ./.env.development react-app-rewired build",
     "stagingBuild": "env-cmd -f ./.env.staging react-app-rewired build",
     "build": "env-cmd -f ./.env.production react-app-rewired build",

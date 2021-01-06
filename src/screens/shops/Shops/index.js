@@ -146,51 +146,45 @@ class ShopsScreen extends Component {
       function getCategoryLabel() {
         switch (categoryId) {
           case "1607328160755":
-            return "中餐 | Chinese";
+            return "CHINESE | 中餐";
 
           case "1607328179507":
-            return "西餐 | Western";
+            return "WESTERN | 西餐";
 
           case "1607328192328":
-            return "Cafe";
+            return "CAFE | 咖啡馆";
 
           case "1607328203811":
-            return "中國菜 | China";
+            return "CHINA | 中国餐";
 
           case "1607328215133":
-            return "日本餐 | Japanese";
+            return "JAPANESE | 日本餐";
 
           case "1607328226309":
-            return "韓國 | Korean";
+            return "KOREAN | 韩国餐";
 
           case "1607328240049":
-            return "泰國 | Thai";
-
-          case "1607328250980":
-            return "台灣 | Taiwan";
+            return "THAI | 泰国餐";
 
           case "1607328262228":
-            return "小酒館 | Bistro";
+            return "BISTRO | 小酒馆";
 
           case "1607328271931":
-            return "火鍋 | Steamboat";
+            return "STEAMBOAT | 火锅";
 
           case "1607328282884":
-            return "本地美食 | Local cuisine";
+            return "LOCAL CUISINE | 本地美食";
 
           case "1607328292779":
-            return "飲料店 | Beverage";
+            return "BEVERAGE | 饮料店";
 
           case "1607328302362":
-            return "餐車 | Food Truck";
-
-          case "1607328342357":
-            return "碌碌 | Lok Lok";
+            return "FOOD TRUCK | 餐车";
 
           case "1607328353437":
-            return "特色美食 | Speciality cuisine";
+            return "SPECIAL CUISINE | 特色美食";
           default:
-            return "Other category";
+            return "OTHER CATEGORY";
         }
       }
 
