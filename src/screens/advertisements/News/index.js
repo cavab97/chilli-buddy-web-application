@@ -764,8 +764,12 @@ class advertisements extends Component {
 
     return (
       <ScreenHolder>
-        <InnerSidebar url={optionUrl} optionControl="news" displayStatus={this.state.innerHide} />
-        <ContentBox title="Advertisement List" onClick={this.onClick.bind(this)}>
+        <InnerSidebar
+          url={optionUrl}
+          optionControl="headerAndPopUp"
+          displayStatus={this.state.innerHide}
+        />
+        <ContentBox title="Header & Pop Up" onClick={this.onClick.bind(this)}>
           <ButtonHolders>
             {/*<ActionBtn type="danger" onClick={this.resetRecords}>
                   Reset record
@@ -779,14 +783,14 @@ class advertisements extends Component {
                 data: null,
               })}
             >
-              Add new advertisement
+              Add new header & pop up
             </ActionBtn>
           </ButtonHolders>
 
           <StepModal
             currentPage={modalCurrentPage}
             visible={modalActive}
-            title={advertisement.key ? "Update Advertisement" : "Add New Advertisement"}
+            title={advertisement.key ? "Update Header & Pop Up" : "Add New Header & Pop Up"}
             stepDetails={stepDetails}
             modalContent={modalContent}
             closable={true}

@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import actions from "../../../redux/settings/Info/actions";
 import PosterAdvertisement from "../../../components/templates/advertisements/HeaderPoster";
-import { ScreenHolder } from 'marslab-library-react/components/molecules';
+import { ScreenHolder } from "marslab-library-react/components/molecules";
 import ContentBox from "marslab-library-react/components/organisms/ContentBox";
 import { notification } from "marslab-library-react/components/organisms";
 import InnerSidebar from "marslab-library-react/components/organisms/InnerSideBar";
@@ -14,7 +14,7 @@ class Poster extends Component {
     this.state = {
       innerHide: { display: "none" },
       photoView: false,
-    }
+    };
   }
 
   componentDidMount() {
@@ -38,21 +38,21 @@ class Poster extends Component {
 
   handleModal = (settingInfo) => {
     this.props.modalControl(settingInfo);
-  }
+  };
 
   handleRecord = async (actionName, record) => {
     this.props.submitToBackend(record, actionName);
-  }
+  };
 
   onClick = () => {
-    if(this.state.innerHide.display === "block"){
-      this.setState({innerHide: {display: "none"}});
-    }else{
-      this.setState({innerHide: {display: "block"}});
+    if (this.state.innerHide.display === "block") {
+      this.setState({ innerHide: { display: "none" } });
+    } else {
+      this.setState({ innerHide: { display: "block" } });
     }
-  }
+  };
 
-  urlChange(url){
+  urlChange(url) {
     const oldUrl = url.substring(0, url.lastIndexOf("/"));
 
     return oldUrl;
@@ -79,7 +79,7 @@ class Poster extends Component {
 
   render() {
     const { url } = this.props.match;
-    const { 
+    const {
       readLoading,
       submitLoading,
       settingInfo,
@@ -92,15 +92,8 @@ class Poster extends Component {
 
     return (
       <ScreenHolder>
-        <InnerSidebar
-            url={optionUrl}
-            optionControl="news"
-            displayStatus={this.state.innerHide}
-        />
-        <ContentBox
-          title="Advertisement Poster"
-          onClick={this.onClick.bind(this)}
-        >
+        <InnerSidebar url={optionUrl} optionControl="news" displayStatus={this.state.innerHide} />
+        <ContentBox title="Advertisement Poster" onClick={this.onClick.bind(this)}>
           <PosterAdvertisement
             loading={readLoading}
             dataSource={settingInfo}
@@ -120,7 +113,7 @@ class Poster extends Component {
   }
 }
 
-const mapStatetoprops = state => {
+const mapStatetoprops = (state) => {
   return { ...state.Info };
 };
 

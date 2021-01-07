@@ -1,20 +1,16 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import actions from '../../../redux/advertisements/actions';
-import Input, {
-  Textarea,
-} from 'isomorphic-shared/components/uielements/input';
-import Select, {
-  SelectOption as Option,
-} from 'isomorphic-shared/components/uielements/select';
+import React, { Component } from "react";
+import { connect } from "react-redux";
+import actions from "../../../redux/advertisements/actions";
+import Input, { Textarea } from "isomorphic-shared/components/uielements/input";
+import Select, { SelectOption as Option } from "isomorphic-shared/components/uielements/select";
 // import Checkbox from 'isomorphic-shared/components/uielements?';
 // import Modal from './node_modules/isomorphic-shared/components/Feedback/Modal';
-import Modal from 'isomorphic-shared/components/Feedback/Modal';
-import LayoutContentWrapper from 'isomorphic-shared/components/utility/layoutWrapper.js';
-import Box from 'isomorphic-shared/components/utility/box';
-import ContentHolder from 'isomorphic-shared/components/utility/contentHolder';
+import Modal from "isomorphic-shared/components/Feedback/Modal";
+import LayoutContentWrapper from "isomorphic-shared/components/utility/layoutWrapper.js";
+import Box from "isomorphic-shared/components/utility/box";
+import ContentHolder from "isomorphic-shared/components/utility/contentHolder";
 // import Popconfirms from './node_modules/isomorphic-shared/components/Feedback/Popconfirm';
-import Popconfirms from 'isomorphic-shared/components/Feedback/Popconfirm';
+import Popconfirms from "isomorphic-shared/components/Feedback/Popconfirm";
 import {
   ActionBtn,
   Fieldset,
@@ -26,36 +22,31 @@ import {
   ComponentTitle,
   TableWrapper,
   StatusTag,
-} from './styles';
-import clone from 'clone';
-import Firebase from '../../../../authentication/firebase';
+} from "./styles";
+import clone from "clone";
+import Firebase from "../../../../authentication/firebase";
 // import { notification } from './node_modules/isomorphic-shared/components';
-import { notification } from 'isomorphic-shared/components';
+import { notification } from "isomorphic-shared/components";
 
 class advertisements extends Component {
-
-
   componentDidMount() {
     this.props.loadDeletedUserFromFireStore();
   }
-
 
   handleRecord = async (actionName, advertisement) => {
     const email = advertisement.email;
     const password = advertisement.ic;
 
-    if (advertisement.key && actionName !== 'delete' && actionName !== 'restore') 
-    {
-      actionName = 'update';
-    } 
-    
-    if (!advertisement.key && actionName == 'insert') 
-    {
+    if (advertisement.key && actionName !== "delete" && actionName !== "restore") {
+      actionName = "update";
+    }
+
+    if (!advertisement.key && actionName == "insert") {
       let data;
       if (!(email && password)) {
-        notification('error', 'Please fill in email and ic number');
+        notification("error", "Please fill in email and ic number");
         return;
-      }  
+      }
       data = await Firebase.signup(Firebase.EMAIL, {
         email,
         password,
@@ -64,13 +55,13 @@ class advertisements extends Component {
       const message =
         newAdvertisement === false && data && data.message
           ? data.message
-          : 'Sorry Some error occurs';
+          : "Sorry Some error occurs";
       if (newAdvertisement) {
         //const token = await newAdvertisement.getIdToken();
         advertisement.uid = data.advertisement.uid;
         advertisement.key = data.advertisement.uid;
       } else {
-        notification('error', message);
+        notification("error", message);
         return;
       }
     }
@@ -113,10 +104,10 @@ class advertisements extends Component {
 
     const columns = [
       {
-        title: 'Name',
-        dataIndex: 'name',
-        key: 'name',
-        width: '150px',
+        title: "Name",
+        dataIndex: "name",
+        key: "name",
+        width: "150px",
         sorter: (a, b) => {
           if (a.name < b.name) return -1;
           if (a.name > b.name) return 1;
@@ -124,9 +115,9 @@ class advertisements extends Component {
         },
       },
       {
-        title: 'Title',
-        dataIndex: 'title',
-        key: 'title',
+        title: "Title",
+        dataIndex: "title",
+        key: "title",
         //width: '200x',
         sorter: (a, b) => {
           if (a.title < b.title) return -1;
@@ -135,10 +126,10 @@ class advertisements extends Component {
         },
       },
       {
-        title: 'Create At',
-        dataIndex: 'createAtString',
-        key: 'createAtString',
-        width: '60x',
+        title: "Create At",
+        dataIndex: "createAtString",
+        key: "createAtString",
+        width: "60x",
         sorter: (a, b) => {
           if (a.createAtString < b.createAtString) return -1;
           if (a.createAtString > b.createAtString) return 1;
@@ -146,10 +137,10 @@ class advertisements extends Component {
         },
       },
       {
-        title: 'Start Date',
-        dataIndex: 'startDateString',
-        key: 'startDateString',
-        width: '60x',
+        title: "Start Date",
+        dataIndex: "startDateString",
+        key: "startDateString",
+        width: "60x",
         sorter: (a, b) => {
           if (a.startDateString < b.startDateString) return -1;
           if (a.startDateString > b.startDateString) return 1;
@@ -157,10 +148,10 @@ class advertisements extends Component {
         },
       },
       {
-        title: 'End Date',
-        dataIndex: 'endDateString',
-        key: 'endDateString',
-        width: '60x',
+        title: "End Date",
+        dataIndex: "endDateString",
+        key: "endDateString",
+        width: "60x",
         sorter: (a, b) => {
           if (a.endDateString < b.endDateString) return -1;
           if (a.endDateString > b.endDateString) return 1;
@@ -168,10 +159,10 @@ class advertisements extends Component {
         },
       },
       {
-        title: 'Likes',
-        dataIndex: 'likes',
-        key: 'likes',
-        width: '60x',
+        title: "Likes",
+        dataIndex: "likes",
+        key: "likes",
+        width: "60x",
         sorter: (a, b) => {
           if (a.likes < b.likes) return -1;
           if (a.likes > b.likes) return 1;
@@ -180,10 +171,10 @@ class advertisements extends Component {
       },
 
       {
-        title: 'Actions',
-        key: 'action',
-        width: '60px',
-        className: 'noWrapCell',
+        title: "Actions",
+        key: "action",
+        width: "60px",
+        className: "noWrapCell",
         render: (text, row) => {
           return (
             <ActionWrapper>
@@ -196,7 +187,7 @@ class advertisements extends Component {
                 okText="Yes"
                 cancelText="No"
                 placement="topRight"
-                onConfirm={this.handleRecord.bind(this, 'restore', row)}
+                onConfirm={this.handleRecord.bind(this, "restore", row)}
               >
                 <a className="restoreBtn" href="# ">
                   <i className="ion-android-happy" />
@@ -211,7 +202,7 @@ class advertisements extends Component {
     return (
       <LayoutContentWrapper>
         <Box>
-          <ContentHolder style={{ marginTop: 0, overflow: 'hidden' }}>
+          <ContentHolder style={{ marginTop: 0, overflow: "hidden" }}>
             <TitleWrapper>
               <ComponentTitle>Deleted Advertisement</ComponentTitle>
 
@@ -232,9 +223,9 @@ class advertisements extends Component {
             <Modal
               visible={modalActive}
               onClose={this.props.toggleModal.bind(this, null)}
-              title={advertisement.key ? 'Update Advertisement' : 'Add New Advertisement'}
-              okText={advertisement.key ? 'Update Advertisement' : 'Add Advertisement'}
-              onOk={this.handleRecord.bind(this, 'insert', advertisement)}
+              title={advertisement.key ? "Update Header & Pop Up" : "Add New Header & Pop Up"}
+              okText={advertisement.key ? "Update Header & Pop Up" : "Add Header & Pop Up"}
+              onOk={this.handleRecord.bind(this, "insert", advertisement)}
               onCancel={this.props.toggleModal.bind(this, null)}
             >
               <Form>
@@ -244,7 +235,7 @@ class advertisements extends Component {
                     label="name"
                     placeholder="Enter Name"
                     value={advertisement.name}
-                    onChange={this.onRecordChange.bind(this, 'name')}
+                    onChange={this.onRecordChange.bind(this, "name")}
                   />
                 </Fieldset>
 
@@ -255,8 +246,8 @@ class advertisements extends Component {
                     placeholder="Enter IC Number Ex:900101015151"
                     rows={1}
                     value={advertisement.ic}
-                    onChange={this.onRecordChange.bind(this, 'ic')}
-                    disabled = {advertisement.key? "disabled" : ""}
+                    onChange={this.onRecordChange.bind(this, "ic")}
+                    disabled={advertisement.key ? "disabled" : ""}
                   />
                 </Fieldset>
 
@@ -267,8 +258,8 @@ class advertisements extends Component {
                     placeholder="Enter E-mail Address"
                     rows={1}
                     value={advertisement.email}
-                    onChange={this.onRecordChange.bind(this, 'email')}
-                    disabled = {advertisement.key? "disabled" : ""}
+                    onChange={this.onRecordChange.bind(this, "email")}
+                    disabled={advertisement.key ? "disabled" : ""}
                   />
                 </Fieldset>
 
@@ -279,7 +270,7 @@ class advertisements extends Component {
                     rows={1}
                     placeholder="Enter Date Joined"
                     value={advertisement.date}
-                    onChange={this.onRecordChange.bind(this, 'date')}
+                    onChange={this.onRecordChange.bind(this, "date")}
                   />
                 </Fieldset>
 
@@ -289,7 +280,7 @@ class advertisements extends Component {
                     label="licence"
                     placeholder="Enter Licence"
                     value={advertisement.licence}
-                    onChange={this.onRecordChange.bind(this, 'licence')}
+                    onChange={this.onRecordChange.bind(this, "licence")}
                   />
                 </Fieldset>
 
@@ -299,10 +290,9 @@ class advertisements extends Component {
                     label="certicated"
                     placeholder="Enter Certicated"
                     value={advertisement.certicated}
-                    onChange={this.onRecordChange.bind(this, 'certicated')}
+                    onChange={this.onRecordChange.bind(this, "certicated")}
                   />
                 </Fieldset>
-
 
                 <Fieldset>
                   <Label>Phone No: </Label>
@@ -310,7 +300,7 @@ class advertisements extends Component {
                     label="phone"
                     placeholder="Enter Phone"
                     value={advertisement.phone}
-                    onChange={this.onRecordChange.bind(this, 'phone')}
+                    onChange={this.onRecordChange.bind(this, "phone")}
                   />
                 </Fieldset>
 
@@ -321,7 +311,7 @@ class advertisements extends Component {
                     rows={3}
                     placeholder="Enter Home Address"
                     value={advertisement.address}
-                    onChange={this.onRecordChange.bind(this, 'address')}
+                    onChange={this.onRecordChange.bind(this, "address")}
                   />
                 </Fieldset>
 
@@ -330,8 +320,8 @@ class advertisements extends Component {
                   <Select
                     defaultValue={advertisement.role}
                     placeholder="Enter Role"
-                    onChange={this.onSelectChange.bind(this, 'role')}
-                    style={{ width: '170px' }}
+                    onChange={this.onSelectChange.bind(this, "role")}
+                    style={{ width: "170px" }}
                   >
                     <Option value="Nurse">Nurse</Option>
                     <Option value="Doctor">Doctor</Option>
@@ -345,8 +335,8 @@ class advertisements extends Component {
                   <Select
                     defaultValue={advertisement.role2}
                     placeholder="Enter Second Role"
-                    onChange={this.onSelectChange.bind(this, 'role2')}
-                    style={{ width: '170px' }}
+                    onChange={this.onSelectChange.bind(this, "role2")}
+                    style={{ width: "170px" }}
                   >
                     <Option value="">Only One Role.</Option>
                     <Option value="Nurse">Nurse</Option>
@@ -355,7 +345,6 @@ class advertisements extends Component {
                     <Option value="Admin">Admin</Option>
                   </Select>
                 </Fieldset>
-
               </Form>
             </Modal>
             <TableWrapper
@@ -371,9 +360,7 @@ class advertisements extends Component {
                 hideOnSinglePage: true,
                 total: dataSource.length,
                 showTotal: (total, range) => {
-                  return `Showing ${range[0]}-${range[1]} of ${
-                    dataSource.length
-                  } Results`;
+                  return `Showing ${range[0]}-${range[1]} of ${dataSource.length} Results`;
                 },
               }}
             />
@@ -385,7 +372,7 @@ class advertisements extends Component {
 }
 
 export default connect(
-  state => ({
+  (state) => ({
     ...state.Advertisements,
   }),
   actions
