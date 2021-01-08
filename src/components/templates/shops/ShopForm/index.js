@@ -208,6 +208,7 @@ export default ({
         placeholder: "Select Categories",
         data: dataSource.categories,
         option: shopCategories,
+        mode: "multiple",
         optionTitle: "label",
         optionValue: "data",
         showSearch: true,
@@ -216,7 +217,7 @@ export default ({
           return option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0;
         },
         onChange: (value) => {
-          onSelectChange({ key: "categories" }, [value]);
+          onSelectChange({ key: "categories" }, value);
         },
         SelectStyle: errorReturn.categories && errorStyle.inputStyle,
         iconRigth: errorReturn.categories ? (

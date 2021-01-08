@@ -158,11 +158,9 @@ class ShopForm extends Component {
 
   onSelectChange = ({ key, nestedKey }, value) => {
     let { shop } = clone(this.props);
-
-    if (key === "categories") {
-      shop["tags"] = [];
-    }
-
+    // if (key === "categories") {
+    //   shop["tags"] = [];
+    // }
     if (key && nestedKey) shop[key][nestedKey] = value;
     else if (key) shop[key] = value;
     this.props.update(shop);
@@ -276,7 +274,6 @@ class ShopForm extends Component {
         return { data: categories.id, label: categories.title };
       });
 
-    console.log(shopCategories);
     function compare(a, b) {
       if (a.label < b.label) {
         return -1;
@@ -291,11 +288,14 @@ class ShopForm extends Component {
 
     let tagsOfShop = [];
     if (shop.categories.length !== 0) {
-      tagsOfShop = Object.values(shop_categories[shop.categories].tags).map((tag) => {
-        return { data: tag, label: shop_tags[tag].title };
+      shop.categories.forEach((category) => {
+        let categoryName = shopCategories.find((cat) => cat.data === category).label;
+        Object.values(shop_categories[category].tags).map((tag) => {
+          tagsOfShop.push({ data: tag, label: shop_tags[tag].title + " (" + categoryName + ") " });
+        });
       });
     }
-
+    //console.log("shoptags: " + JSON.stringify(shop.tags));
     return (
       <ScreenHolder>
         <InnerSidebar
