@@ -681,25 +681,19 @@ class advertisements extends Component {
           UploadStyle: UploadStyle,
         },
       ],
-      //   [
-      //     {
-      //       type: "upload",
-      //       uploadType: "pictureWall",
-      //       onUploadFile: this.onUploadFile.bind(this, {
-      //         key: "subImage",
-      //         target: advertisement.key,
-      //       }),
-      //       uploadLoading: uploadLoading,
-      //       uploadProgress: uploadProgress,
-      //       uploadResult: uploadResult,
-      //       onChange: this.onSelectChange.bind(this, "subImage"),
-      //       defaultFileList: advertisement.subImage,
-      //       maxFiles: 3,
-      //       label: "Sub Image (800 x 600)",
-      //       disabled: uploadKey && uploadKey !== "subImage",
-      //       UploadStyle: UploadStyle,
-      //     },
-      //   ],
+      [
+        {
+          type: "label",
+          label: "Image/Video url (Copy to view)",
+          data: advertisement.popUpImage,
+        },
+      ],
+      [
+        {
+          type: "label",
+          label: advertisement.popUpImage,
+        },
+      ],
     ];
     const stepDetails = [
       {
