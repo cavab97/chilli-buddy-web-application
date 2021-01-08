@@ -8,6 +8,7 @@ import firebase from "firebase";
 import uuid from "uuid/v4";
 import { backend, database as databaseHelper } from "../../marslab-library-react/utils/helper";
 import * as auth from "marslab-library-react/services/auth";
+import { merchantBackendServices } from "services/backend";
 
 export const getMerchant = (state) => state.MerchantAuth;
 
@@ -85,8 +86,9 @@ export function* signupRequest({ payload }) {
   console.log("signupreq");
   try {
     const { email, password } = payload;
-    console.log("email: " + email);
-    const user = yield call(auth.signup, auth.providers.EMAIL, {
+    //result = yield call(merchantBackendServices.create, { email, password });
+
+    const user = yield call(auth.createUser, auth.providers.EMAIL, {
       email,
       password,
     });

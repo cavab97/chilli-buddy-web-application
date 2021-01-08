@@ -11,19 +11,21 @@ import * as settingInfoBackendServices from "./info";
 import * as covid19NameListBackendServices from "./covid19NameList";
 import * as covid19ShopBackendServices from "./covid19Shop";
 import * as promotionBackendServices from "./promotion";
+import * as merchantBackendServices from "./merchant";
 
-export { 
-    shopBackendServices, 
-    shopPostBackendServices, 
-    routeGroupBackendServices,
-    routeTicketBackendServices,
-    routeBackendServices, 
-    missionBackendServices,
-    rewardBackendServices,
-    eventBackendServices,
-    transactionBackendServices,
-    settingInfoBackendServices,
-    covid19NameListBackendServices,
-    covid19ShopBackendServices,
-    promotionBackendServices,
-}
+export {
+  shopBackendServices,
+  shopPostBackendServices,
+  routeGroupBackendServices,
+  routeTicketBackendServices,
+  routeBackendServices,
+  missionBackendServices,
+  rewardBackendServices,
+  eventBackendServices,
+  transactionBackendServices,
+  settingInfoBackendServices,
+  covid19NameListBackendServices,
+  covid19ShopBackendServices,
+  promotionBackendServices,
+  merchantBackendServices,
+};

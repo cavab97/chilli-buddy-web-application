@@ -276,6 +276,11 @@ const restrictedRoutes = [
     role: "admin",
     component: asyncComponent(() => import("screens/merchant")),
   },
+  {
+    path: "voucher",
+    role: "admin",
+    component: asyncComponent(() => import("screens/voucher")),
+  },
 ];
 
 export default restrictedRoutes;
