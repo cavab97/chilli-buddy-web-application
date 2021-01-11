@@ -88,7 +88,7 @@ export function* signupRequest({ payload }) {
     const { email, password } = payload;
     //result = yield call(merchantBackendServices.create, { email, password });
 
-    const user = yield call(auth.createUser, auth.providers.EMAIL, {
+    const user = yield call(auth.signup, auth.providers.EMAIL, {
       email,
       password,
     });
