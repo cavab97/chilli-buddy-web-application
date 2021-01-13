@@ -18,6 +18,7 @@ import Covid19NameList from "./covid19NameList/reducers";
 import Covid19Shop from "./covid19Shop/reducers";
 import Promotion from "./promotion/reducers";
 import MerchantAuth from "./merchantAuth/reducers";
+import Vouchers from "./vouchers/reducers";
 
 export default {
   Merchants,
@@ -40,4 +41,5 @@ export default {
   Covid19Shop,
   Promotion,
   MerchantAuth,
+  Vouchers
 };
