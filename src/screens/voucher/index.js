@@ -134,6 +134,14 @@ class voucher extends Component {
     return oldUrl;
   }
 
+  onDateChange({ key, nestedKey }, date, dateString) {
+    let { advertisement } = clone(this.props);
+
+    if (key && nestedKey) advertisement[key][nestedKey] = date;
+    else if (key) advertisement[key] = date;
+    this.props.update(advertisement);
+  }
+
   getColumnSearchProps = (columnName, title) => ({
     filterIcon: (filtered) => (
       <SearchOutlined style={{ color: filtered ? "#1890ff" : undefined }} />
@@ -245,7 +253,7 @@ class voucher extends Component {
 
     return (
       <ScreenHolder>
-        <ContentBox title="Voucher List" onClick={this.onClick.bind(this)}>
+        <ContentBox title="Voucher List :D" onClick={this.onClick.bind(this)}>
           <ButtonHolders>
             <ActionBtn
               type="primary"
@@ -274,6 +282,7 @@ class voucher extends Component {
             user={this.props.user}
             modalActive={this.props.modalActive}
             submitLoading={this.props.submitLoading}
+            onDateChange={this.onDateChange.bind(this)}
           />
         </ContentBox>
       </ScreenHolder>

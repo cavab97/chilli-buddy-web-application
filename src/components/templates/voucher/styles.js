@@ -121,6 +121,24 @@ const SelectStyle = {
   width: 470,
 };
 
+const errorStyle = {
+  labelStyle: {
+    color: "red",
+  },
+
+  inputStyle: {
+    borderColor: "red",
+  },
+
+  datepickerStyle: {
+    backgroundColor: "rgba(255, 0, 0, 1)",
+  },
+
+  textareaStyle: {
+    borderColor: "red",
+  },
+};
+
 export {
   TableWrapper,
   ActionWrapper,
@@ -138,4 +156,5 @@ export {
   RowHolderStyle,
   LabelStyle,
   SelectStyle,
+  errorStyle
 };
