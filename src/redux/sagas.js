@@ -19,6 +19,7 @@ import covid19NameList from "./covid19NameList/sagas";
 import covid19Shop from "./covid19Shop/sagas";
 import promotion from "./promotion/sagas";
 import merchantAuth from "./merchantAuth/sagas";
+import vouchers from "./vouchers/sagas";
 
 export default [
   merchants(),
@@ -41,4 +42,5 @@ export default [
   covid19Shop(),
   promotion(),
   merchantAuth(),
+  vouchers()
 ];

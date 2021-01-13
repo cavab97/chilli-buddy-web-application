@@ -12,6 +12,7 @@ import * as covid19NameListBackendServices from "./covid19NameList";
 import * as covid19ShopBackendServices from "./covid19Shop";
 import * as promotionBackendServices from "./promotion";
 import * as merchantBackendServices from "./merchant";
+import * as voucherBackendServices from "./voucher";
 
 export {
   shopBackendServices,
@@ -28,4 +29,5 @@ export {
   covid19ShopBackendServices,
   promotionBackendServices,
   merchantBackendServices,
+  voucherBackendServices
 };
