@@ -43,7 +43,7 @@ function* readSpecifiedRecord({ payload }) {
 }
 
 function* submitIntoBackend({ payload }) {
-  const { data, actionName, shopID } = payload;
+  const { data, actionName } = payload;
   let result = {};
   
   delete data["created"];
@@ -62,7 +62,7 @@ function* submitIntoBackend({ payload }) {
         result = yield call(voucherBackendServices.update, { data });
         break;
       default:
-        result = yield call(voucherBackendServices.create, { data }, shopID);
+        result = yield call(voucherBackendServices.create, { data });
         break;
     }
     

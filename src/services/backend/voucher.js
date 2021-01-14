@@ -45,15 +45,26 @@ export function update({ data }) {
   return new Promise((resolve, reject) => {
     const apiName = `http${objectName}Update`;
 
-    const { id, title, coverPhotos, images, startTime, endTime } = data;
+    const { 
+      id,
+      title,
+      description,
+      amount,
+      tnc,
+      startDate,
+      endDate,
+      shopIds,
+    } = data;
 
     data = {
       id,
       title,
-      coverPhotos,
-      images,
-      startTime,
-      endTime,
+      description,
+      amount,
+      tnc,
+      startDate,
+      endDate,
+      shopIds,
     };
 
     data = backend.processData({ data });

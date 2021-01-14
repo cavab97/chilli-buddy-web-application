@@ -38,6 +38,7 @@ class voucher extends Component {
       nextProps.submitResult.message
     ) {
       notification("success", nextProps.submitResult.message);
+      this.props.readFromDatabase();
     }
   }
 
@@ -50,7 +51,6 @@ class voucher extends Component {
   };
 
   handleRecord = async (actionName, record) => {
-    const { shopID } = this.props.match.params;
     let { errorReturn } = this.props;
 
     const defaultValidate = {
@@ -67,7 +67,7 @@ class voucher extends Component {
     this.props.errorUpdate(errorReturn);
     
     if (errorReturn.errorNo === 0) {
-      this.props.submitToBackend(record, actionName, shopID);
+      this.props.submitToBackend(record, actionName);
     }
   };
 
@@ -191,7 +191,18 @@ class voucher extends Component {
       onChange: (selectedRowKeys, selectedRows) => {},
     };
 
-    console.log(voucher);
+    vouchers.forEach((voucher) => {
+      if (voucher.startDate && voucher.endDate)
+        if (voucher.endDate <= moment().endOf('day'))
+          voucher["status"] = "Expired";
+        else if (voucher.startDate <= moment().endOf('day') 
+        && voucher.endDate >= moment().endOf('day'))
+          voucher["status"] = "Active";
+        else 
+          voucher["status"] = "Awaiting";
+      else 
+        voucher["status"] = "Active";
+    });
 
     return (
       <ScreenHolder>
