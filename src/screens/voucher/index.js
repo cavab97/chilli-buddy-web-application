@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import actions from "../../redux/advertisements/actions";
+import actions from "../../redux/vouchers/actions";
 import actionsShop from "../../redux/shops/actions";
 import { notification } from "marslab-library-react/components/organisms";
 import { ScreenHolder } from "marslab-library-react/components/molecules";
@@ -12,10 +12,9 @@ import { ActionBtn, ButtonHolders } from "./styles";
 import clone from "clone";
 import "react-datepicker/dist/react-datepicker.css";
 import { validation } from "marslab-library-react/utils/validation";
-import merchantAction from "../../redux/merchantAuth/actions";
+import moment from "moment";
 
 const readFromDatabaseShops = actionsShop.readFromDatabase;
-const { signup, updateLoginDetails } = merchantAction;
 
 class voucher extends Component {
   constructor(props) {
@@ -23,7 +22,7 @@ class voucher extends Component {
   }
 
   componentDidMount() {
-    this.props.loadFromFireStore();
+    //this.props.loadFromFireStore();
     this.props.readFromDatabaseShops();
   }
   componentWillReceiveProps(nextProps) {
@@ -49,83 +48,47 @@ class voucher extends Component {
     }
   };
 
-  handleRecord = async (actionName, advertisement) => {
+  handleRecord = async (actionName, record) => {
+    const { shopID } = this.props.match.params;
     let { errorReturn } = this.props;
-    const { user } = this.props;
-    const loginDetails = this.props.loginDetails;
-    //console.log(advertisements)
-    if (advertisement.key && actionName !== "delete") {
-      actionName = "update";
-    }
-
-    const recordCheck = {
-      email: loginDetails.email,
-      passcode: loginDetails.password,
-    };
 
     const defaultValidate = {
-      email: { required: true, type: "email" },
-      passcode: { required: true },
+      title: { required: true, type: "stringLength", max: 80 },
+      description: { required: true, type: "stringLength", min: 1 },
+      startTime: { type: "time" },
+      endTime: { type: "time", before: moment() },
+      shopID: { required: true },
+      amount: { required: true, type: "number", decimalPlace: 2 }
     };
-
-    errorReturn = validation(recordCheck, defaultValidate);
+    
+    errorReturn = validation(record, defaultValidate);
 
     this.props.errorUpdate(errorReturn);
-    console.log(errorReturn);
-
+    
     if (errorReturn.errorNo === 0) {
-      this.props.saveIntoFireStore(advertisement, actionName);
+      this.props.submitToBackend(record, actionName, shopID);
     }
   };
 
-  handleSignup = (loginDetails) => {
-    let { errorReturn } = this.props;
-    console.log("loginDetails: " + loginDetails.email + loginDetails.password);
-    const recordCheck = {
-      email: loginDetails.email,
-      passcode: loginDetails.password,
-    };
-
-    const defaultValidate = {
-      email: { required: true, type: "email" },
-      passcode: { required: true },
-    };
-
-    errorReturn = validation(recordCheck, defaultValidate);
-    this.props.errorUpdate(errorReturn);
-    console.log(errorReturn);
-
-    if (errorReturn.errorNo === 0) {
-      console.log("hi");
-      this.props.signup(loginDetails);
-      console.log("bye");
-    }
-  };
-
-  handleModal = ({ toggle = false, nextPage = 0, data = null }) => {
+  handleModal = () => {
     const errorReturn = {};
+
     this.props.errorUpdate(errorReturn);
-    this.props.toggleModal({ toggle, nextPage, data });
+    this.props.modalControl();
   };
 
   onRecordChange = ({ key, nestedKey }, event) => {
-    let { advertisement } = clone(this.props);
-    if (key && nestedKey) advertisement[key][nestedKey] = event.target.value;
-    else if (key) advertisement[key] = event.target.value;
-    this.props.update(advertisement);
-  };
-
-  onLoginRecordChange = (key, event) => {
-    let { loginDetails } = clone(this.props);
-    if (key) loginDetails[key] = event.target.value;
-    this.props.updateLoginDetails(loginDetails);
+    let { voucher } = clone(this.props);
+    if (key && nestedKey) voucher[key][nestedKey] = event.target.value;
+    else if (key) voucher[key] = event.target.value;
+    this.props.update(voucher);
   };
 
   onShopIDChange = ({ key, nestedKey }, event) => {
-    let { advertisement } = clone(this.props);
-    if (key && nestedKey) advertisement[key][nestedKey] = event;
-    else if (key) advertisement[key] = event;
-    this.props.update(advertisement);
+    let { voucher } = clone(this.props);
+    if (key && nestedKey) voucher[key][nestedKey] = event;
+    else if (key) voucher[key] = event;
+    this.props.update(voucher);
   };
 
   urlChange(url) {
@@ -139,23 +102,13 @@ class voucher extends Component {
       <SearchOutlined style={{ color: filtered ? "#1890ff" : undefined }} />
     ),
     filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => {
-      const { advertisements } = this.props;
-      const { advertisement } = clone(this.props);
-      const advertisementArray = [];
-      Object.keys(advertisements).map((advertisement, index) => {
-        return advertisementArray.push({
-          ...advertisements[advertisement],
-          isPopUp: advertisements[advertisement].isPopUp === true ? "Yes" : "No",
-          startDate: advertisements[advertisement].startDate
-            ? advertisements[advertisement].startDate.toDate()
-            : "",
-          endDate: advertisements[advertisement].endDate
-            ? advertisements[advertisement].endDate.toDate()
-            : "",
-          createAtString: advertisements[advertisement].createAt.format("YYYY-MM-DD"),
-          startDateString: advertisements[advertisement].startDate.format("YYYY-MM-DD"),
-          endDateString: advertisements[advertisement].endDate.format("YYYY-MM-DD"),
-          key: advertisement,
+      const { vouchers } = this.props;
+      const { voucher } = clone(this.props);
+      const voucherArray = [];
+
+      Object.keys(vouchers).map((voucher, index) => {
+        return voucherArray.push({
+          ...vouchers[voucher],
         });
       });
 
@@ -165,7 +118,7 @@ class voucher extends Component {
             type: "select",
             placeholder: `Search ${title}`,
             data: selectedKeys[0],
-            option: advertisementArray,
+            option: voucherArray,
             optionTitle: columnName,
             optionValue: columnName,
             showSearch: true,
@@ -205,23 +158,19 @@ class voucher extends Component {
   render() {
     const { url } = this.props.match;
     const {
+      vouchers,
+      voucher,
       modalActive,
-      advertisements,
       modalCurrentPage,
       submitLoading,
       isLoading,
       readSpecifiedRecordLoading,
       errorReturn,
       shop_shops,
-      user,
-      loginDetails,
-      loading,
       error,
     } = this.props;
 
-    const { advertisement } = clone(this.props);
     const optionUrl = this.urlChange(url);
-    const dataSource = [];
 
     const shopLists =
       shop_shops &&
@@ -229,19 +178,11 @@ class voucher extends Component {
         return { data: shops.id, label: shops.title };
       });
 
-    Object.keys(advertisements).map((advertisement, index) => {
-      return dataSource.push({
-        ...advertisements[advertisement],
-        startDate: advertisements[advertisement].startDate,
-        isPopUp: advertisements[advertisement].isPopUp === true ? "Yes" : "No",
-        createAtString: advertisements[advertisement].createAt.format("hh:mm a YYYY-MM-DD"),
-        key: advertisement,
-      });
-    });
-
     const rowSelection = {
       onChange: (selectedRowKeys, selectedRows) => {},
     };
+    
+    console.log(voucher)
 
     return (
       <ScreenHolder>
@@ -249,31 +190,26 @@ class voucher extends Component {
           <ButtonHolders>
             <ActionBtn
               type="primary"
-              onClick={this.handleModal.bind(this, {
-                toggle: true,
-                nextPage: 0,
-                data: null,
-              })}
+              onClick={this.handleModal.bind(this)}
             >
-              Add new voucher
+              Add New Voucher
             </ActionBtn>
           </ButtonHolders>
 
           <Voucher
-            dataSource={dataSource}
-            loading={this.props.isLoading}
+            dataSource={vouchers}
+            loading={isLoading}
             rowSelection={rowSelection}
             getColumnSearchProps={this.getColumnSearchProps.bind(this)}
             handleModal={this.handleModal.bind(this)}
             handleRecord={this.handleRecord.bind(this)}
             onShopIDChange={this.onShopIDChange.bind(this)}
             onRecordChange={this.onRecordChange.bind(this)}
-            advertisement={this.props.advertisement}
+            voucher={voucher}
             shopLists={shopLists}
-            errorReturn={this.props.errorReturn}
-            user={this.props.user}
-            modalActive={this.props.modalActive}
-            submitLoading={this.props.submitLoading}
+            errorReturn={errorReturn}
+            modalActive={modalActive}
+            submitLoading={submitLoading}
           />
         </ContentBox>
       </ScreenHolder>
@@ -288,7 +224,7 @@ const mapStatetoprops = (state) => {
   const { loginDetails, isLoading, loading, error } = state.MerchantAuth;
 
   return {
-    ...state.Advertisements,
+    ...state.Vouchers,
     shop,
     readSpecifiedRecordLoading,
     readSpecifiedRecordError,
@@ -304,6 +240,4 @@ const mapStatetoprops = (state) => {
 export default connect(mapStatetoprops, {
   ...actions,
   readFromDatabaseShops,
-  updateLoginDetails,
-  signup,
 })(voucher);

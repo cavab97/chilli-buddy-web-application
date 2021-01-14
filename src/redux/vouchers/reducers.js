@@ -166,114 +166,129 @@ const initState = {
 export default function reducer(state = initState, { type, payload }) {
     switch (type) {
         case actions.READ_FROM_DATABASE:
-        return {
-            ...state,
-            promotions: [],
-            readLoading: true,
-            readError: false,
-        };
+            return {
+                ...state,
+                promotions: [],
+                readLoading: true,
+                readError: false,
+            };
+
         case actions.READ_FROM_DATABASE_SUCCESS:
-        return {
-            ...state,
-            readLoading: false,
-            vouchers: payload.data,
-            readError: false
-        };
+            return {
+                ...state,
+                readLoading: false,
+                vouchers: payload.data,
+                readError: false
+            };
+
         case actions.READ_FROM_DATABASE_ERROR:
-        return {
-            ...state,
-            readLoading: false,
-            readError: payload.error
-        };
+            return {
+                ...state,
+                readLoading: false,
+                readError: payload.error
+            };
+
         case actions.READ_SPECIFIED_RECORD:
-        return {
-            ...state,
-            voucher: initState.voucher,
-            readSpecifiedRecordLoading: true,
-            readSpecifiedRecordError: false
-        };
+            return {
+                ...state,
+                voucher: initState.voucher,
+                readSpecifiedRecordLoading: true,
+                readSpecifiedRecordError: false
+            };
+
         case actions.READ_SPECIFIED_RECORD_SUCCESS:
-        return {
-            ...state,
-            readSpecifiedRecordLoading: false,
-            voucher: payload.data ? payload.data : initState.voucher,
-            readSpecifiedRecordError: false
-        };
+            return {
+                ...state,
+                readSpecifiedRecordLoading: false,
+                voucher: payload.data ? payload.data : initState.voucher,
+                readSpecifiedRecordError: false
+            };
+
         case actions.READ_SPECIFIED_RECORD_ERROR:
-        return {
-            ...state,
-            voucher: initState.voucher,
-            readSpecifiedRecordLoading: false,
-            readError: payload.error
-        };
+            return {
+                ...state,
+                voucher: initState.voucher,
+                readSpecifiedRecordLoading: false,
+                readError: payload.error
+            };
 
         case actions.SUBMIT_TO_BACKEND:
-        return {
-            ...state,
-            submitLoading: true,
-            submitError: initState.submitError,
-            submitResult: initState.submitResult
-        };
+            return {
+                ...state,
+                submitLoading: true,
+                submitError: initState.submitError,
+                submitResult: initState.submitResult
+            };
+
         case actions.SUBMIT_TO_BACKEND_SUCCESS:
-        return {
-            ...state,
-            submitLoading: false,
-            submitError: initState.submitError,
-            submitResult: payload.data,
-            voucher: { ...state.voucher, id: payload.data.ids[0] }
-        };
+            return {
+                ...state,
+                submitLoading: false,
+                submitError: initState.submitError,
+                submitResult: payload.data,
+                voucher: { ...state.voucher, id: payload.data.ids[0] }
+            };
 
         case actions.SUBMIT_TO_BACKEND_ERROR:
-        return {
-            ...state,
-            submitLoading: false,
-            submitError: payload.error,
-            submitResult: initState.submitResult
-        };
+            return {
+                ...state,
+                submitLoading: false,
+                submitError: payload.error,
+                submitResult: initState.submitResult
+            };
 
         case actions.UPLOAD_TO_STORAGE:
-        return {
-            ...state,
-            uploadLoading: true,
-            uploadProgress: initState.uploadProgress,
-            uploadResult: initState.uploadResult,
-            uploadError: initState.uploadError
-        };
+            return {
+                ...state,
+                uploadLoading: true,
+                uploadProgress: initState.uploadProgress,
+                uploadResult: initState.uploadResult,
+                uploadError: initState.uploadError
+            };
 
         case actions.UPLOAD_TO_STORAGE_SUCCESS:
-        return {
-            ...state,
-            uploadLoading: false,
-            uploadProgress: initState.uploadProgress,
-            uploadResult: payload.data,
-            uploadError: initState.uploadError
-        };
+            return {
+                ...state,
+                uploadLoading: false,
+                uploadProgress: initState.uploadProgress,
+                uploadResult: payload.data,
+                uploadError: initState.uploadError
+            };
 
         case actions.UPLOAD_TO_STORAGE_ERROR:
-        return {
-            ...state,
-            uploadLoading: false,
-            uploadProgress: initState.uploadProgress,
-            uploadResult: initState.uploadResult,
-            uploadError: payload.error
-        };
+            return {
+                ...state,
+                uploadLoading: false,
+                uploadProgress: initState.uploadProgress,
+                uploadResult: initState.uploadResult,
+                uploadError: payload.error
+            };
 
         case actions.UPDATE_UPLOAD_PROGRESS:
-        return {
-            ...state,
-            uploadProgress: payload.data
-        };
+            return {
+                ...state,
+                uploadProgress: payload.data
+            };
+
         case actions.ERROR_UPDATE:
-        return {
-            ...state,
-            errorReturn: payload.data,
-        };
+            return {
+                ...state,
+                errorReturn: payload.data,
+            };
+
         case actions.STATE_UPDATE:
-        return {
-            ...state,
-            voucher: payload.data
-        };
-        default:
-        return state;
+            return {
+                ...state,
+                voucher: payload.data
+            };
+
+        case actions.MODAL_CONTROL:
+            return {
+              ...state,
+              modalActive: !state.modalActive
+            };
+
+        default: 
+            return state;
     }
 }

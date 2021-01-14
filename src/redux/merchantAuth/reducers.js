@@ -160,20 +160,19 @@ export default function reducer(state = initState, { type, payload, newRecord })
         error: false,
       };
     case actions.SIGNUP_SUCCESS:
-      console.log("Signup");
-      console.log(payload.user);
       return {
         ...state,
         loading: false,
         isLoggedIn: true,
         user: payload.user,
       };
+
     case actions.SIGNUP_ERROR:
       return {
         ...state,
         loading: false,
         isLoggedIn: false,
-        user: {},
+        user: initState.user,
         error: payload.error,
       };
 

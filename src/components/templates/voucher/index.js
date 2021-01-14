@@ -26,10 +26,9 @@ export default ({
   handleRecord,
   onShopIDChange,
   onRecordChange,
-  advertisement,
+  voucher,
   shopLists,
   errorReturn,
-  user,
   modalActive,
   submitLoading,
 }) => {
@@ -47,9 +46,9 @@ export default ({
       ...getColumnSearchProps("title", "title"),
     },
     {
-      title: "Pop Up",
-      dataIndex: "isPopUp",
-      key: "isPopUp",
+      title: "Description",
+      dataIndex: "description",
+      key: "description",
       width: "120x",
       filters: [
         {
@@ -61,10 +60,9 @@ export default ({
           value: "No",
         },
       ],
-      onFilter: (value, record) => record.isPopUp.indexOf(value) === 0,
       sorter: (a, b) => {
-        if (a.isPopUp < b.isPopUp) return -1;
-        if (a.isPopUp > b.isPopUp) return 1;
+        if (a.description < b.description) return -1;
+        if (a.description > b.description) return 1;
         return 0;
       },
 
@@ -132,7 +130,7 @@ export default ({
         type: "select",
         //label: "Shop ID *",
         placeholder: "Enter Shop ID",
-        data: advertisement.shopID,
+        data: voucher.shopID,
         onChange: onShopIDChange.bind(this, { key: "shopID" }),
         option: shopLists,
         optionTitle: "label",
@@ -168,7 +166,7 @@ export default ({
       {
         type: "text",
         placeholder: "Enter Title",
-        data: advertisement.title,
+        data: voucher.title,
         onChange: onRecordChange.bind(this, { key: "title" }),
         InputStyle: errorReturn.title ? ErrorInputStyle : null,
         iconRigth: errorReturn.title ? (
@@ -190,7 +188,7 @@ export default ({
         type: "text",
         label: "Voucher Amount *",
         placeholder: "Enter Voucher Amount",
-        data: advertisement.merchantDesc,
+        data: voucher.amount,
         onChange: onRecordChange.bind(this, { key: "amount" }),
         InputStyle: errorReturn.amount ? ErrorInputStyle : null,
         iconRigth: errorReturn.amount ? (
@@ -212,7 +210,7 @@ export default ({
         type: "textArea",
         label: "Description *",
         placeholder: "Enter Description",
-        data: advertisement.description,
+        data: voucher.description,
         autoSize: { minRows: 3, maxRows: 3 },
         onChange: onRecordChange.bind(this, { key: "description" }),
         InputStyle: errorReturn.description ? ErrorInputStyle : null,
@@ -235,9 +233,9 @@ export default ({
         type: "textArea",
         label: "Terms & Conditions",
         placeholder: "Enter Terms & Conditions",
-        data: advertisement.termAndCon,
+        data: voucher.tnc,
         autoSize: { minRows: 3, maxRows: 3 },
-        onChange: onRecordChange.bind(this, { key: "termAndCon" }),
+        onChange: onRecordChange.bind(this, { key: "tnc" }),
       },
     ],
   ];
@@ -245,7 +243,7 @@ export default ({
   return (
     <Content>
       <Modal
-        title={user.uid ? "Update Voucher" : "Add New Voucher"}
+        title={voucher.id ? "Update Voucher" : "Add New Voucher"}
         visible={modalActive}
         onCancel={handleModal.bind(this, {
           toggle: true,
@@ -254,9 +252,9 @@ export default ({
         })}
         okText="Submit"
         onOk={
-          user.uid
-            ? handleRecord.bind(this, "update", advertisement)
-            : handleRecord.bind(this, "create", advertisement)
+          voucher.id
+            ? handleRecord.bind(this, "update", voucher)
+            : handleRecord.bind(this, "create", voucher)
         }
         confirmLoading={submitLoading}
         closable={true}

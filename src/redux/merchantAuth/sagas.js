@@ -83,15 +83,10 @@ function* loadFromFirestore() {
 }
 
 export function* signupRequest({ payload }) {
-  console.log("signupreq");
   try {
     const { email, password } = payload;
-    //result = yield call(merchantBackendServices.create, { email, password });
-
-    const user = yield call(auth.signup, auth.providers.EMAIL, {
-      email,
-      password,
-    });
+    const user = yield call(merchantBackendServices.signup, { email, password });
+    console.log(user);
 
     yield put(actions.signupSuccess({ user }));
   } catch (error) {
@@ -211,8 +206,8 @@ function* storeIntoFirestore({ payload }) {
 export default function* rootSaga() {
   yield all([
     takeEvery(actions.SIGNUP_REQUEST, signupRequest),
-    takeEvery(actions.SIGNUP_SUCCESS, signupSuccess),
-    takeEvery(actions.SIGNUP_ERROR, signupError),
+/*     takeEvery(actions.SIGNUP_SUCCESS, signupSuccess),
+    takeEvery(actions.SIGNUP_ERROR, signupError), */
 
     takeEvery(actions.LOAD_FROM_FIRESTORE, loadFromFirestore),
     takeEvery(actions.SAVE_INTO_FIRESTORE, storeIntoFirestore),
