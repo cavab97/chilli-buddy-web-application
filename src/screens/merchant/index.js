@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import actions from "../../redux/advertisements/actions";
 import actionsShop from "../../redux/shops/actions";
+import { QRCode } from "marslab-library-react/components/atoms";
 import {
   Form as FormSet,
   Button,
@@ -36,6 +37,7 @@ import {
   RowHolderStyle,
   LabelStyle,
   SelectStyle,
+  QRContainer
 } from "./styles";
 import { StepModal } from "marslab-library-react/components/organisms/StepModal";
 import clone from "clone";
@@ -479,7 +481,17 @@ class merchants extends Component {
             closable={true}
             maskClosable={false}
             keyboard={false}
+            url={loginDetails}
           />
+               <QRContainer>
+                        <QRCode
+                            id={"QRCodeCanvas"}
+                            value={`https://${loginDetails.passcode}/${loginDetails.email}`} 
+                            size={120}
+                            includeMargin={true}
+                            style={{borderRadius: 10}}
+                        />
+                    </QRContainer>
           <Merchant
             dataSource={dataSource}
             loading={this.props.isLoading}
