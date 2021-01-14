@@ -2,19 +2,16 @@ import { all, takeEvery, put, call, take, select } from "redux-saga/effects";
 import { eventChannel, END } from "redux-saga";
 import actions from "./actions";
 import { voucherBackendServices } from "services/backend";
-import { promotionDataServices } from "services/database";
+import { voucherDataServices } from "services/database";
 import { promotionStorageServices } from "services/storage";
 
 export const getVoucherState = state => state.Voucher;
 
-function* readFromDatabase({ payload }) {
-  const { shopID } = payload
+function* readFromDatabase() {
   try {
-    const promotions = yield call(promotionDataServices.readObjects, {
-      groupId: shopID,
-    });
+    const vouchers = yield call(voucherDataServices.readObjects);
 
-    yield put(actions.readFromDatabaseSuccess(promotions));
+    yield put(actions.readFromDatabaseSuccess(vouchers));
   } catch (error) {
     console.log(error);
     yield put(actions.readFromDatabaseError(error));
@@ -34,7 +31,7 @@ function* readSpecifiedRecord({ payload }) {
     })[0];
 
     if (!voucher) {
-      voucher = yield call(promotionDataServices.readObject, { id });
+      voucher = yield call(voucherDataServices.readObject, { id });
       yield put(actions.readSpecifiedRecordSuccess(voucher));
     }
 

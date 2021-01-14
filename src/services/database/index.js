@@ -14,6 +14,7 @@ import * as covid19ShopDataServices from "./covid19Shop";
 import * as shopCategoryDataServices from "./shopCategory";
 import * as promotionDataServices from "./promotion";
 import * as merchantDataServices from "./merchant";
+import * as voucherDataServices from "./voucher";
 
 export {
   shopDataServices,
@@ -32,4 +33,5 @@ export {
   shopCategoryDataServices,
   promotionDataServices,
   merchantDataServices,
+  voucherDataServices
 };

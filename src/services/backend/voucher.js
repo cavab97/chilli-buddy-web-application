@@ -2,7 +2,7 @@ import { backend } from "../../marslab-library-react/utils/helper";
 
 const objectName = "Voucher";
 
-export function create({ data }, shopID) {
+export function create({ data }) {
   return new Promise((resolve, reject) => {
     const apiName = `http${objectName}Create`;
 
@@ -16,8 +16,6 @@ export function create({ data }, shopID) {
       endDate,
       shopIds,
     } = data;
-
-    shopIds.push(shopID);
 
     data = {
       id,
