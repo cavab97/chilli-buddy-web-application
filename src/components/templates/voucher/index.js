@@ -15,6 +15,7 @@ import {
   RowHolderStyle,
   LabelStyle,
   SelectStyle,
+  errorStyle
 } from "./styles";
 
 export default ({
@@ -31,6 +32,7 @@ export default ({
   errorReturn,
   modalActive,
   submitLoading,
+  onDateChange
 }) => {
   const columns = [
     {
@@ -183,6 +185,60 @@ export default ({
         hide: errorReturn.title ? false : true,
       },
     ],
+    [
+      {
+        type: "label",
+        label: "Start Date *",
+      },
+    ],
+    [
+      {
+        type: "datePicker",
+        // data: advertisement.startDate === null ? advertisement.startDate : moment(advertisement.startDate),
+        data: voucher.startDate,
+        placeholder: "Select Start Date",
+        onChange: onDateChange.bind(this, {
+          key: "startDate",
+        }),
+        DatePickerStyle: (errorReturn.startDate || errorReturn.endDate) && errorStyle.inputStyle,
+      },
+    ],
+    [
+      {
+        type: "label",
+        label: errorReturn.startDate ? "*" + errorReturn.startDate : "",
+        FieldsetStyle: ErrorMsgFieldsetStyle,
+        LabelStyle: ErrorMsgLabelStyle,
+        hide: errorReturn.startDate ? false : true,
+      },
+    ],
+    [
+      {
+        type: "label",
+        label: "End Date *",
+      },
+    ],
+    [
+      {
+        type: "datePicker",
+        // data: advertisement.endDate === null ? advertisement.endDate : moment(advertisement.endDate),
+        data: voucher.endDate,
+        placeholder: "Select End Date",
+        onChange: onDateChange.bind(this, {
+          key: "endDate",
+        }),
+      },
+    ],
+    [
+      {
+        type: "label",
+        label: errorReturn.endDate ? "*" + errorReturn.endDate : "",
+        FieldsetStyle: ErrorMsgFieldsetStyle,
+        LabelStyle: ErrorMsgLabelStyle,
+        hide: errorReturn.endDate ? false : true,
+      },
+    ],
+    
     [
       {
         type: "text",
