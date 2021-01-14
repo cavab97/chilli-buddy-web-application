@@ -115,7 +115,15 @@ const initState = {
             id: null,
         },
         prevUserIds: [null],
-        prevUser: {
+        assignedDate: { at: null, by: null },
+        expiryDate:  null,
+        prevAssignedDate: [null],
+        startDate: null,
+        endDate: null,
+        created: { at: null, by: null },
+        deleted: { at: null, by: null },
+        updated: { at: null, by: null },
+       /*  prevUser: {
             role: {
                 absoluteDeveloper: false,
                 developer: false,
@@ -151,15 +159,7 @@ const initState = {
             deleted: { at: null, by: null },
             updated: { at: null, by: null },
             id: null,
-        },
-        assignedDate: { at: null, by: null },
-        expiryDate:  null,
-        prevAssignedDate: [null],
-        startDate: null,
-        endDate: null,
-        created: { at: null, by: null },
-        deleted: { at: null, by: null },
-        updated: { at: null, by: null },
+        }, */
     }
 };
 
@@ -168,7 +168,7 @@ export default function reducer(state = initState, { type, payload }) {
         case actions.READ_FROM_DATABASE:
             return {
                 ...state,
-                promotions: [],
+                vouchers: [],
                 readLoading: true,
                 readError: false,
             };
@@ -223,6 +223,7 @@ export default function reducer(state = initState, { type, payload }) {
         case actions.SUBMIT_TO_BACKEND_SUCCESS:
             return {
                 ...state,
+                modalActive: false,
                 submitLoading: false,
                 submitError: initState.submitError,
                 submitResult: payload.data,
@@ -285,7 +286,8 @@ export default function reducer(state = initState, { type, payload }) {
         case actions.MODAL_CONTROL:
             return {
               ...state,
-              modalActive: !state.modalActive
+              modalActive: !state.modalActive,
+              voucher: payload.data == null ? initState.voucher : payload.data
             };
 
         default: 

@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import actions from "../../redux/advertisements/actions";
+import actions from "../../redux/merchantAuth/actions";
 import actionsShop from "../../redux/shops/actions";
 import {
   Form as FormSet,

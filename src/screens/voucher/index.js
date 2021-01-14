@@ -23,6 +23,7 @@ class voucher extends Component {
 
   componentDidMount() {
     //this.props.loadFromFireStore();
+    this.props.readFromDatabase();
     this.props.readFromDatabaseShops();
   }
   componentWillReceiveProps(nextProps) {
@@ -70,11 +71,11 @@ class voucher extends Component {
     }
   };
 
-  handleModal = () => {
+  handleModal = (voucher = null) => {
     const errorReturn = {};
 
     this.props.errorUpdate(errorReturn);
-    this.props.modalControl();
+    this.props.modalControl(voucher);
   };
 
   onRecordChange = ({ key, nestedKey }, event) => {
@@ -84,10 +85,10 @@ class voucher extends Component {
     this.props.update(voucher);
   };
 
-  onShopIDChange = ({ key, nestedKey }, event) => {
+  onSelectChange = ({ key, nestedKey }, value) => {
     let { voucher } = clone(this.props);
-    if (key && nestedKey) voucher[key][nestedKey] = event;
-    else if (key) voucher[key] = event;
+    if (key && nestedKey) voucher[key][nestedKey] = value;
+    else if (key) voucher[key] = value;
     this.props.update(voucher);
   };
 
@@ -171,7 +172,7 @@ class voucher extends Component {
       modalActive,
       modalCurrentPage,
       submitLoading,
-      isLoading,
+      readLoading,
       readSpecifiedRecordLoading,
       errorReturn,
       shop_shops,
@@ -189,8 +190,8 @@ class voucher extends Component {
     const rowSelection = {
       onChange: (selectedRowKeys, selectedRows) => {},
     };
-    
-    console.log(voucher)
+
+    console.log(voucher);
 
     return (
       <ScreenHolder>
@@ -198,7 +199,7 @@ class voucher extends Component {
           <ButtonHolders>
             <ActionBtn
               type="primary"
-              onClick={this.handleModal.bind(this)}
+              onClick={this.handleModal.bind(this, null)}
             >
               Add New Voucher
             </ActionBtn>
@@ -206,12 +207,12 @@ class voucher extends Component {
 
           <Voucher
             dataSource={vouchers}
-            loading={isLoading}
+            loading={readLoading}
             rowSelection={rowSelection}
             getColumnSearchProps={this.getColumnSearchProps.bind(this)}
             handleModal={this.handleModal.bind(this)}
             handleRecord={this.handleRecord.bind(this)}
-            onShopIDChange={this.onShopIDChange.bind(this)}
+            onSelectChange={this.onSelectChange.bind(this)}
             onRecordChange={this.onRecordChange.bind(this)}
             voucher={voucher}
             shopLists={shopLists}
@@ -230,7 +231,6 @@ const mapStatetoprops = (state) => {
   const { shop, readSpecifiedRecordLoading, readSpecifiedRecordError } = state.Shops;
   const shop_shops = state.Shops.shops;
   const { user } = state.MerchantAuth.user;
-  const { loginDetails, isLoading, loading, error } = state.MerchantAuth;
 
   return {
     ...state.Vouchers,
@@ -239,10 +239,6 @@ const mapStatetoprops = (state) => {
     readSpecifiedRecordError,
     shop_shops,
     user,
-    loginDetails,
-    isLoading,
-    loading,
-    error,
   };
 };
 

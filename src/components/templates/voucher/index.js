@@ -17,6 +17,7 @@ import {
   SelectStyle,
   errorStyle
 } from "./styles";
+import moment from "moment";
 
 export default ({
   dataSource,
@@ -25,7 +26,7 @@ export default ({
   getColumnSearchProps,
   handleModal,
   handleRecord,
-  onShopIDChange,
+  onSelectChange,
   onRecordChange,
   voucher,
   shopLists,
@@ -35,6 +36,18 @@ export default ({
   onDateChange
 }) => {
   const columns = [
+    {
+      title: "ID",
+      dataIndex: "id",
+      key: "id",
+      width: "120x",
+      sorter: (a, b) => {
+        if (a.id < b.id) return -1;
+        if (a.id > b.id) return 1;
+        return 0;
+      },
+      ...getColumnSearchProps("id", "id"),
+    },
     {
       title: "Title",
       dataIndex: "title",
@@ -48,9 +61,9 @@ export default ({
       ...getColumnSearchProps("title", "title"),
     },
     {
-      title: "Description",
-      dataIndex: "description",
-      key: "description",
+      title: "Start Date",
+      dataIndex: "startDate",
+      key: "startDate",
       width: "120x",
       filters: [
         {
@@ -62,40 +75,43 @@ export default ({
           value: "No",
         },
       ],
+      render: (data) => {
+        return moment(data).format("DD-MM-YYYY");
+      },
       sorter: (a, b) => {
-        if (a.description < b.description) return -1;
-        if (a.description > b.description) return 1;
+        if (a.startDate < b.startDate) return -1;
+        if (a.startDate > b.startDate) return 1;
         return 0;
       },
 
       //...this.getColumnSearchProps("isPopUp", "pop up"),
     },
     {
-      title: "Key",
-      dataIndex: "key",
-      key: "key",
-      width: "120px",
-      sorter: (a, b) => {
-        if (a.key < b.key) return -1;
-        if (a.key > b.key) return 1;
-        return 0;
-      },
-      ...getColumnSearchProps("key", "key"),
-    },
-
-    {
-      title: "Create At",
-      dataIndex: "createAtString",
-      key: "createAtString",
+      title: "End Date",
+      dataIndex: "endDate",
+      key: "endDate",
       width: "120x",
+      filters: [
+        {
+          text: "Yes",
+          value: "Yes",
+        },
+        {
+          text: "No",
+          value: "No",
+        },
+      ],
+      render: (data) => {
+        return moment(data).format("DD-MM-YYYY");
+      },
       sorter: (a, b) => {
-        if (a.createAt < b.createAt) return -1;
-        if (a.createAt > b.createAt) return 1;
+        if (a.endDate < b.endDate) return -1;
+        if (a.endDate > b.endDate) return 1;
         return 0;
       },
-      ...getColumnSearchProps("createAtString", "create at"),
-    },
 
+      //...this.getColumnSearchProps("isPopUp", "pop up"),
+    },
     {
       title: "Actions",
       key: "action",
@@ -105,15 +121,22 @@ export default ({
         return (
           <ActionWrapper>
             <a
-              onClick={handleModal.bind(this, {
-                toggle: true,
-                nextPage: 0,
-                data: row,
-              })}
+              onClick={handleModal.bind(this, row)}
               href="# "
             >
               <i className="ion-android-create" />
             </a>
+            {/* <Popconfirm
+                title="Are you sure to delete this voucher?"
+                okText="Yes"
+                cancelText="No"
+                placement="topRight"
+                onConfirm={this.handleRecord.bind(this, 'delete', row)}
+              >
+                <a className="deleteBtn" href="# ">
+                  <i className="ion-android-delete" />
+                </a>
+            </Popconfirm> */}
           </ActionWrapper>
         );
       },
@@ -131,9 +154,9 @@ export default ({
       {
         type: "select",
         //label: "Shop ID *",
-        placeholder: "Enter Shop ID",
-        data: voucher.shopID,
-        onChange: onShopIDChange.bind(this, { key: "shopID" }),
+        placeholder: "Select Shop",
+        data: voucher.shopIds,
+        onChange: (value)=> onSelectChange({ key: "shopIds" },[value]),
         option: shopLists,
         optionTitle: "label",
         optionValue: "data",
@@ -188,7 +211,7 @@ export default ({
     [
       {
         type: "label",
-        label: "Start Date *",
+        label: "Start Date",
       },
     ],
     [
@@ -215,7 +238,7 @@ export default ({
     [
       {
         type: "label",
-        label: "End Date *",
+        label: "End Date",
       },
     ],
     [
@@ -301,11 +324,7 @@ export default ({
       <Modal
         title={voucher.id ? "Update Voucher" : "Add New Voucher"}
         visible={modalActive}
-        onCancel={handleModal.bind(this, {
-          toggle: true,
-          nextPage: 0,
-          data: null,
-        })}
+        onCancel={handleModal.bind(this, null)}
         okText="Submit"
         onOk={
           voucher.id
@@ -330,8 +349,7 @@ export default ({
         />
       </Modal>
       <TableWrapper
-        rowKey="key"
-        rowSelection={rowSelection}
+        rowKey="id"
         columns={columns}
         bordered={true}
         dataSource={dataSource}

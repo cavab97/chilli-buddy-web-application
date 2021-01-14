@@ -94,8 +94,9 @@ const actions = {
     payload: { data },
   }),
 
-  modalControl: () => ({
+  modalControl: (data = null) => ({
     type: actions.MODAL_CONTROL,
+    payload: { data }
   }),
 
   errorUpdate: data => ({
