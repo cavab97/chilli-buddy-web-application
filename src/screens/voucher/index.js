@@ -105,8 +105,6 @@ class voucher extends Component {
     this.props.update(voucher);
   }
 
-
-
   getColumnSearchProps = (columnName, title) => ({
     filterIcon: (filtered) => (
       <SearchOutlined style={{ color: filtered ? "#1890ff" : undefined }} />
@@ -196,7 +194,7 @@ class voucher extends Component {
 
     return (
       <ScreenHolder>
-        <ContentBox title="Voucher List :D" onClick={this.onClick.bind(this)}>
+        <ContentBox title="Voucher List" onClick={this.onClick.bind(this)}>
           <ButtonHolders>
             <ActionBtn
               type="primary"
