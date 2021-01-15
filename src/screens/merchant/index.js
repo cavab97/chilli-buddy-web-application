@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import actions from "../../redux/merchantAuth/actions";
 import actionsShop from "../../redux/shops/actions";
+import { QRCode } from "marslab-library-react/components/atoms";
 import {
   Form as FormSet,
   Button,
@@ -36,15 +37,14 @@ import {
   RowHolderStyle,
   LabelStyle,
   SelectStyle,
+  QRContainer,
 } from "./styles";
 import { StepModal } from "marslab-library-react/components/organisms/StepModal";
 import clone from "clone";
 import "react-datepicker/dist/react-datepicker.css";
 import { validation } from "marslab-library-react/utils/validation";
-import merchantAction from "../../redux/merchantAuth/actions";
 
 const readFromDatabaseShops = actionsShop.readFromDatabase;
-const { signup, updateLoginDetails } = merchantAction;
 
 class merchants extends Component {
   constructor(props) {
@@ -79,18 +79,18 @@ class merchants extends Component {
     }
   };
 
-  handleRecord = async (actionName, advertisement) => {
+  handleRecord = async (actionName, merchant) => {
     let { errorReturn } = this.props;
     const { user } = this.props;
-    const loginDetails = this.props.loginDetails;
+    const createDetails = this.props.createDetails;
     //console.log(advertisements)
-    if (advertisement.key && actionName !== "delete") {
+    if (merchant.key && actionName !== "delete") {
       actionName = "update";
     }
 
     const recordCheck = {
-      email: loginDetails.email,
-      passcode: loginDetails.password,
+      email: createDetails.email,
+      passcode: createDetails.password,
     };
 
     const defaultValidate = {
@@ -104,7 +104,7 @@ class merchants extends Component {
     console.log(errorReturn);
 
     if (errorReturn.errorNo === 0) {
-      this.props.saveIntoFireStore(advertisement, actionName);
+      this.props.saveIntoFireStore(merchant, actionName);
     }
   };
 
@@ -136,23 +136,24 @@ class merchants extends Component {
   };
 
   onRecordChange = ({ key, nestedKey }, event) => {
-    let { advertisement } = clone(this.props);
-    if (key && nestedKey) advertisement[key][nestedKey] = event.target.value;
-    else if (key) advertisement[key] = event.target.value;
-    this.props.update(advertisement);
+    let { merchant } = clone(this.props);
+    if (key && nestedKey) merchant[key][nestedKey] = event.target.value;
+    else if (key) merchant[key] = event.target.value;
+    this.props.update(merchant);
   };
 
   onLoginRecordChange = (key, event) => {
     let { loginDetails } = clone(this.props);
     if (key) loginDetails[key] = event.target.value;
+    console.log(this.props);
     this.props.updateLoginDetails(loginDetails);
   };
 
   onShopIDChange = ({ key, nestedKey }, event) => {
-    let { advertisement } = clone(this.props);
-    if (key && nestedKey) advertisement[key][nestedKey] = event;
-    else if (key) advertisement[key] = event;
-    this.props.update(advertisement);
+    let { merchant } = clone(this.props);
+    if (key && nestedKey) merchant[key][nestedKey] = event;
+    else if (key) merchant[key] = event;
+    this.props.update(merchant);
   };
 
   urlChange(url) {
@@ -166,23 +167,19 @@ class merchants extends Component {
       <SearchOutlined style={{ color: filtered ? "#1890ff" : undefined }} />
     ),
     filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => {
-      const { advertisements } = this.props;
-      const { advertisement } = clone(this.props);
-      const advertisementArray = [];
-      Object.keys(advertisements).map((advertisement, index) => {
-        return advertisementArray.push({
-          ...advertisements[advertisement],
-          isPopUp: advertisements[advertisement].isPopUp === true ? "Yes" : "No",
-          startDate: advertisements[advertisement].startDate
-            ? advertisements[advertisement].startDate.toDate()
-            : "",
-          endDate: advertisements[advertisement].endDate
-            ? advertisements[advertisement].endDate.toDate()
-            : "",
-          createAtString: advertisements[advertisement].createAt.format("YYYY-MM-DD"),
-          startDateString: advertisements[advertisement].startDate.format("YYYY-MM-DD"),
-          endDateString: advertisements[advertisement].endDate.format("YYYY-MM-DD"),
-          key: advertisement,
+      const { merchants } = this.props;
+      const { merchant } = clone(this.props);
+      const merchantArray = [];
+      Object.keys(merchants).map((merchant, index) => {
+        return merchantArray.push({
+          ...merchants[merchant],
+          isPopUp: merchants[merchant].isPopUp === true ? "Yes" : "No",
+          startDate: merchants[merchant].startDate ? merchants[merchant].startDate.toDate() : "",
+          endDate: merchants[merchant].endDate ? merchants[merchant].endDate.toDate() : "",
+          createAtString: merchants[merchant].createAt.format("YYYY-MM-DD"),
+          startDateString: merchants[merchant].startDate.format("YYYY-MM-DD"),
+          endDateString: merchants[merchant].endDate.format("YYYY-MM-DD"),
+          key: merchant,
         });
       });
 
@@ -192,7 +189,7 @@ class merchants extends Component {
             type: "select",
             placeholder: `Search ${title}`,
             data: selectedKeys[0],
-            option: advertisementArray,
+            option: merchantArray,
             optionTitle: columnName,
             optionValue: columnName,
             showSearch: true,
@@ -233,7 +230,7 @@ class merchants extends Component {
     const { url } = this.props.match;
     const {
       modalActive,
-      advertisements,
+      merchants,
       modalCurrentPage,
       submitLoading,
       isLoading,
@@ -242,11 +239,12 @@ class merchants extends Component {
       shop_shops,
       user,
       loginDetails,
+      createDetails,
       loading,
       error,
     } = this.props;
 
-    const { advertisement } = clone(this.props);
+    const { merchant } = clone(this.props);
     const optionUrl = this.urlChange(url);
     const dataSource = [];
 
@@ -401,7 +399,7 @@ class merchants extends Component {
         title: "Merchant Information",
         description: "",
         okText: "Finish",
-        onOk: this.handleRecord.bind(this, "update", advertisement),
+        onOk: this.handleRecord.bind(this, "update", merchant),
         cancelText: "Back",
         onCancel: this.handleModal.bind(this, {
           toggle: false,
@@ -467,7 +465,17 @@ class merchants extends Component {
             closable={true}
             maskClosable={false}
             keyboard={false}
+            url={createDetails}
           />
+          <QRContainer>
+            <QRCode
+              id={"QRCodeCanvas"}
+              value={`https://${createDetails.passcode}/${createDetails.email}`}
+              size={120}
+              includeMargin={true}
+              style={{ borderRadius: 10 }}
+            />
+          </QRContainer>
           <Merchant
             dataSource={dataSource}
             loading={loading}
@@ -485,8 +493,10 @@ class merchants extends Component {
 const mapStatetoprops = (state) => {
   const { shop, readSpecifiedRecordLoading, readSpecifiedRecordError } = state.Shops;
   const shop_shops = state.Shops.shops;
-  const { user } = state.MerchantAuth.user;
-  const { loginDetails, isLoading, loading, error } = state.MerchantAuth;
+  const { user } = state.Merchant.user;
+  const { createDetails, isLoading, loading, error } = state.Merchant;
+
+  console.log(state);
 
   return {
     ...state.MerchantAuth,
@@ -495,7 +505,7 @@ const mapStatetoprops = (state) => {
     readSpecifiedRecordError,
     shop_shops,
     user,
-    loginDetails,
+    createDetails,
     isLoading,
     loading,
     error,
@@ -505,6 +515,4 @@ const mapStatetoprops = (state) => {
 export default connect(mapStatetoprops, {
   ...actions,
   readFromDatabaseShops,
-  updateLoginDetails,
-  signup,
 })(merchants);

@@ -37,6 +37,8 @@ class voucher extends Component {
       this.props.submitResult.message !== nextProps.submitResult.message &&
       nextProps.submitResult.message
     ) {
+      this.props.readFromDatabase();
+      this.props.readFromDatabaseShops();
       notification("success", nextProps.submitResult.message);
       this.props.readFromDatabase();
     }

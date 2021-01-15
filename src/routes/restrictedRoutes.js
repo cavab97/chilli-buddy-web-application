@@ -277,6 +277,11 @@ const restrictedRoutes = [
     component: asyncComponent(() => import("screens/merchant")),
   },
   {
+    path: "merchantInfo",
+    role: "admin",
+    component: asyncComponent(() => import("screens/merchantInfo")),
+  },
+  {
     path: "voucher",
     role: "admin",
     component: asyncComponent(() => import("screens/voucher")),
