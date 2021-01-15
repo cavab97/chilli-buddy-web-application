@@ -51,9 +51,9 @@ const actions = {
     payload: { data },
   }),
 
-  signup: ({ email, password }) => ({
+  signup: (data) => ({
     type: actions.SIGNUP_REQUEST,
-    payload: { email, password },
+    payload: { data },
   }),
 
   signupSuccess: ({ user }) => ({

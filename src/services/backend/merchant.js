@@ -16,6 +16,8 @@ export function signup({ data }) {
       password
     };
 
+    console.log(data);
+
     data = backend.processData({ data });
 
     backend

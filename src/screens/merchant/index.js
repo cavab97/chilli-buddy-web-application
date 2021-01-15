@@ -52,9 +52,10 @@ class merchants extends Component {
   }
 
   componentDidMount() {
-    this.props.loadFromFireStore();
+    //this.props.loadFromFireStore();
     this.props.readFromDatabaseShops();
   }
+
   componentWillReceiveProps(nextProps) {
     if (
       this.props.submitError.message !== nextProps.submitError.message &&
@@ -109,25 +110,22 @@ class merchants extends Component {
 
   handleSignup = (loginDetails) => {
     let { errorReturn } = this.props;
-    console.log("loginDetails: " + loginDetails.email + loginDetails.password);
+
     const recordCheck = {
       email: loginDetails.email,
-      passcode: loginDetails.password,
+      password: loginDetails.password,
     };
 
     const defaultValidate = {
       email: { required: true, type: "email" },
-      passcode: { required: true },
+      password: { required: true },
     };
 
     errorReturn = validation(recordCheck, defaultValidate);
     this.props.errorUpdate(errorReturn);
-    console.log(errorReturn);
 
     if (errorReturn.errorNo === 0) {
-      console.log("hi");
       this.props.signup(loginDetails);
-      console.log("bye");
     }
   };
 
@@ -258,16 +256,6 @@ class merchants extends Component {
         return { data: shops.id, label: shops.title };
       });
 
-    Object.keys(advertisements).map((advertisement, index) => {
-      return dataSource.push({
-        ...advertisements[advertisement],
-        startDate: advertisements[advertisement].startDate,
-        isPopUp: advertisements[advertisement].isPopUp === true ? "Yes" : "No",
-        createAtString: advertisements[advertisement].createAt.format("hh:mm a YYYY-MM-DD"),
-        key: advertisement,
-      });
-    });
-
     const rowSelection = {
       onChange: (selectedRowKeys, selectedRows) => {},
     };
@@ -285,8 +273,8 @@ class merchants extends Component {
           placeholder: "Enter Merchant Email",
           data: loginDetails.email,
           onChange: this.onLoginRecordChange.bind(this, "email"),
-          InputStyle: errorReturn.email ? ErrorInputStyle : null,
-          iconRigth: errorReturn.email ? (
+          InputStyle: errorReturn.loginDetails?.email ? ErrorInputStyle : null,
+          iconRigth: errorReturn.loginDetails?.email ? (
             <AntdIcon.CloseCircleFilled style={{ color: "red" }} />
           ) : null,
         },
@@ -294,10 +282,10 @@ class merchants extends Component {
       [
         {
           type: "label",
-          label: errorReturn.email ? "*" + errorReturn.email : "",
+          label: errorReturn.loginDetails ? "*" + errorReturn.loginDetails.email : "",
           FieldsetStyle: ErrorMsgFieldsetStyle,
           LabelStyle: ErrorMsgLabelStyle,
-          hide: errorReturn.email ? false : true,
+          hide: errorReturn.loginDetails ? false : true,
         },
       ],
       [
@@ -312,8 +300,8 @@ class merchants extends Component {
           placeholder: "Enter Merchant Passcode",
           data: loginDetails.password,
           onChange: this.onLoginRecordChange.bind(this, "password"),
-          InputStyle: errorReturn.password ? ErrorInputStyle : null,
-          iconRigth: errorReturn.password ? (
+          InputStyle: errorReturn.loginDetails?.password ? ErrorInputStyle : null,
+          iconRigth: errorReturn.loginDetails?.password ? (
             <AntdIcon.CloseCircleFilled style={{ color: "red" }} />
           ) : null,
         },
@@ -321,10 +309,10 @@ class merchants extends Component {
       [
         {
           type: "label",
-          label: errorReturn.password ? "*" + errorReturn.password : "",
+          label: errorReturn.loginDetails ? "*" + errorReturn.loginDetails.password : "",
           FieldsetStyle: ErrorMsgFieldsetStyle,
           LabelStyle: ErrorMsgLabelStyle,
-          hide: errorReturn.password ? false : true,
+          hide: errorReturn.loginDetails?.password ? false : true,
         },
       ],
     ];
@@ -341,8 +329,8 @@ class merchants extends Component {
           type: "select",
           //label: "Shop ID *",
           placeholder: "Enter Shop ID",
-          data: advertisement.shopID,
-          onChange: this.onShopIDChange.bind(this, { key: "shopID" }),
+          data: user.shopIds[0],
+          onChange: this.onShopIDChange.bind(this, { key: "shopIds" }),
           option: shopLists,
           optionTitle: "label",
           optionValue: "data",
@@ -361,10 +349,10 @@ class merchants extends Component {
       [
         {
           type: "label",
-          label: errorReturn.shopID ? "*" + errorReturn.shopID : "",
+          label: errorReturn.shopIds ? "*" + errorReturn.shopIds : "",
           FieldsetStyle: ErrorMsgFieldsetStyle,
           LabelStyle: ErrorMsgLabelStyle,
-          hide: errorReturn.shopID ? false : true,
+          hide: errorReturn.shopIds ? false : true,
         },
       ],
       [
@@ -482,9 +470,9 @@ class merchants extends Component {
           />
           <Merchant
             dataSource={dataSource}
-            loading={this.props.isLoading}
+            loading={loading}
             rowSelection={rowSelection}
-            getColumnSearchProps={this.getColumnSearchProps.bind(this)}
+            //getColumnSearchProps={this.getColumnSearchProps.bind(this)}
             handleModal={this.handleModal.bind(this)}
             handleRecord={this.handleRecord.bind(this)}
           />
@@ -501,7 +489,7 @@ const mapStatetoprops = (state) => {
   const { loginDetails, isLoading, loading, error } = state.MerchantAuth;
 
   return {
-    ...state.Advertisements,
+    ...state.MerchantAuth,
     shop,
     readSpecifiedRecordLoading,
     readSpecifiedRecordError,

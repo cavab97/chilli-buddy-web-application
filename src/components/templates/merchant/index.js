@@ -22,7 +22,7 @@ export default ({
         if (a.title > b.title) return 1;
         return 0;
       },
-      ...getColumnSearchProps("title", "title"),
+      //...getColumnSearchProps("title", "title"),
     },
     {
       title: "Pop Up",
@@ -58,7 +58,7 @@ export default ({
         if (a.key > b.key) return 1;
         return 0;
       },
-      ...getColumnSearchProps("key", "key"),
+      //...getColumnSearchProps("key", "key"),
     },
 
     {
@@ -71,7 +71,7 @@ export default ({
         if (a.createAt > b.createAt) return 1;
         return 0;
       },
-      ...getColumnSearchProps("createAtString", "create at"),
+      //...getColumnSearchProps("createAtString", "create at"),
     },
 
     {

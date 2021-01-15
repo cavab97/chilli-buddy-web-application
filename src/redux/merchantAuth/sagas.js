@@ -84,8 +84,8 @@ function* loadFromFirestore() {
 
 export function* signupRequest({ payload }) {
   try {
-    const { email, password } = payload;
-    const user = yield call(merchantBackendServices.signup, { email, password });
+    const { data } = payload; 
+    const user = yield call(merchantBackendServices.signup, { data });
     console.log(user);
 
     yield put(actions.signupSuccess({ user }));

@@ -5,6 +5,21 @@ const initState = {
   isLoading: false,
   errorMessage: false,
   errorReturn: {},
+
+  submitLoading: false,
+  submitError: {
+    code: null,
+    message: null,
+    details: null
+  },
+  submitResult: {
+    objectName: null,
+    ids: null,
+    status: null,
+    action: null,
+    message: null
+  },
+
   modalActive: false,
   modalCurrentPage: 0,
   isLoggedIn: false,
@@ -89,7 +104,7 @@ export default function reducer(state = initState, { type, payload, newRecord })
       };
 
     case actions.TOGGLE_FIRESTORE_HANDLE_MODAL:
-      //console.log("toggle firestore handle modal")
+      
       return {
         ...state,
         modalActive: payload.toggle ? !state.modalActive : state.modalActive,
@@ -154,26 +169,33 @@ export default function reducer(state = initState, { type, payload, newRecord })
       };
 
     case actions.SIGNUP_REQUEST:
+      console.log('activated')
       return {
         ...state,
-        loading: true,
-        error: false,
+        submitLoading: true,
+        submitError: initState.submitError,
+        submitResult: initState.submitResult
       };
     case actions.SIGNUP_SUCCESS:
+      console.log('success')
       return {
         ...state,
-        loading: false,
-        isLoggedIn: true,
+        submitLoading: false,
+        submitError: initState.submitError,
+        submitResult: payload.user,
+        isLoggedIn: false,
         user: payload.user,
       };
 
     case actions.SIGNUP_ERROR:
+      console.log('error')
       return {
         ...state,
-        loading: false,
         isLoggedIn: false,
         user: initState.user,
-        error: payload.error,
+        submitLoading: false,
+        submitError: payload.error,
+        submitResult: initState.submitResult
       };
 
     default:
