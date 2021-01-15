@@ -145,7 +145,6 @@ class merchants extends Component {
   onLoginRecordChange = (key, event) => {
     let { loginDetails } = clone(this.props);
     if (key) loginDetails[key] = event.target.value;
-    console.log(this.props);
     this.props.updateLoginDetails(loginDetails);
   };
 
@@ -495,8 +494,6 @@ const mapStatetoprops = (state) => {
   const shop_shops = state.Shops.shops;
   const { user } = state.Merchant.user;
   const { createDetails, isLoading, loading, error } = state.Merchant;
-
-  console.log(state);
 
   return {
     ...state.MerchantAuth,

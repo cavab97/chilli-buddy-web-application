@@ -169,7 +169,6 @@ export default function reducer(state = initState, { type, payload, newRecord })
       };
 
     case actions.SIGNUP_REQUEST:
-      console.log('activated')
       return {
         ...state,
         submitLoading: true,
@@ -177,7 +176,6 @@ export default function reducer(state = initState, { type, payload, newRecord })
         submitResult: initState.submitResult
       };
     case actions.SIGNUP_SUCCESS:
-      console.log('success')
       return {
         ...state,
         submitLoading: false,
@@ -188,7 +186,6 @@ export default function reducer(state = initState, { type, payload, newRecord })
       };
 
     case actions.SIGNUP_ERROR:
-      console.log('error')
       return {
         ...state,
         isLoggedIn: false,
