@@ -76,7 +76,7 @@ export default ({
         },
       ],
       render: (data) => {
-        return moment(data).format("DD-MM-YYYY");
+        return data ? moment(data).format("DD-MM-YYYY") : null;
       },
       sorter: (a, b) => {
         if (a.startDate < b.startDate) return -1;
@@ -102,7 +102,7 @@ export default ({
         },
       ],
       render: (data) => {
-        return moment(data).format("DD-MM-YYYY");
+        return data ? moment(data).format("DD-MM-YYYY") : null;
       },
       sorter: (a, b) => {
         if (a.endDate < b.endDate) return -1;
@@ -111,6 +111,18 @@ export default ({
       },
 
       //...this.getColumnSearchProps("isPopUp", "pop up"),
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      width: "120x",
+      sorter: (a, b) => {
+        if (a.status < b.status) return -1;
+        if (a.status > b.status) return 1;
+        return 0;
+      },
+      ...getColumnSearchProps("status", "status"),
     },
     {
       title: "Actions",
