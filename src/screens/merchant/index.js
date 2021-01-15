@@ -37,13 +37,13 @@ import {
   RowHolderStyle,
   LabelStyle,
   SelectStyle,
-  QRContainer
+  QRContainer,
 } from "./styles";
 import { StepModal } from "marslab-library-react/components/organisms/StepModal";
 import clone from "clone";
 import "react-datepicker/dist/react-datepicker.css";
 import { validation } from "marslab-library-react/utils/validation";
-import merchantAction from "../../redux/merchantAuth/actions";
+import merchantAction from "../../redux/merchant/actions";
 
 const readFromDatabaseShops = actionsShop.readFromDatabase;
 const { signup, updateLoginDetails } = merchantAction;
@@ -80,18 +80,18 @@ class merchants extends Component {
     }
   };
 
-  handleRecord = async (actionName, advertisement) => {
+  handleRecord = async (actionName, merchant) => {
     let { errorReturn } = this.props;
     const { user } = this.props;
-    const loginDetails = this.props.loginDetails;
+    const createDetails = this.props.createDetails;
     //console.log(advertisements)
-    if (advertisement.key && actionName !== "delete") {
+    if (merchant.key && actionName !== "delete") {
       actionName = "update";
     }
 
     const recordCheck = {
-      email: loginDetails.email,
-      passcode: loginDetails.password,
+      email: createDetails.email,
+      passcode: createDetails.password,
     };
 
     const defaultValidate = {
@@ -105,16 +105,16 @@ class merchants extends Component {
     console.log(errorReturn);
 
     if (errorReturn.errorNo === 0) {
-      this.props.saveIntoFireStore(advertisement, actionName);
+      this.props.saveIntoFireStore(merchant, actionName);
     }
   };
 
-  handleSignup = (loginDetails) => {
+  handleSignup = (createDetails) => {
     let { errorReturn } = this.props;
-    console.log("loginDetails: " + loginDetails.email + loginDetails.password);
+    console.log("loginDetails: " + createDetails.email + createDetails.password);
     const recordCheck = {
-      email: loginDetails.email,
-      passcode: loginDetails.password,
+      email: createDetails.email,
+      passcode: createDetails.password,
     };
 
     const defaultValidate = {
@@ -128,7 +128,7 @@ class merchants extends Component {
 
     if (errorReturn.errorNo === 0) {
       console.log("hi");
-      this.props.signup(loginDetails);
+      this.props.signup(createDetails);
       console.log("bye");
     }
   };
@@ -140,23 +140,23 @@ class merchants extends Component {
   };
 
   onRecordChange = ({ key, nestedKey }, event) => {
-    let { advertisement } = clone(this.props);
-    if (key && nestedKey) advertisement[key][nestedKey] = event.target.value;
-    else if (key) advertisement[key] = event.target.value;
-    this.props.update(advertisement);
+    let { merchant } = clone(this.props);
+    if (key && nestedKey) merchant[key][nestedKey] = event.target.value;
+    else if (key) merchant[key] = event.target.value;
+    this.props.update(merchant);
   };
 
   onLoginRecordChange = (key, event) => {
-    let { loginDetails } = clone(this.props);
-    if (key) loginDetails[key] = event.target.value;
-    this.props.updateLoginDetails(loginDetails);
+    let { createDetails } = clone(this.props);
+    if (key) createDetails[key] = event.target.value;
+    this.props.updateLoginDetails(createDetails);
   };
 
   onShopIDChange = ({ key, nestedKey }, event) => {
-    let { advertisement } = clone(this.props);
-    if (key && nestedKey) advertisement[key][nestedKey] = event;
-    else if (key) advertisement[key] = event;
-    this.props.update(advertisement);
+    let { merchant } = clone(this.props);
+    if (key && nestedKey) merchant[key][nestedKey] = event;
+    else if (key) merchant[key] = event;
+    this.props.update(merchant);
   };
 
   urlChange(url) {
@@ -170,23 +170,19 @@ class merchants extends Component {
       <SearchOutlined style={{ color: filtered ? "#1890ff" : undefined }} />
     ),
     filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => {
-      const { advertisements } = this.props;
-      const { advertisement } = clone(this.props);
-      const advertisementArray = [];
-      Object.keys(advertisements).map((advertisement, index) => {
-        return advertisementArray.push({
-          ...advertisements[advertisement],
-          isPopUp: advertisements[advertisement].isPopUp === true ? "Yes" : "No",
-          startDate: advertisements[advertisement].startDate
-            ? advertisements[advertisement].startDate.toDate()
-            : "",
-          endDate: advertisements[advertisement].endDate
-            ? advertisements[advertisement].endDate.toDate()
-            : "",
-          createAtString: advertisements[advertisement].createAt.format("YYYY-MM-DD"),
-          startDateString: advertisements[advertisement].startDate.format("YYYY-MM-DD"),
-          endDateString: advertisements[advertisement].endDate.format("YYYY-MM-DD"),
-          key: advertisement,
+      const { merchants } = this.props;
+      const { merchant } = clone(this.props);
+      const merchantArray = [];
+      Object.keys(merchants).map((merchant, index) => {
+        return merchantArray.push({
+          ...merchants[merchant],
+          isPopUp: merchants[merchant].isPopUp === true ? "Yes" : "No",
+          startDate: merchants[merchant].startDate ? merchants[merchant].startDate.toDate() : "",
+          endDate: merchants[merchant].endDate ? merchants[merchant].endDate.toDate() : "",
+          createAtString: merchants[merchant].createAt.format("YYYY-MM-DD"),
+          startDateString: merchants[merchant].startDate.format("YYYY-MM-DD"),
+          endDateString: merchants[merchant].endDate.format("YYYY-MM-DD"),
+          key: merchant,
         });
       });
 
@@ -196,7 +192,7 @@ class merchants extends Component {
             type: "select",
             placeholder: `Search ${title}`,
             data: selectedKeys[0],
-            option: advertisementArray,
+            option: merchantArray,
             optionTitle: columnName,
             optionValue: columnName,
             showSearch: true,
@@ -237,7 +233,7 @@ class merchants extends Component {
     const { url } = this.props.match;
     const {
       modalActive,
-      advertisements,
+      merchants,
       modalCurrentPage,
       submitLoading,
       isLoading,
@@ -245,12 +241,12 @@ class merchants extends Component {
       errorReturn,
       shop_shops,
       user,
-      loginDetails,
+      createDetails,
       loading,
       error,
     } = this.props;
 
-    const { advertisement } = clone(this.props);
+    const { merchant } = clone(this.props);
     const optionUrl = this.urlChange(url);
     const dataSource = [];
 
@@ -260,13 +256,13 @@ class merchants extends Component {
         return { data: shops.id, label: shops.title };
       });
 
-    Object.keys(advertisements).map((advertisement, index) => {
+    Object.keys(merchants).map((merchant, index) => {
       return dataSource.push({
-        ...advertisements[advertisement],
-        startDate: advertisements[advertisement].startDate,
-        isPopUp: advertisements[advertisement].isPopUp === true ? "Yes" : "No",
-        createAtString: advertisements[advertisement].createAt.format("hh:mm a YYYY-MM-DD"),
-        key: advertisement,
+        ...merchants[merchant],
+        startDate: merchants[merchant].startDate,
+        isPopUp: merchants[merchant].isPopUp === true ? "Yes" : "No",
+        createAtString: merchants[merchant].createAt.format("hh:mm a YYYY-MM-DD"),
+        key: merchant,
       });
     });
 
@@ -285,7 +281,7 @@ class merchants extends Component {
         {
           type: "text",
           placeholder: "Enter Merchant Email",
-          data: loginDetails.email,
+          data: createDetails.email,
           onChange: this.onLoginRecordChange.bind(this, "email"),
           InputStyle: errorReturn.email ? ErrorInputStyle : null,
           iconRigth: errorReturn.email ? (
@@ -312,7 +308,7 @@ class merchants extends Component {
         {
           type: "text",
           placeholder: "Enter Merchant Passcode",
-          data: loginDetails.password,
+          data: createDetails.password,
           onChange: this.onLoginRecordChange.bind(this, "password"),
           InputStyle: errorReturn.password ? ErrorInputStyle : null,
           iconRigth: errorReturn.password ? (
@@ -343,7 +339,7 @@ class merchants extends Component {
           type: "select",
           //label: "Shop ID *",
           placeholder: "Enter Shop ID",
-          data: advertisement.shopID,
+          data: merchant.shopID,
           onChange: this.onShopIDChange.bind(this, { key: "shopID" }),
           option: shopLists,
           optionTitle: "label",
@@ -402,7 +398,7 @@ class merchants extends Component {
         title: "Merchant Login Details",
         description: "",
         okText: "Next",
-        onOk: user.uid ? "" : this.handleSignup.bind(this, loginDetails),
+        onOk: user.uid ? "" : this.handleSignup.bind(this, createDetails),
         cancelText: "Close",
         onCancel: this.handleModal.bind(this, {
           toggle: true,
@@ -415,7 +411,7 @@ class merchants extends Component {
         title: "Merchant Information",
         description: "",
         okText: "Finish",
-        onOk: this.handleRecord.bind(this, "update", advertisement),
+        onOk: this.handleRecord.bind(this, "update", merchant),
         cancelText: "Back",
         onCancel: this.handleModal.bind(this, {
           toggle: false,
@@ -481,17 +477,17 @@ class merchants extends Component {
             closable={true}
             maskClosable={false}
             keyboard={false}
-            url={loginDetails}
+            url={createDetails}
           />
-               <QRContainer>
-                        <QRCode
-                            id={"QRCodeCanvas"}
-                            value={`https://${loginDetails.passcode}/${loginDetails.email}`} 
-                            size={120}
-                            includeMargin={true}
-                            style={{borderRadius: 10}}
-                        />
-                    </QRContainer>
+          <QRContainer>
+            <QRCode
+              id={"QRCodeCanvas"}
+              value={`https://${createDetails.passcode}/${createDetails.email}`}
+              size={120}
+              includeMargin={true}
+              style={{ borderRadius: 10 }}
+            />
+          </QRContainer>
           <Merchant
             dataSource={dataSource}
             loading={this.props.isLoading}
@@ -509,17 +505,17 @@ class merchants extends Component {
 const mapStatetoprops = (state) => {
   const { shop, readSpecifiedRecordLoading, readSpecifiedRecordError } = state.Shops;
   const shop_shops = state.Shops.shops;
-  const { user } = state.MerchantAuth.user;
-  const { loginDetails, isLoading, loading, error } = state.MerchantAuth;
+  const { user } = state.Merchant.user;
+  const { createDetails, isLoading, loading, error } = state.Merchant;
 
   return {
-    ...state.Advertisements,
+    ...state.Merchant,
     shop,
     readSpecifiedRecordLoading,
     readSpecifiedRecordError,
     shop_shops,
     user,
-    loginDetails,
+    createDetails,
     isLoading,
     loading,
     error,
