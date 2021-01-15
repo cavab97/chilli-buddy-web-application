@@ -126,17 +126,17 @@ export default ({
             >
               <i className="ion-android-create" />
             </a>
-            {/* <Popconfirm
+            <Popconfirm
                 title="Are you sure to delete this voucher?"
                 okText="Yes"
                 cancelText="No"
                 placement="topRight"
-                onConfirm={this.handleRecord.bind(this, 'delete', row)}
+                onConfirm={handleRecord.bind(this, 'delete', row)}
               >
                 <a className="deleteBtn" href="# ">
                   <i className="ion-android-delete" />
                 </a>
-            </Popconfirm> */}
+            </Popconfirm>
           </ActionWrapper>
         );
       },
