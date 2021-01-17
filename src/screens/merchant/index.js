@@ -495,6 +495,8 @@ const mapStatetoprops = (state) => {
   const { user } = state.Merchant.user;
   const { createDetails, isLoading, loading, error } = state.Merchant;
 
+  console.log(state)
+
   return {
     ...state.MerchantAuth,
     shop,

@@ -1,5 +1,5 @@
 import React from "react";
-import { Popconfirm, Modal, Descriptions } from "marslab-library-react/components/atoms";
+import { AntdIcon, Modal, Descriptions } from "marslab-library-react/components/atoms";
 import Table from "../../../../screens/antTable.style";
 import { Form } from "marslab-library-react/components/organisms/Form";
 import moment from "moment";
@@ -11,7 +11,15 @@ import {
   DescFieldsetStyle,
   RowHolderStyle,
   Image,
+  ErrorInputStyle,
+  ErrorMsgFieldsetStyle,
+  ErrorMsgLabelStyle,
+  InputStyle,
+  FieldsetStyle,
+  LabelStyle,
+  ButtonStyle
 } from "./styles";
+import { signupRequest } from "marslab-library-react/redux/auth/saga";
 
 
 export default ({
@@ -21,7 +29,14 @@ export default ({
     modalActive,
     handleModal,
     imageModal,
-    photoView
+    photoView,
+    errorReturn,
+    loginDetails,
+    handleSignupModal,
+    signupModalActive,
+    submitLoading,
+    onLoginRecordChange,
+    handleSignup
 }) => {
 
     const formItem = [
@@ -141,6 +156,63 @@ export default ({
         ],
     ];
 
+    const signupFormItem = [
+        [
+          {
+            type: "label",
+            label: "User Email *",
+          },
+        ],
+        [
+          {
+            type: "text",
+            placeholder: "Enter User Email",
+            data: loginDetails.email,
+            onChange: onLoginRecordChange.bind(this, "email"),
+            InputStyle: errorReturn?.loginDetails?.email ? ErrorInputStyle : null,
+            iconRigth: errorReturn?.loginDetails?.email ? (
+              <AntdIcon.CloseCircleFilled style={{ color: "red" }} />
+            ) : null,
+          },
+        ],
+        [
+          {
+            type: "label",
+            label: errorReturn?.loginDetails ? "*" + errorReturn.loginDetails.email : "",
+            FieldsetStyle: ErrorMsgFieldsetStyle,
+            LabelStyle: ErrorMsgLabelStyle,
+            hide: errorReturn?.loginDetails ? false : true,
+          },
+        ],
+        [
+          {
+            type: "label",
+            label: "User Password *",
+          },
+        ],
+        [
+          {
+            type: "text",
+            placeholder: "Enter User Password",
+            data: loginDetails.password,
+            onChange: onLoginRecordChange.bind(this, "password"),
+            InputStyle: errorReturn?.loginDetails?.password ? ErrorInputStyle : null,
+            iconRigth: errorReturn?.loginDetails?.password ? (
+              <AntdIcon.CloseCircleFilled style={{ color: "red" }} />
+            ) : null,
+          },
+        ],
+        [
+          {
+            type: "label",
+            label: errorReturn?.loginDetails ? "*" + errorReturn?.loginDetails.password : "",
+            FieldsetStyle: ErrorMsgFieldsetStyle,
+            LabelStyle: ErrorMsgLabelStyle,
+            hide: errorReturn?.loginDetails?.password ? false : true,
+          },
+        ],
+    ];
+
     const columns = [
         {
             title: "User Phone",
@@ -237,6 +309,28 @@ export default ({
                         src={singleDataSource.photoURL}
                     />
                 </Modal>
+            </Modal>
+
+            <Modal
+                title="Create New User Account"
+                visible={signupModalActive}
+                onCancel={handleSignupModal.bind(this, null)}
+                okText="Create"
+                onOk={handleSignup.bind(this, loginDetails)}
+                confirmLoading={submitLoading}
+                closable={true}
+                maskClosable={false}
+                keyboard={false}
+            >
+                <Form
+                    formItem={signupFormItem}
+                    InputStyle={InputStyle}
+                    RowHolderStyle={RowHolderStyle}
+                    FieldsetStyle={FieldsetStyle}
+                    LabelStyle={LabelStyle}
+                    ButtonStyle={ButtonStyle}
+                    InputStyle={InputStyle}
+                />
             </Modal>
         </Content>
     );

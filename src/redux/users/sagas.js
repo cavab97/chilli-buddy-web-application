@@ -3,6 +3,7 @@ import actions from './actions';
 import { userDataServices } from "services/database";
 import FirebaseHelper from 'marslab-library-react/utils/helper/firebase';
 import omit from 'lodash/omit';
+import { authBackendServices } from "services/backend";
 
 const {
   database,
@@ -114,6 +115,18 @@ const readAllFirestoreDocuments = async () =>
       return documents;
     });
 
+export function* signupRequest({ payload }) {
+  try {
+    const { data } = payload; 
+    const user = yield call(authBackendServices.signup, { data });
+
+    yield put(actions.signupSuccess({ user }));
+  } catch (error) {
+    console.log(error);
+    yield put(actions.signupError({ error }));
+  }
+}
+
 // function* resetFireStoreDocuments() {
 //   try {
 //     const docsKey = yield call(readAllFirestoreDocuments);
@@ -142,6 +155,7 @@ export default function* rootSaga() {
     takeEvery(actions.READ_FROM_DATABASE, readFromDatabase),
     takeEvery(actions.LOAD_FROM_FIRESTORE, loadFromFirestore),
     takeEvery(actions.LOAD_DELETED_USER_FROM_FIRESTORE, loadDeletedUserFromFireStore),
-    takeEvery(actions.SAVE_INTO_FIRESTORE, storeIntoFirestore)
+    takeEvery(actions.SAVE_INTO_FIRESTORE, storeIntoFirestore),
+    takeEvery(actions.SIGNUP_REQUEST, signupRequest)
   ]);
 }

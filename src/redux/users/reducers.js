@@ -5,9 +5,29 @@ const initState = {
   errorMessage: false,
   users: [],
   modalActive: false,
+  signupModalActive: false,
+
+  submitLoading: false,
+  submitError: {
+    code: null,
+    message: null,
+    details: null
+  },
+  submitResult: {
+    objectName: null,
+    ids: null,
+    status: null,
+    action: null,
+    message: null
+  },
 
   readLoading: false,
   readError: false,
+
+  loginDetails: {
+    email: null,
+    password: null,
+  },
 
   user: {
     key: null,
@@ -100,11 +120,58 @@ export default function reducer(
         modalActive: !state.modalActive,
         user: payload.data == null ? initState.user : payload.data,
       };
+
+    case actions.SIGNUP_REQUEST:
+      return {
+        ...state,
+        submitLoading: true,
+        submitError: initState.submitError,
+        submitResult: initState.submitResult
+      };
+    case actions.SIGNUP_SUCCESS:
+      return {
+        ...state,
+        submitLoading: false,
+        submitError: initState.submitError,
+        submitResult: payload.user,
+        isLoggedIn: false,
+        user: payload.user,
+      };
+
+    case actions.SIGNUP_ERROR:
+      return {
+        ...state,
+        isLoggedIn: false,
+        user: initState.user,
+        submitLoading: false,
+        submitError: payload.error,
+        submitResult: initState.submitResult
+      };
+    
+    case actions.SIGNUP_TOGGLE:
+      return {
+        ...state,
+        signupModalActive: !state.signupModalActive,
+      }
+
+    case actions.UPDATE_LOGIN_DETAILS:
+      return {
+        ...state,
+        loginDetails: payload.data,
+      };
+
     case actions.FIRESTORE_UPDATE:
       return {
         ...state,
         user: payload.data,
       };
+    
+    case actions.ERROR_UPDATE:
+      return {
+        ...state,
+        errorReturn: payload.data,
+      };
+
     default:
       return state;
   }

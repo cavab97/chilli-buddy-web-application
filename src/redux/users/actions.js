@@ -16,8 +16,16 @@ const actions = {
   RESET_FIRESTORE_DOCUMENTS: type + 'RESET_FIRESTORE_DOCUMENTS',
   RESET_FIRESTORE_DOCUMENTS_ERROR: type + 'RESET_FIRESTORE_DOCUMENTS_ERROR',
 
+  SIGNUP_REQUEST: type + "SIGNUP_REQUEST",
+  SIGNUP_SUCCESS: type + "SIGNUP_SUCCESS",
+  SIGNUP_ERROR: type + "SIGNUP_ERROR",
+  SIGNUP_TOGGLE: type + "SIGNUP_TOGGLE",
+
   TOGGLE_FIRESTORE_HANDLE_MODAL: type + 'TOGGLE_FIRESTORE_HANDLE_MODAL',
   FIRESTORE_UPDATE: type + 'FIRESTORE_UPDATE',
+  UPDATE_LOGIN_DETAILS: type + 'UPDATE_LOGIN_DETAILS',
+
+  ERROR_UPDATE: type + "ERROR_UPDATE",
 
   readFromDatabase: () => {
     return { 
@@ -63,6 +71,31 @@ const actions = {
     payload: { data },
   }),
 
+  signup: (data) => ({
+    type: actions.SIGNUP_REQUEST,
+    payload: { data },
+  }),
+
+  signupSuccess: ({ user }) => ({
+    type: actions.SIGNUP_SUCCESS,
+    payload: { user },
+  }),
+
+  signupError: ({ error }) => ({
+    type: actions.SIGNUP_ERROR,
+    payload: { error },
+  }),
+
+  signupToggle: (data) => ({
+    type: actions.SIGNUP_TOGGLE,
+    payload: { data }
+  }),
+
+  updateLoginDetails: (data) => ({
+    type: actions.UPDATE_LOGIN_DETAILS,
+    payload: { data }
+  }),
+
   update: data => ({
     type: actions.FIRESTORE_UPDATE,
     payload: { data },
@@ -81,5 +114,11 @@ const actions = {
     type: actions.RESET_FIRESTORE_DOCUMENTS_ERROR,
     payload: { error },
   }),
+
+  errorUpdate: (data) => ({
+    type: actions.ERROR_UPDATE,
+    payload: { data },
+  }),
+
 };
 export default actions;

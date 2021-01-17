@@ -2,35 +2,6 @@ import { backend } from "../../marslab-library-react/utils/helper";
 
 const objectName = "Merchant";
 
-export function signup({ data }) {
-  return new Promise((resolve, reject) => {
-    const apiName = `httpAuth${objectName}Create`;
-
-    const {
-      email,
-      password
-    } = data;
-
-    data = {
-      email,
-      password
-    };
-
-    console.log(data);
-
-    data = backend.processData({ data });
-
-    backend
-      .callApi({ apiName, data })
-      .then((result) => {
-        resolve(result);
-      })
-      .catch((error) => {
-        reject(error);
-      });
-  });
-}
-
 export function create({ data }, shopID) {
   return new Promise((resolve, reject) => {
     const apiName = `http${objectName}Create`;

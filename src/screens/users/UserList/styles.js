@@ -46,7 +46,11 @@ const TitleWrapper = styled.div`
   align-items: center;
 `;
 
-const ButtonHolders = styled.div``;
+const ButtonHolders = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  margin: 15px;
+`;
 
 const ComponentTitle = styled.h3`
   font-size: 16px;
@@ -63,13 +67,17 @@ const ActionBtn = styled(Button)`
     &:last-child {
       margin-right: 0;
     }
+    border-color: ${palette("primary", 5)};
+    background-color: ${palette("primary", 6)};
 
     i {
       font-size: 17px;
-      color: ${palette('text', 1)};
+      color: ${palette("text", 1)};
     }
 
     &:hover {
+      background-color: ${palette("primary", 5)};
+      border-color: ${palette("primary", 6)};
       i {
         color: inherit;
       }
