@@ -21,13 +21,6 @@ const TableWrapper = styled(Table)`
   }
 `;
 
-
-const QRContainer = styled.div`
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    margin-bottom: 20px;
-`;
 const ButtonHolders = styled.div`
   display: flex;
   justify-content: flex-end;
@@ -208,6 +201,5 @@ export {
   DatePickerStyle,
   RowHolderStyle,
   LabelStyle,
-  SelectStyle, 
-  QRContainer,
+  SelectStyle,
 };

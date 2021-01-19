@@ -2,40 +2,20 @@ import { backend } from "../../marslab-library-react/utils/helper";
 
 const objectName = "Merchant";
 
-export function create({ data }, shopID) {
+export function create({ data }) {
   return new Promise((resolve, reject) => {
     const apiName = `http${objectName}Create`;
 
     const {
-      displayName,
-      name,
-      address,
-      dateOfBirth,
-      identityNumber,
-      gender,
-      email,
-      phoneNumber,
-      notificationToken,
-      photoURL,
-      role,
-      shopIds,
+      businessName,
+      businessRegistrationNumber,
+      superadmin,
     } = data;
 
-    shopIds.push(shopID);
-
     data = {
-      displayName,
-      name,
-      address,
-      dateOfBirth,
-      identityNumber,
-      gender,
-      email,
-      phoneNumber,
-      notificationToken,
-      photoURL,
-      role,
-      shopIds,
+      businessName,
+      businessRegistrationNumber,
+      superadmin,
     };
 
     data = backend.processData({ data });
@@ -56,27 +36,19 @@ export function update({ data }) {
     const apiName = `http${objectName}Update`;
 
     const {
-      displayName,
-      name,
-      address,
-      dateOfBirth,
-      identityNumber,
-      gender,
-      email,
-      photoURL,
-      shopIds,
+      id,
+      businessName,
+      businessRegistrationNumber,
+      superadmin,
+      logo
     } = data;
 
     data = {
-      displayName,
-      name,
-      address,
-      dateOfBirth,
-      identityNumber,
-      gender,
-      email,
-      photoURL,
-      shopIds,
+      id,
+      businessName,
+      businessRegistrationNumber,
+      superadmin,
+      logo
     };
 
     data = backend.processData({ data });

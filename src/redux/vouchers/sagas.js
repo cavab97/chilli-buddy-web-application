@@ -67,14 +67,7 @@ function* submitIntoBackend({ payload }) {
     }
     
     yield put(actions.submitToBackendSuccess(result));
-    // if(["update", "insert"].includes(actionName))
-    // {
-    //   let shops = yield select(getShops);
-    //   const nextPage = shops.modalCurrentPage + 1
 
-    //   yield put(actions.modalControl({ toggle: nextPage > 1 , nextPage: nextPage > 1 ? 0: nextPage }));
-    // }
-    //yield put({ type: actions.READ_FROM_DATABASE });
   } catch (error) {
     console.log(error);
     yield put(actions.submitToBackendError(error));

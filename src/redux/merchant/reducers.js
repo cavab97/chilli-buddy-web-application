@@ -1,182 +1,190 @@
 import actions from "./actions";
-import moment from "moment";
 
 const initState = {
-  isLoading: false,
-  errorMessage: false,
-  errorReturn: {},
   modalActive: false,
   modalCurrentPage: 0,
-  isLoggedIn: false,
-  loading: false,
-  error: false,
-  forgotPasswordLoading: false,
-  forgotPasswordMessage: false,
-  forgotPasswordError: false,
-  createDetails: {
-    email: null,
-    password: null,
+
+  readLoading: false,
+  readError: false,
+
+  submitLoading: false,
+  submitError: {
+    code: null,
+    message: null,
+    details: null
   },
-  users: [],
-  user: {
-    user: {
-      uid: null,
-      displayName: null,
-      photoURL: null,
-      phoneNumber: null,
-      email: null,
-      role: {
-        director: false,
-        executive: false,
-        admin: false,
-        user: false,
-        merchant: true,
-      },
-      shopIds: [],
+  submitResult: {
+    objectName: null,
+    ids: null,
+    status: null,
+    action: null,
+    message: null
+  },
+
+  uploadKey: null,
+  uploadLoading: false,
+  uploadResult: {
+    url: null
+  },
+  uploadError: false,
+  uploadProgress: 0,
+
+  errorReturn: {},
+  
+  merchants: [],
+  merchant: {
+    id: null,
+    businessName: null,
+    businessRegistrationNumber: null,
+    email: null,
+    phoneNumber: null,
+    address: { 
+      line1: null,
+      line2: null,
+      postcode: null,
+      state: null,
+      country: null
     },
-    idTokenResult: {
-      token: null,
-      expirationTime: null,
-      authTime: null,
-      issuedAtTime: null,
-      signInProvider: null,
-      claims: {
-        name: null,
-        role: {
-          director: false,
-          executive: false,
-          admin: false,
-          user: false,
-          merchant: true,
-        },
-        accessLevel: 50,
-        plan: null,
-      },
-      user_id: null,
-      email: null,
-      email_verified: false,
-    },
+    logo: [],
+    shops: [null],
+    superadmin:[null],
+    admins: [null],
+    categories: [null],
+    dateJoined: new Date,
+    created: { at: null, by: null },
+    deleted: { at: null, by: null },
+    updated: { at: null, by: null },
   },
 };
 
-export default function reducer(state = initState, { type, payload, newRecord }) {
+export default function reducer(state = initState, { type, payload }) {
   switch (type) {
-    case actions.LOAD_FROM_FIRESTORE:
-      //console.log("LOAD_FROM_FIRESTORE");
-      return {
-        ...state,
-        isLoading: true,
-        errorMessage: false,
-        // modalActive: false,
-      };
+      case actions.READ_FROM_DATABASE:
+        return {
+            ...state,
+            merchants: [],
+            readLoading: true,
+            readError: false,
+        };
 
-    case actions.LOAD_FROM_FIRESTORE_SUCCESS:
-      //console.log(payload.data)
-      //console.log(payload)
-      return {
-        ...state,
-        isLoading: false,
-        users: payload.data,
-        errorMessage: false,
-        submitLoading: false,
-      };
-    case actions.LOAD_FROM_FIRESTORE_ERROR:
-      // console.log("LOAD_FROM_FIRESTORE_ERRO");
-      return {
-        ...state,
-        isLoading: false,
-        errorMessage: "There is a loading problem",
-      };
+      case actions.READ_FROM_DATABASE_SUCCESS:
+        return {
+            ...state,
+            readLoading: false,
+            merchants: payload.data,
+            readError: false
+        };
 
-    case actions.TOGGLE_FIRESTORE_HANDLE_MODAL:
-      //console.log("toggle firestore handle modal")
-      return {
-        ...state,
-        modalActive: payload.toggle ? !state.modalActive : state.modalActive,
-        modalCurrentPage: payload.nextPage,
-        user: payload.toggle
-          ? state.modalActive
-            ? initState.user
-            : payload.data
-            ? payload.data
-            : initState.user
-          : state.user,
-      };
+      case actions.READ_FROM_DATABASE_ERROR:
+        return {
+            ...state,
+            readLoading: false,
+            readError: payload.error
+        };
 
-    case actions.SAVE_INTO_FIRESTORE:
-      //console.log("save into firestore")
-      return {
-        ...state,
-        submitLoading: true,
-        submitError: initState.submitError,
-        submitResult: initState.submitResult,
-      };
+      case actions.READ_SPECIFIED_RECORD:
+        return {
+            ...state,
+            merchant: initState.merchant,
+            readSpecifiedRecordLoading: true,
+            readSpecifiedRecordError: false
+        };
 
-    case actions.SAVE_INTO_FIRESTORE_SUCCESS:
-      console.log("save into firebase success");
-      //console.log(payload.data)
-      //console.log(payload)
-      return {
-        ...state,
-        submitLoading: false,
-        submitError: initState.submitError,
-        submitResult: payload.data,
-        advertisement: { ...state.advertisement, key: payload.data.key },
-      };
+      case actions.READ_SPECIFIED_RECORD_SUCCESS:
+        return {
+            ...state,
+            readSpecifiedRecordLoading: false,
+            merchant: payload.data ? payload.data : initState.merchant,
+            readSpecifiedRecordError: false
+        };
 
-    case actions.SAVE_INTO_FIRESTORE_ERROR:
-      console.log("save into firestore error");
-      return {
-        ...state,
-        submitLoading: false,
-        submitError: payload.error,
-        submitResult: initState.submitResult,
-      };
+      case actions.READ_SPECIFIED_RECORD_ERROR:
+        return {
+            ...state,
+            merchant: initState.merchant,
+            readSpecifiedRecordLoading: false,
+            readError: payload.error
+        };
 
-    case actions.FIRESTORE_UPDATE:
-      //console.log("FIRESTORE_UPDATE");
-      //console.log(payload.data);
-      return {
-        ...state,
-        user: payload.data,
-      };
+      case actions.SUBMIT_TO_BACKEND:
+        return {
+            ...state,
+            submitLoading: true,
+            submitError: initState.submitError,
+            submitResult: initState.submitResult,
+        };
 
-    case actions.UPDATE_LOGIN_DETAILS:
-      return {
-        ...state,
-        createDetails: payload.data,
-      };
+      case actions.SUBMIT_TO_BACKEND_SUCCESS:
+        return {
+            ...state,
+            submitLoading: false,
+            submitError: initState.submitError,
+            submitResult: payload.data,
+            merchant: { ...state.merchant, id: payload.data.ids[0] },
+            modalActive: !state.modalActive
+        };
 
-    case actions.ERROR_UPDATE:
-      return {
-        ...state,
-        errorReturn: payload.data,
-      };
+      case actions.SUBMIT_TO_BACKEND_ERROR:
+        return {
+            ...state,
+            submitLoading: false,
+            submitError: payload.error,
+            submitResult: initState.submitResult
+        };
 
-    case actions.SIGNUP_REQUEST:
-      return {
-        ...state,
-        loading: true,
-        error: false,
-      };
-    case actions.SIGNUP_SUCCESS:
-      return {
-        ...state,
-        loading: false,
-        isLoggedIn: true,
-        user: payload.user,
-      };
+      case actions.UPLOAD_TO_STORAGE:
+        return {
+            ...state,
+            uploadLoading: true,
+            uploadProgress: initState.uploadProgress,
+            uploadResult: initState.uploadResult,
+            uploadError: initState.uploadError
+        };
 
-    case actions.SIGNUP_ERROR:
-      return {
-        ...state,
-        loading: false,
-        isLoggedIn: false,
-        user: initState.user,
-        error: payload.error,
-      };
+      case actions.UPLOAD_TO_STORAGE_SUCCESS:
+        return {
+            ...state,
+            uploadLoading: false,
+            uploadProgress: initState.uploadProgress,
+            uploadResult: payload.data,
+            uploadError: initState.uploadError
+        };
 
-    default:
-      return state;
+      case actions.UPLOAD_TO_STORAGE_ERROR:
+        return {
+            ...state,
+            uploadLoading: false,
+            uploadProgress: initState.uploadProgress,
+            uploadResult: initState.uploadResult,
+            uploadError: payload.error
+        };
+
+      case actions.UPDATE_UPLOAD_PROGRESS:
+        return {
+            ...state,
+            uploadProgress: payload.data
+        };
+
+      case actions.ERROR_UPDATE:
+        return {
+            ...state,
+            errorReturn: payload.data,
+        };
+
+      case actions.STATE_UPDATE:
+        return {
+            ...state,
+            merchant: payload.data
+        };
+
+      case actions.MODAL_CONTROL:
+        return {
+          ...state,
+          modalActive: !state.modalActive,
+          merchant: payload.data == null ? initState.merchant : payload.data
+        }
+
+      default:
+        return state;
   }
 }

@@ -9,207 +9,129 @@ import uuid from "uuid/v4";
 import { backend, database as databaseHelper } from "../../marslab-library-react/utils/helper";
 import * as auth from "marslab-library-react/services/auth";
 import { merchantBackendServices } from "services/backend";
+import { merchantDataServices } from "services/database";
+import { merchantStorageServices } from "services/storage";
 
 export const getMerchant = (state) => state.Merchant;
 
-const {
-  database,
-  createBatch,
-  rsfFirestore,
-  createNewRef,
-  processFireStoreCollection,
-} = FirebaseHelper;
-
-/**
- * DOC: https://redux-saga-firebase.js.org/reference/dev/firestore
- */
-
-const COLLECTION_NAME = "user"; // change your collection
-const ORDER_BY = "createAt";
-const ORDER = "desc";
-
-function* loadFromFirestore() {
+function* readFromDatabase() {
   try {
-    const collections = database
-      .collection(COLLECTION_NAME)
-      .where("deleted_at", "==", null)
-      .orderBy(ORDER_BY, ORDER);
-    const snapshot = yield call(rsfFirestore.getCollection, collections);
-    let data = processFireStoreCollection(snapshot);
+    const merchants = yield call(merchantDataServices.readObjects);
 
-    let result = {};
-
-    Object.keys(data).forEach((recordId) => {
-      const parent = databaseHelper.processData({ data: data[recordId] });
-      const created = databaseHelper.processData({ data: data[recordId].created });
-      const updated = databaseHelper.processData({ data: data[recordId].updated });
-
-      const coverPic =
-        data[recordId].coverPic === "" ||
-        data[recordId].coverPic === null ||
-        data[recordId].coverPic.length === 0
-          ? []
-          : [data[recordId].coverPic];
-
-      const popUpImage =
-        data[recordId].popUpImage === undefined ||
-        data[recordId].popUpImage === "" ||
-        data[recordId].popUpImage === null ||
-        data[recordId].popUpImage.length === 0
-          ? []
-          : [data[recordId].popUpImage];
-
-      //let subImage = [];
-
-      // data[recordId].subImage.forEach((picUrl) => {
-      //   if (picUrl !== "" && picUrl !== null) {
-      //     subImage.push(picUrl);
-      //   }
-      // });
-
-      const processedData = { ...parent, created, updated, coverPic, popUpImage };
-
-      result = {
-        ...result,
-        [recordId]: processedData,
-      };
-    });
-
-    yield put(actions.loadFromFireStoreSuccess(result));
+    yield put(actions.readFromDatabaseSuccess(merchants));
   } catch (error) {
     console.log(error);
-    yield put(actions.loadFromFireStoreError(error));
+    yield put(actions.readFromDatabaseError(error));
   }
 }
 
-export function* signupRequest({ payload }) {
+function* readSpecifiedRecord({ payload }) {
   try {
-    const { email, password } = payload;
-    const user = yield call(merchantBackendServices.signup, { email, password });
-    console.log(user);
+    const { id } = payload;
+    const { merchants } = yield select(getMerchant);
+    if (!id) {
+      return yield put(actions.readSpecifiedRecordSuccess(null));
+    }
 
-    yield put(actions.signupSuccess({ user }));
+    let merchant = merchants.filter(merchant => {
+      return merchant.id === id
+    })[0];
+
+    if (!merchant) {
+      merchant = yield call(merchantDataServices.readObject, { id });
+      yield put(actions.readSpecifiedRecordSuccess(merchant));
+    }
+
+    yield put(actions.readSpecifiedRecordSuccess(merchant));
   } catch (error) {
     console.log(error);
-    yield put(actions.signupError({ error }));
+    yield put(actions.readSpecifiedRecordError(error));
   }
 }
 
-export function* signupSuccess({ payload }) {
-  yield localStorage.setItem("user", JSON.stringify(payload.user));
-}
-
-export function* signupError() {}
-
-function* storeIntoFirestore({ payload }) {
-  const { data, actionName, item, deleted_at } = payload;
-  //const { key, title, merchantDesc, description, createAt, endDate, startDate} = data;
-
-  const postsRef = database.collection("posts").doc();
-  const newKey = postsRef.id;
-
-  let resultFirst = {};
+function* submitIntoBackend({ payload }) {
+  const { data, actionName } = payload;
   let result = {};
-  let resultCreate = {};
-
-  resultFirst = backend.processDataV2({ data });
-  const created = backend.processDataV2({ data: data.created });
-  const updated = backend.processDataV2({ data: data.updated });
-
-  const coverPic = data.coverPic.length === 0 ? "" : data.coverPic[0];
-  const popUpImage = data.popUpImage.length === 0 ? "" : data.popUpImage[0];
-  const isPopUp = data.popUpImage[0] ? true : false;
-  // let subImage = [];
-
-  // for (let i = 0; i < 3; i++) {
-  //   if (data.subImage[i] === null || data.subImage[i] === undefined || data.subImage[i] === "") {
-  //     subImage.push("");
-  //   } else {
-  //     subImage.push(data.subImage[i]);
-  //   }
-  // }
-
-  result = {
-    ...resultFirst,
-    created,
-    updated,
-    coverPic,
-    popUpImage,
-    isPopUp,
-  };
-
-  resultCreate = {
-    ...resultFirst,
-    key: newKey,
-    created,
-    updated,
-    coverPic,
-    popUpImage,
-    isPopUp,
-  };
-
-  // throw null;
-
-  let submitData = {};
+  
+  delete data["created"];
+  delete data["deleted"];
+  delete data["updated"];
 
   try {
     switch (actionName) {
       case "delete":
-        submitData = yield call(rsfFirestore.updateDocument, `${COLLECTION_NAME}/${result.key}`, {
-          ...omit(result, ["key"]),
-          deleted_at: new Date().getTime(),
-        });
+        result = yield call(merchantBackendServices.remove, { data });
         break;
       case "restore":
-        submitData = yield call(rsfFirestore.updateDocument, `${COLLECTION_NAME}/${result.key}`, {
-          ...omit(result, ["key"]),
-          deleted_at: null,
-        });
+        result = yield call(merchantBackendServices.restore, { data });
         break;
       case "update":
-        submitData = yield call(rsfFirestore.updateDocument, `${COLLECTION_NAME}/${result.key}`, {
-          ...omit(result, ["key"]),
-          key: result.key,
-        });
+        result = yield call(merchantBackendServices.update, { data });
         break;
       default:
-        submitData = yield call(
-          rsfFirestore.setDocument,
-          `${COLLECTION_NAME}/${newKey}`,
-          resultCreate
-        );
-
-        yield put(actions.saveIntoFireStoreSuccess({ key: newKey }));
-
+        result = yield call(merchantBackendServices.create, { data });
         break;
     }
-
-    if (["update", "insert"].includes(actionName)) {
-      let merchantAuth = yield select(getMerchant);
-      const nextPage = merchantAuth.modalCurrentPage + 1;
-      yield put(
-        actions.toggleModal({ toggle: nextPage > 1, nextPage: nextPage > 1 ? 0 : nextPage })
-      );
-    }
-
-    yield put({
-      type:
-        data.deleted_at !== null
-          ? actions.LOAD_DELETED_USER_FROM_FIRESTORE
-          : actions.LOAD_FROM_FIRESTORE,
-    });
+    
+    yield put(actions.submitToBackendSuccess(result));
+    yield put({ type: actions.READ_FROM_DATABASE });
   } catch (error) {
-    yield put(actions.saveIntoFireStoreError(error));
+    console.log(error);
+    yield put(actions.submitToBackendError(error));
   }
+}
+
+
+function* uploadToStorage({ payload }) {
+  const { data } = payload;
+  const { merchantId, file } = data;
+  const channel = yield call(uploadProgressChannel, merchantId, file);
+
+  try {
+    while (true) {
+      const result = yield take(channel);
+      if (result.progress) {
+        yield put(actions.uploadFileProgress(result.progress));
+      } else if (result.url) {
+        yield put(actions.uploadFileSuccess({ url: result.url }));
+      }
+    }
+  } catch (error) {
+    console.log(error);
+    yield put(actions.uploadFileError(error));
+  } finally {
+    channel.close();
+  }
+}
+
+function uploadProgressChannel(merchantId, file) {
+  return eventChannel(emit => {
+    const progressListener = merchantStorageServices
+      .uploadFile({
+        id: merchantId,
+        file,
+        progressListener: snap => {
+          const progress = Math.round(
+            (snap.bytesTransferred / snap.totalBytes) * 100
+          );
+          emit({ progress });
+        }
+      })
+      .then(({ url }) => {
+        emit({ url });
+        emit(END);
+      });
+    return () => {
+      //progressListener();
+    };
+  });
 }
 
 export default function* rootSaga() {
   yield all([
-    takeEvery(actions.SIGNUP_REQUEST, signupRequest),
-    /*     takeEvery(actions.SIGNUP_SUCCESS, signupSuccess),
-    takeEvery(actions.SIGNUP_ERROR, signupError), */
-
-    takeEvery(actions.LOAD_FROM_FIRESTORE, loadFromFirestore),
-    takeEvery(actions.SAVE_INTO_FIRESTORE, storeIntoFirestore),
+    takeEvery(actions.READ_FROM_DATABASE, readFromDatabase),
+    takeEvery(actions.READ_SPECIFIED_RECORD, readSpecifiedRecord),
+    takeEvery(actions.SUBMIT_TO_BACKEND, submitIntoBackend),
+    takeEvery(actions.UPLOAD_TO_STORAGE, uploadToStorage)
   ]);
 }

@@ -1,8 +1,23 @@
 import React from "react";
-import { ActionButton } from "marslab-library-react/components/atoms";
-import { Form } from "marslab-library-react/components/organisms/Form";
-import { Popconfirm } from "marslab-library-react/components/atoms";
-import { Content, ActionWrapper, TableWrapper } from "./styles";
+import { Form, Modal, Popconfirm, AntdIcon } from "marslab-library-react/components/atoms";
+import { Form as ModalForm } from "marslab-library-react/components/organisms/Form";
+import {
+  Content,
+  ActionWrapper,
+  TableWrapper,
+  FieldsetStyle,
+  ErrorMsgFieldsetStyle,
+  ErrorMsgLabelStyle,
+  ErrorInputStyle,
+  ButtonStyle,
+  InputStyle,
+  RowHolderStyle,
+  LabelStyle,
+  SelectStyle,
+  UploadStyle
+} from "./styles";
+import moment from "moment";
+
 export default ({
   dataSource,
   rowSelection,
@@ -10,24 +25,62 @@ export default ({
   getColumnSearchProps,
   handleModal,
   handleRecord,
+  onSelectChange,
+  onRecordChange,
+  merchant,
+  userLists,
+  errorReturn,
+  modalActive,
+  submitLoading,
+  onUploadFile,
+  uploadLoading,
+  uploadProgress,
+  uploadResult,
+  uploadKey
 }) => {
+
   const columns = [
     {
-      title: "Title",
-      dataIndex: "title",
-      key: "title",
+      title: "ID",
+      dataIndex: "id",
+      key: "id",
       width: "120x",
       sorter: (a, b) => {
-        if (a.title < b.title) return -1;
-        if (a.title > b.title) return 1;
+        if (a.id < b.id) return -1;
+        if (a.id > b.id) return 1;
         return 0;
       },
-      //...getColumnSearchProps("title", "title"),
+      ...getColumnSearchProps("id", "id"),
     },
     {
-      title: "Pop Up",
-      dataIndex: "isPopUp",
-      key: "isPopUp",
+      title: "Business Name",
+      dataIndex: "businessName",
+      key: "businessName",
+      width: "120x",
+      sorter: (a, b) => {
+        if (a.businessName < b.businessName) return -1;
+        if (a.businessName > b.businessName) return 1;
+        return 0;
+      },
+      ...getColumnSearchProps("businessName", "businessName"),
+    },
+    ,
+    {
+      title: "Business Registration Number",
+      dataIndex: "businessRegistrationNumber",
+      key: "businessRegistrationNumber",
+      width: "120x",
+      sorter: (a, b) => {
+        if (a.businessRegistrationNumber < b.businessRegistrationNumber) return -1;
+        if (a.businessRegistrationNumber > b.businessRegistrationNumber) return 1;
+        return 0;
+      },
+      ...getColumnSearchProps("businessRegistrationNumber", "businessRegistrationNumber"),
+    },
+    {
+      title: "User ID",
+      dataIndex: "superadmin",
+      key: "superadmin",
       width: "120x",
       filters: [
         {
@@ -39,41 +92,13 @@ export default ({
           value: "No",
         },
       ],
-      onFilter: (value, record) => record.isPopUp.indexOf(value) === 0,
       sorter: (a, b) => {
-        if (a.isPopUp < b.isPopUp) return -1;
-        if (a.isPopUp > b.isPopUp) return 1;
+        if (a.superadmin < b.superadmin) return -1;
+        if (a.superadmin > b.superadmin) return 1;
         return 0;
       },
-
-      //...this.getColumnSearchProps("isPopUp", "pop up"),
+      ...getColumnSearchProps("businessRegistrationNumber", "businessRegistrationNumber"),
     },
-    {
-      title: "Key",
-      dataIndex: "key",
-      key: "key",
-      width: "120px",
-      sorter: (a, b) => {
-        if (a.key < b.key) return -1;
-        if (a.key > b.key) return 1;
-        return 0;
-      },
-      //...getColumnSearchProps("key", "key"),
-    },
-
-    {
-      title: "Create At",
-      dataIndex: "createAtString",
-      key: "createAtString",
-      width: "120x",
-      sorter: (a, b) => {
-        if (a.createAt < b.createAt) return -1;
-        if (a.createAt > b.createAt) return 1;
-        return 0;
-      },
-      //...getColumnSearchProps("createAtString", "create at"),
-    },
-
     {
       title: "Actions",
       key: "action",
@@ -83,26 +108,168 @@ export default ({
         return (
           <ActionWrapper>
             <a
-              onClick={handleModal.bind(this, {
-                toggle: true,
-                nextPage: 0,
-                data: row,
-              })}
+              onClick={handleModal.bind(this, row)}
               href="# "
             >
               <i className="ion-android-create" />
             </a>
+            {/* <Popconfirm
+                title="Are you sure to delete this merchant?"
+                okText="Yes"
+                cancelText="No"
+                placement="topRight"
+                onConfirm={handleRecord.bind(this, 'delete', row)}
+              >
+                <a className="deleteBtn" href="# ">
+                  <i className="ion-android-delete" />
+                </a>
+            </Popconfirm> */}
           </ActionWrapper>
         );
       },
     },
   ];
 
+  const formItem = [
+    [
+      {
+        type: "label",
+        label: "Business Name *",
+      },
+    ],
+    [
+      {
+        type: "text",
+        placeholder: "Enter Business Name",
+        data: merchant.businessName,
+        onChange: onRecordChange.bind(this, { key: "businessName" }),
+        InputStyle: errorReturn.businessName ? ErrorInputStyle : null,
+        iconRigth: errorReturn.businessName ? (
+          <AntdIcon.CloseCircleFilled style={{ color: "red" }} />
+        ) : null,
+      },
+    ],
+    [
+      {
+        type: "label",
+        label: errorReturn.businessName ? "*" + errorReturn.businessName : "",
+        FieldsetStyle: ErrorMsgFieldsetStyle,
+        LabelStyle: ErrorMsgLabelStyle,
+        hide: errorReturn.businessName ? false : true,
+      },
+    ],
+    [
+      {
+        type: "label",
+        label: "Business Registration Number *",
+      },
+    ],
+    [
+      {
+        type: "text",
+        placeholder: "Enter Business Registration Numebr",
+        data: merchant.businessRegistrationNumber,
+        onChange: onRecordChange.bind(this, { key: "businessRegistrationNumber" }),
+        InputStyle: errorReturn.businessRegistrationNumber ? ErrorInputStyle : null,
+        iconRigth: errorReturn.businessRegistrationNumber ? (
+          <AntdIcon.CloseCircleFilled style={{ color: "red" }} />
+        ) : null,
+      },
+    ],
+    [
+      {
+        type: "label",
+        label: errorReturn.businessRegistrationNumber ? "*" + errorReturn.businessRegistrationNumber : "",
+        FieldsetStyle: ErrorMsgFieldsetStyle,
+        LabelStyle: ErrorMsgLabelStyle,
+        hide: errorReturn.businessRegistrationNumber ? false : true,
+      },
+    ],
+    [
+      {
+        type: "label",
+        label: "User *",
+      },
+    ],
+    [
+      {
+        type: "select",
+        //label: "Shop ID *",
+        placeholder: "Select User",
+        data: merchant.superadmin,
+        onChange: (value)=> onSelectChange({ key: "superadmin" },[value]),
+        option: userLists,
+        optionTitle: "label",
+        optionValue: "data",
+        showSearch: true,
+        styles: SelectStyle,
+        optionFilterProp: "children",
+        filterOption: (input, option) => {
+          return option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+        },
+        InputStyle: errorReturn.superadmin ? ErrorInputStyle : null,
+        iconRigth: errorReturn.superadmin ? (
+          <AntdIcon.CloseCircleFilled style={{ color: "red" }} />
+        ) : null,
+      },
+    ],
+    [
+      {
+        type: "label",
+        label: errorReturn.superadmin ? "*" + errorReturn.superadmin : "",
+        FieldsetStyle: ErrorMsgFieldsetStyle,
+        LabelStyle: ErrorMsgLabelStyle,
+        hide: errorReturn.superadmin ? false : true,
+      },
+    ],
+    [
+      {
+        type: merchant.id && "upload",
+        uploadType: "pictureWall",
+        onUploadFile: onUploadFile.bind(this, { key: "logo", target: merchant.id }),
+        uploadLoading: uploadLoading,
+        uploadProgress: uploadProgress,
+        uploadResult: uploadResult,
+        onChange: onSelectChange.bind(this, { key: "logo" }),
+        defaultFileList: merchant.logo ? merchant.logo : [],
+        maxFiles: 1,
+        label: "Logo (800 x 600)",
+        disabled: uploadKey && uploadKey !== "logo",
+        UploadStyle: UploadStyle,
+      },
+    ],
+  ];
+
   return (
     <Content>
+      <Modal
+        title={merchant.id ? "Update Merchant" : "Add New Merchant"}
+        visible={modalActive}
+        onCancel={handleModal.bind(this, null)}
+        okText="Submit"
+        onOk={
+          merchant.id
+            ? handleRecord.bind(this, "update", merchant)
+            : handleRecord.bind(this, "create", merchant)
+        }
+        confirmLoading={submitLoading}
+        closable={true}
+        maskClosable={false}
+        keyboard={false}
+      >
+        <ModalForm
+          formItem={formItem}
+          InputStyle={InputStyle}
+          RowHolderStyle={RowHolderStyle}
+          FieldsetStyle={FieldsetStyle}
+          LabelStyle={LabelStyle}
+          SelectStyle={SelectStyle}
+          ButtonStyle={ButtonStyle}
+          InputStyle={InputStyle}
+        />
+      </Modal>
       <TableWrapper
-        rowKey="key"
-        rowSelection={rowSelection}
+        rowKey="id"
         columns={columns}
         bordered={true}
         dataSource={dataSource}

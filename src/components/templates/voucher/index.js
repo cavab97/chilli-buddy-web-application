@@ -33,7 +33,7 @@ export default ({
   errorReturn,
   modalActive,
   submitLoading,
-  onDateChange
+  onDateChange,
 }) => {
   const columns = [
     {
@@ -159,16 +159,16 @@ export default ({
     [
       {
         type: "label",
-        label: "Shop *",
+        label: "Merchant *",
       },
     ],
     [
       {
         type: "select",
         //label: "Shop ID *",
-        placeholder: "Select Shop",
-        data: voucher.shopIds,
-        onChange: (value)=> onSelectChange({ key: "shopIds" },[value]),
+        placeholder: "Select Merchant",
+        data: voucher.merchantIds,
+        onChange: (value)=> onSelectChange({ key: "merchantIds" },[value]),
         option: shopLists,
         optionTitle: "label",
         optionValue: "data",
@@ -178,8 +178,8 @@ export default ({
         filterOption: (input, option) => {
           return option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0;
         },
-        InputStyle: errorReturn.title ? ErrorInputStyle : null,
-        iconRigth: errorReturn.title ? (
+        InputStyle: errorReturn.merchantIds ? ErrorInputStyle : null,
+        iconRigth: errorReturn.merchantIds ? (
           <AntdIcon.CloseCircleFilled style={{ color: "red" }} />
         ) : null,
       },
@@ -187,10 +187,10 @@ export default ({
     [
       {
         type: "label",
-        label: errorReturn.shopID ? "*" + errorReturn.shopID : "",
+        label: errorReturn.merchantIds ? "*" + errorReturn.merchantIds : "",
         FieldsetStyle: ErrorMsgFieldsetStyle,
         LabelStyle: ErrorMsgLabelStyle,
-        hide: errorReturn.shopID ? false : true,
+        hide: errorReturn.merchantIds ? false : true,
       },
     ],
     [
@@ -238,6 +238,7 @@ export default ({
         DatePickerStyle: (errorReturn.startDate || errorReturn.endDate) && errorStyle.inputStyle,
       },
     ],
+    
     [
       {
         type: "label",
@@ -273,7 +274,6 @@ export default ({
         hide: errorReturn.endDate ? false : true,
       },
     ],
-    
     [
       {
         type: "text",
@@ -294,6 +294,33 @@ export default ({
         FieldsetStyle: ErrorMsgFieldsetStyle,
         LabelStyle: ErrorMsgLabelStyle,
         hide: errorReturn.amount ? false : true,
+      },
+    ],
+    [
+      {
+        type: "label",
+        label: "Quantity *",
+      },
+    ],
+    [
+      {
+        type: "text",
+        placeholder: "Enter Quantity",
+        data: voucher.quantity,
+        onChange: onRecordChange.bind(this, { key: "quantity" }),
+        InputStyle: errorReturn.quantity ? ErrorInputStyle : null,
+        iconRigth: errorReturn.quantity ? (
+          <AntdIcon.CloseCircleFilled style={{ color: "red" }} />
+        ) : null,
+      },
+    ],
+    [
+      {
+        type: "label",
+        label: errorReturn.quantity ? "*" + errorReturn.quantit : "",
+        FieldsetStyle: ErrorMsgFieldsetStyle,
+        LabelStyle: ErrorMsgLabelStyle,
+        hide: errorReturn.quantity ? false : true,
       },
     ],
     [

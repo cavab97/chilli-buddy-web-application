@@ -25,7 +25,6 @@ const ORDER_BY = 'uid';
 const ORDER = 'asc';
 
 function* readFromDatabase() {
-
   try {
     const users = yield call(userDataServices.readObjects);
 

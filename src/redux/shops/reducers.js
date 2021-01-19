@@ -146,7 +146,6 @@ export default function reducer(state = initState, { type, payload }) {
       };
 
     case actions.UPLOAD_TO_STORAGE:
-      console.log("uploadStorage");
       return {
         ...state,
         uploadKey: payload.data.key,

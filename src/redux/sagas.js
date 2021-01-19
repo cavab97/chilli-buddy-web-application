@@ -1,4 +1,3 @@
-import merchants from "./merchants/sagas";
 import shops from "./shops/sagas";
 import shopPost from "./shopPost/sagas";
 import shopTags from "./settings/shops/tags/sagas";
@@ -20,10 +19,9 @@ import covid19Shop from "./covid19Shop/sagas";
 import promotion from "./promotion/sagas";
 import merchantAuth from "./merchantAuth/sagas";
 import vouchers from "./vouchers/sagas";
-import merchant from "./merchant/sagas";
+import merchants from "./merchant/sagas";
 
 export default [
-  merchants(),
   shops(),
   shopPost(),
   shopTags(),
@@ -44,5 +42,5 @@ export default [
   promotion(),
   merchantAuth(),
   vouchers(),
-  merchant(),
+  merchants(),
 ];

@@ -6,26 +6,29 @@ export function create({ data }) {
   return new Promise((resolve, reject) => {
     const apiName = `http${objectName}Create`;
 
+    console.log('here')
+
     const {
-      id,
       title,
       description,
       amount,
       tnc,
       startDate,
       endDate,
-      shopIds,
+      merchantIds,
+      quantity
     } = data;
 
+    console.log(data);
     data = {
-      id,
       title,
       description,
       amount,
       tnc,
       startDate,
       endDate,
-      shopIds,
+      merchantIds,
+      quantity
     };
 
     data = backend.processData({ data });
@@ -53,7 +56,7 @@ export function update({ data }) {
       tnc,
       startDate,
       endDate,
-      shopIds,
+      merchantIds,
     } = data;
 
     data = {
@@ -64,7 +67,7 @@ export function update({ data }) {
       tnc,
       startDate,
       endDate,
-      shopIds,
+      merchantIds,
     };
 
     data = backend.processData({ data });

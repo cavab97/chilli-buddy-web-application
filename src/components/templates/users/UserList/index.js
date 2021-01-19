@@ -196,16 +196,18 @@ export default ({
             placeholder: "Enter User Password",
             data: loginDetails.password,
             onChange: onLoginRecordChange.bind(this, "password"),
-            InputStyle: errorReturn?.loginDetails?.password ? ErrorInputStyle : null,
-            iconRigth: errorReturn?.loginDetails?.password ? (
-              <AntdIcon.CloseCircleFilled style={{ color: "red" }} />
-            ) : null,
+            InputStyle: errorReturn ?  errorReturn.loginDetails?.password ? ErrorInputStyle : null : null,
+            iconRigth: errorReturn ? (
+                errorReturn.loginDetails?.password ?
+                    <AntdIcon.CloseCircleFilled style={{ color: "red" }} />
+                    : null
+            ) : null
           },
         ],
         [
           {
             type: "label",
-            label: errorReturn?.loginDetails ? "*" + errorReturn?.loginDetails.password : "",
+            label: errorReturn?.loginDetails ? "*" + errorReturn?.loginDetails?.password : "",
             FieldsetStyle: ErrorMsgFieldsetStyle,
             LabelStyle: ErrorMsgLabelStyle,
             hide: errorReturn?.loginDetails?.password ? false : true,

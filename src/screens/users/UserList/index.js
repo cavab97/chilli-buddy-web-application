@@ -11,9 +11,6 @@ import UserList from "../../../components/templates/users/UserList";
 import { 
   ActionBtn, 
   ButtonHolders,
-  ErrorInputStyle,
-  ErrorMsgFieldsetStyle,
-  ErrorMsgLabelStyle
 } from "./styles";
 import { validation } from "marslab-library-react/utils/validation";
 import clone from "clone";
@@ -126,6 +123,8 @@ class users extends Component {
       if(merchantUser.length === 0)
         phoneUsers.push(data);
     });
+
+    console.log(this.props);
 
     return (
       <ScreenHolder>

@@ -1,99 +1,110 @@
-const DOCUMENT = "MERCHANTCREATE_";
+const type = "merchants";
 
 const actions = {
-  LOAD_FROM_FIRESTORE: DOCUMENT + "LOAD_FROM_FIRESTORE",
-  LOAD_DELETED_USER_FROM_FIRESTORE: DOCUMENT + "LOAD_DELETED_USER_FROM_FIRESTORE",
-  LOAD_FROM_FIRESTORE_SUCCESS: DOCUMENT + "LOAD_FROM_FIRESTORE_SUCCESS",
-  LOAD_FROM_FIRESTORE_ERROR: DOCUMENT + "LOAD_FROM_FIRESTORE_ERROR",
+  READ_FROM_DATABASE: type + "READ_FROM_DATABASE",
+  READ_FROM_DATABASE_SUCCESS: type + "READ_FROM_DATABASE_SUCCESS",
+  READ_FROM_DATABASE_ERROR: type + "READ_FROM_DATABASE_ERROR",
 
-  SAVE_INTO_FIRESTORE: DOCUMENT + "SAVE_INTO_FIRESTORE",
-  SAVE_INTO_FIRESTORE_SUCCESS: DOCUMENT + "SAVE_INTO_FIRESTORE_SUCCESS",
-  SAVE_INTO_FIRESTORE_ERROR: DOCUMENT + "SAVE_INTO_FIRESTORE_ERROR",
-  RESET_FIRESTORE_DOCUMENTS: DOCUMENT + "RESET_FIRESTORE_DOCUMENTS",
-  RESET_FIRESTORE_DOCUMENTS_ERROR: DOCUMENT + "RESET_FIRESTORE_DOCUMENTS_ERROR",
+  READ_SPECIFIED_RECORD: type + "READ_SPECIFIED_RECORD",
+  READ_SPECIFIED_RECORD_SUCCESS: type + "READ_SPECIFIED_RECORD_SUCCESS",
+  READ_SPECIFIED_RECORD_ERROR: type + "READ_SPECIFIED_RECORD_ERROR",
 
-  TOGGLE_FIRESTORE_HANDLE_MODAL: DOCUMENT + "TOGGLE_FIRESTORE_HANDLE_MODAL",
-  FIRESTORE_UPDATE: DOCUMENT + "FIRESTORE_UPDATE",
-  UPDATE_LOGIN_DETAILS: DOCUMENT + "UPDATE_LOGIN_DETAILS",
+  SUBMIT_TO_BACKEND: type + "SUBMIT_TO_BACKEND",
+  SUBMIT_TO_BACKEND_ERROR: type + "SUBMIT_TO_BACKEND_ERROR",
+  SUBMIT_TO_BACKEND_SUCCESS: type + "SUBMIT_TO_BACKEND_SUCCESS",
 
-  SIGNUP_REQUEST: DOCUMENT + "SIGNUP_REQUEST",
-  SIGNUP_SUCCESS: DOCUMENT + "SIGNUP_SUCCESS",
-  SIGNUP_ERROR: DOCUMENT + "SIGNUP_ERROR",
+  UPLOAD_TO_STORAGE: type + "UPLOAD_TO_STORAGE",
+  UPLOAD_TO_STORAGE_SUCCESS: type + "UPLOAD_TO_STORAGE_SUCCESS",
+  UPLOAD_TO_STORAGE_ERROR: type + "UPLOAD_TO_STORAGE_ERROR",
+  UPDATE_UPLOAD_PROGRESS: type + "UPDATE_UPLOAD_PROGRESS",
 
-  ERROR_UPDATE: DOCUMENT + "ERROR_UPDATE",
+  ERROR_UPDATE: type + 'ERROR_UPDATE',
+  STATE_UPDATE: type + "STATE_UPDATE",
+  MODAL_CONTROL: type + 'MODAL_CONTROL',
 
-  loadFromFireStore: () => {
-    return { type: actions.LOAD_FROM_FIRESTORE };
+  readFromDatabase: () => {
+    return { 
+      type: actions.READ_FROM_DATABASE, 
+    };
   },
 
-  loadFromFireStoreSuccess: (data) => ({
-    type: actions.LOAD_FROM_FIRESTORE_SUCCESS,
+  readFromDatabaseSuccess: (data) => ({
+    type: actions.READ_FROM_DATABASE_SUCCESS,
     payload: { data },
   }),
 
-  loadFromFireStoreError: (error) => ({
-    type: actions.LOAD_FROM_FIRESTORE_ERROR,
+  readFromDatabaseError: (error) => ({
+    type: actions.READ_FROM_DATABASE_ERROR,
     payload: { error },
   }),
 
-  toggleModal: ({ toggle = false, nextPage = 0, data = null }) => ({
-    type: actions.TOGGLE_FIRESTORE_HANDLE_MODAL,
-    payload: { toggle, nextPage, data },
-  }),
+  readSpecifiedRecord: (id) => {
+    return { type: actions.READ_SPECIFIED_RECORD, payload: { id } };
+  },
 
-  update: (data) => ({
-    type: actions.FIRESTORE_UPDATE,
+  readSpecifiedRecordSuccess: (data) => ({
+    type: actions.READ_SPECIFIED_RECORD_SUCCESS,
     payload: { data },
   }),
 
-  updateCreateDetails: (data) => ({
-    type: actions.UPDATE_LOGIN_DETAILS,
+  readSpecifiedRecordError: (error) => ({
+    type: actions.READ_SPECIFIED_RECORD_ERROR,
+    payload: { error },
+  }),
+
+  pushNewRecord: (data) => ({
+    type: actions.PUSH_NEW_RECORD,
     payload: { data },
   }),
 
-  signup: ({ email, password }) => ({
-    type: actions.SIGNUP_REQUEST,
-    payload: { email, password },
+  submitToBackend: (data, actionName = "insert", merchantID) => ({
+    type: actions.SUBMIT_TO_BACKEND,
+    payload: { data, actionName, merchantID },
   }),
 
-  signupSuccess: ({ user }) => ({
-    type: actions.SIGNUP_SUCCESS,
-    payload: { user },
-  }),
-
-  signupError: ({ error }) => ({
-    type: actions.SIGNUP_ERROR,
+  submitToBackendError: (error) => ({
+    type: actions.SUBMIT_TO_BACKEND_ERROR,
     payload: { error },
   }),
 
-  saveIntoFireStore: (data, actionName = "insert") => ({
-    type: actions.SAVE_INTO_FIRESTORE,
-    payload: { data, actionName },
-  }),
-
-  saveIntoFireStoreSuccess: (data) => ({
-    type: actions.SAVE_INTO_FIRESTORE_SUCCESS,
+  submitToBackendSuccess: (data) => ({
+    type: actions.SUBMIT_TO_BACKEND_SUCCESS,
     payload: { data },
   }),
 
-  saveIntoFireStoreError: (error) => ({
-    type: actions.SAVE_INTO_FIRESTORE_ERROR,
+  uploadFile: ({ merchantId, file = null }) => ({
+    type: actions.UPLOAD_TO_STORAGE,
+    payload: { data: { merchantId, file } },
+  }),
+
+  uploadFileSuccess: (data) => ({
+    type: actions.UPLOAD_TO_STORAGE_SUCCESS,
+    payload: { data },
+  }),
+
+  uploadFileError: (error) => ({
+    type: actions.UPLOAD_TO_STORAGE_ERROR,
     payload: { error },
   }),
 
-  resetFireStoreDocuments: () => ({
-    type: actions.RESET_FIRESTORE_DOCUMENTS,
+  uploadFileProgress: (data) => ({
+    type: actions.UPDATE_UPLOAD_PROGRESS,
+    payload: { data },
   }),
 
-  resetFireStoreDocumentsError: (error) => ({
-    type: actions.RESET_FIRESTORE_DOCUMENTS_ERROR,
-    payload: { error },
+  modalControl: (data = null) => ({
+    type: actions.MODAL_CONTROL,
+    payload: { data }
   }),
 
-  errorUpdate: (data) => ({
+  errorUpdate: data => ({
     type: actions.ERROR_UPDATE,
     payload: { data },
   }),
+  
+  update: (data) => ({
+    type: actions.STATE_UPDATE,
+    payload: { data },
+  }),
 };
-
 export default actions;

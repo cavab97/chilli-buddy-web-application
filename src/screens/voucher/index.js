@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import actions from "../../redux/vouchers/actions";
-import actionsShop from "../../redux/shops/actions";
+import actionsMerchant from "../../redux/merchant/actions";
 import { notification } from "marslab-library-react/components/organisms";
 import { ScreenHolder } from "marslab-library-react/components/molecules";
 import ContentBox from "marslab-library-react/components/organisms/ContentBox";
@@ -14,7 +14,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { validation } from "marslab-library-react/utils/validation";
 import moment from "moment";
 
-const readFromDatabaseShops = actionsShop.readFromDatabase;
+const readFromDatabaseMerchants = actionsMerchant.readFromDatabase;
 
 class voucher extends Component {
   constructor(props) {
@@ -24,7 +24,7 @@ class voucher extends Component {
   componentDidMount() {
     //this.props.loadFromFireStore();
     this.props.readFromDatabase();
-    this.props.readFromDatabaseShops();
+    this.props.readFromDatabaseMerchants();
   }
   componentWillReceiveProps(nextProps) {
     if (
@@ -38,9 +38,8 @@ class voucher extends Component {
       nextProps.submitResult.message
     ) {
       this.props.readFromDatabase();
-      this.props.readFromDatabaseShops();
+      this.props.readFromDatabaseMerchants();
       notification("success", nextProps.submitResult.message);
-      this.props.readFromDatabase();
     }
   }
 
@@ -55,13 +54,16 @@ class voucher extends Component {
   handleRecord = async (actionName, record) => {
     let { errorReturn } = this.props;
 
+    console.log(record)
+
     const defaultValidate = {
       title: { required: true, type: "stringLength", max: 80 },
       description: { required: true, type: "stringLength", min: 1 },
       startTime: { type: "time" },
       endTime: { type: "time", before: moment() },
-      shopID: { required: true },
-      amount: { required: true, type: "number", decimalPlace: 2 }
+      merchantIds: { required: true },
+      amount: { required: true, type: "number", decimalPlace: 2 },
+      quantity: { required: true, type: "number" }
     };
     
     errorReturn = validation(record, defaultValidate);
@@ -177,16 +179,17 @@ class voucher extends Component {
       readLoading,
       readSpecifiedRecordLoading,
       errorReturn,
-      shop_shops,
+      merchants,
+      merchant,
       error,
     } = this.props;
 
     const optionUrl = this.urlChange(url);
 
-    const shopLists =
-      shop_shops &&
-      Object.values(shop_shops).map((shops) => {
-        return { data: shops.id, label: shops.title };
+    const merchantLists =
+    merchants &&
+      Object.values(merchants).map((merchant) => {
+        return { data: merchant.id, label: merchant.businessName };
       });
 
     const rowSelection = {
@@ -228,7 +231,7 @@ class voucher extends Component {
             onSelectChange={this.onSelectChange.bind(this)}
             onRecordChange={this.onRecordChange.bind(this)}
             voucher={voucher}
-            shopLists={shopLists}
+            shopLists={merchantLists}
             errorReturn={errorReturn}
             modalActive={modalActive}
             submitLoading={submitLoading}
@@ -241,21 +244,21 @@ class voucher extends Component {
 }
 
 const mapStatetoprops = (state) => {
-  const { shop, readSpecifiedRecordLoading, readSpecifiedRecordError } = state.Shops;
-  const shop_shops = state.Shops.shops;
+  const { merchant, readSpecifiedRecordLoading, readSpecifiedRecordError } = state.Merchants;
+  const merchants = state.Merchants.merchants;
   const { user } = state.MerchantAuth.user;
 
   return {
     ...state.Vouchers,
-    shop,
+    merchant,
     readSpecifiedRecordLoading,
     readSpecifiedRecordError,
-    shop_shops,
+    merchants,
     user,
   };
 };
 
 export default connect(mapStatetoprops, {
   ...actions,
-  readFromDatabaseShops,
+  readFromDatabaseMerchants
 })(voucher);

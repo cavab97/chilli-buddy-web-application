@@ -1,59 +1,29 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import actions from "../../redux/merchantAuth/actions";
-import actionsShop from "../../redux/shops/actions";
-import { QRCode } from "marslab-library-react/components/atoms";
-import {
-  Form as FormSet,
-  Button,
-  Input,
-  Textarea,
-  Modal,
-  Popconfirm,
-  AntdIcon,
-} from "marslab-library-react/components/atoms";
+import actions from "../../redux/merchant/actions";
+import actionsUser from "../../redux/users/actions";
 import { notification } from "marslab-library-react/components/organisms";
 import { ScreenHolder } from "marslab-library-react/components/molecules";
 import ContentBox from "marslab-library-react/components/organisms/ContentBox";
 import { SearchOutlined } from "@ant-design/icons";
 import { Form as ModalForm } from "marslab-library-react/components/organisms/Form";
 import Merchant from "../../components/templates/merchant";
-import {
-  ActionBtn,
-  Fieldset,
-  FieldsetStyle,
-  Form,
-  Label,
-  ButtonHolders,
-  ActionWrapper,
-  TableWrapper,
-  errorStyle,
-  ErrorMsgFieldsetStyle,
-  ErrorMsgLabelStyle,
-  ErrorInputStyle,
-  ButtonStyle,
-  InputStyle,
-  DatePickerStyle,
-  RowHolderStyle,
-  LabelStyle,
-  SelectStyle,
-  QRContainer,
-} from "./styles";
-import { StepModal } from "marslab-library-react/components/organisms/StepModal";
+import { ActionBtn, ButtonHolders } from "./styles";
 import clone from "clone";
 import "react-datepicker/dist/react-datepicker.css";
 import { validation } from "marslab-library-react/utils/validation";
+import moment from "moment";
 
-const readFromDatabaseShops = actionsShop.readFromDatabase;
+const readFromDatabaseUsers = actionsUser.readFromDatabase;
 
-class merchants extends Component {
+class merchant extends Component {
   constructor(props) {
     super(props);
   }
 
   componentDidMount() {
-    //this.props.loadFromFireStore();
-    this.props.readFromDatabaseShops();
+    this.props.readFromDatabase();
+    this.props.readFromDatabaseUsers();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -67,7 +37,10 @@ class merchants extends Component {
       this.props.submitResult.message !== nextProps.submitResult.message &&
       nextProps.submitResult.message
     ) {
+      this.props.readFromDatabase();
+      this.props.readFromDatabaseUsers();
       notification("success", nextProps.submitResult.message);
+      this.props.readFromDatabase();
     }
   }
 
@@ -79,60 +52,29 @@ class merchants extends Component {
     }
   };
 
-  handleRecord = async (actionName, merchant) => {
+  handleRecord = async (actionName, record) => {
     let { errorReturn } = this.props;
-    const { user } = this.props;
-    const createDetails = this.props.createDetails;
-    //console.log(advertisements)
-    if (merchant.key && actionName !== "delete") {
-      actionName = "update";
-    }
-
-    const recordCheck = {
-      email: createDetails.email,
-      passcode: createDetails.password,
-    };
 
     const defaultValidate = {
-      email: { required: true, type: "email" },
-      passcode: { required: true },
+      businessName: { required: true },
+      businessRegistrationNumber: { required: true },
+      superadmin: { required: true },
     };
-
-    errorReturn = validation(recordCheck, defaultValidate);
+    
+    errorReturn = validation(record, defaultValidate);
 
     this.props.errorUpdate(errorReturn);
-    console.log(errorReturn);
-
+    
     if (errorReturn.errorNo === 0) {
-      this.props.saveIntoFireStore(merchant, actionName);
+      this.props.submitToBackend(record, actionName);
     }
   };
 
-  handleSignup = (loginDetails) => {
-    let { errorReturn } = this.props;
-
-    const recordCheck = {
-      email: loginDetails.email,
-      password: loginDetails.password,
-    };
-
-    const defaultValidate = {
-      email: { required: true, type: "email" },
-      password: { required: true },
-    };
-
-    errorReturn = validation(recordCheck, defaultValidate);
-    this.props.errorUpdate(errorReturn);
-
-    if (errorReturn.errorNo === 0) {
-      this.props.signup(loginDetails);
-    }
-  };
-
-  handleModal = ({ toggle = false, nextPage = 0, data = null }) => {
+  handleModal = (merchant = null) => {
     const errorReturn = {};
+
     this.props.errorUpdate(errorReturn);
-    this.props.toggleModal({ toggle, nextPage, data });
+    this.props.modalControl(merchant);
   };
 
   onRecordChange = ({ key, nestedKey }, event) => {
@@ -142,18 +84,16 @@ class merchants extends Component {
     this.props.update(merchant);
   };
 
-  onLoginRecordChange = (key, event) => {
-    let { loginDetails } = clone(this.props);
-    if (key) loginDetails[key] = event.target.value;
-    this.props.updateLoginDetails(loginDetails);
-  };
-
-  onShopIDChange = ({ key, nestedKey }, event) => {
+  onSelectChange = ({ key, nestedKey }, value) => {
     let { merchant } = clone(this.props);
-    if (key && nestedKey) merchant[key][nestedKey] = event;
-    else if (key) merchant[key] = event;
+    if (key && nestedKey) merchant[key][nestedKey] = value;
+    else if (key) merchant[key] = value;
     this.props.update(merchant);
   };
+
+  onUploadFile({ key = null, target = null }, { file = null }) {
+    this.props.uploadFile({ key, merchantId: target, file });
+  }
 
   urlChange(url) {
     const oldUrl = url.substring(0, url.lastIndexOf("/"));
@@ -169,16 +109,10 @@ class merchants extends Component {
       const { merchants } = this.props;
       const { merchant } = clone(this.props);
       const merchantArray = [];
+
       Object.keys(merchants).map((merchant, index) => {
         return merchantArray.push({
           ...merchants[merchant],
-          isPopUp: merchants[merchant].isPopUp === true ? "Yes" : "No",
-          startDate: merchants[merchant].startDate ? merchants[merchant].startDate.toDate() : "",
-          endDate: merchants[merchant].endDate ? merchants[merchant].endDate.toDate() : "",
-          createAtString: merchants[merchant].createAt.format("YYYY-MM-DD"),
-          startDateString: merchants[merchant].startDate.format("YYYY-MM-DD"),
-          endDateString: merchants[merchant].endDate.format("YYYY-MM-DD"),
-          key: merchant,
         });
       });
 
@@ -228,216 +162,32 @@ class merchants extends Component {
   render() {
     const { url } = this.props.match;
     const {
-      modalActive,
       merchants,
-      modalCurrentPage,
+      merchant,
+      modalActive,
       submitLoading,
-      isLoading,
+      uploadLoading,
+      uploadProgress,
+      uploadResult,
+      readLoading,
+      uploadKey,
       readSpecifiedRecordLoading,
       errorReturn,
-      shop_shops,
-      user,
-      loginDetails,
-      createDetails,
-      loading,
+      users,
       error,
     } = this.props;
 
-    const { merchant } = clone(this.props);
     const optionUrl = this.urlChange(url);
-    const dataSource = [];
 
-    const shopLists =
-      shop_shops &&
-      Object.values(shop_shops).map((shops) => {
-        return { data: shops.id, label: shops.title };
+    const userLists =
+      users &&
+      Object.values(users).map((user) => {
+        return { data: user.id, label: user.email };
       });
 
     const rowSelection = {
       onChange: (selectedRowKeys, selectedRows) => {},
     };
-
-    const formItem = [
-      [
-        {
-          type: "label",
-          label: "Merchant Email *",
-        },
-      ],
-      [
-        {
-          type: "text",
-          placeholder: "Enter Merchant Email",
-          data: loginDetails.email,
-          onChange: this.onLoginRecordChange.bind(this, "email"),
-          InputStyle: errorReturn.loginDetails?.email ? ErrorInputStyle : null,
-          iconRigth: errorReturn.loginDetails?.email ? (
-            <AntdIcon.CloseCircleFilled style={{ color: "red" }} />
-          ) : null,
-        },
-      ],
-      [
-        {
-          type: "label",
-          label: errorReturn.loginDetails ? "*" + errorReturn.loginDetails.email : "",
-          FieldsetStyle: ErrorMsgFieldsetStyle,
-          LabelStyle: ErrorMsgLabelStyle,
-          hide: errorReturn.loginDetails ? false : true,
-        },
-      ],
-      [
-        {
-          type: "label",
-          label: "Merchant Passcode *",
-        },
-      ],
-      [
-        {
-          type: "text",
-          placeholder: "Enter Merchant Passcode",
-          data: loginDetails.password,
-          onChange: this.onLoginRecordChange.bind(this, "password"),
-          InputStyle: errorReturn.loginDetails?.password ? ErrorInputStyle : null,
-          iconRigth: errorReturn.loginDetails?.password ? (
-            <AntdIcon.CloseCircleFilled style={{ color: "red" }} />
-          ) : null,
-        },
-      ],
-      [
-        {
-          type: "label",
-          label: errorReturn.loginDetails ? "*" + errorReturn.loginDetails.password : "",
-          FieldsetStyle: ErrorMsgFieldsetStyle,
-          LabelStyle: ErrorMsgLabelStyle,
-          hide: errorReturn.loginDetails?.password ? false : true,
-        },
-      ],
-    ];
-
-    const formMerchant = [
-      [
-        {
-          type: "label",
-          label: "Shop *",
-        },
-      ],
-      [
-        {
-          type: "select",
-          //label: "Shop ID *",
-          placeholder: "Enter Shop ID",
-          data: user.shopIds[0],
-          onChange: this.onShopIDChange.bind(this, { key: "shopIds" }),
-          option: shopLists,
-          optionTitle: "label",
-          optionValue: "data",
-          showSearch: true,
-          styles: SelectStyle,
-          optionFilterProp: "children",
-          filterOption: (input, option) => {
-            return option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0;
-          },
-          InputStyle: errorReturn.title ? ErrorInputStyle : null,
-          iconRigth: errorReturn.title ? (
-            <AntdIcon.CloseCircleFilled style={{ color: "red" }} />
-          ) : null,
-        },
-      ],
-      [
-        {
-          type: "label",
-          label: errorReturn.shopIds ? "*" + errorReturn.shopIds : "",
-          FieldsetStyle: ErrorMsgFieldsetStyle,
-          LabelStyle: ErrorMsgLabelStyle,
-          hide: errorReturn.shopIds ? false : true,
-        },
-      ],
-      [
-        {
-          type: "label",
-          label: "Merchant Name",
-        },
-      ],
-      [
-        {
-          type: "text",
-          placeholder: "Enter Merchant Name",
-          data: user.displayName,
-          onChange: this.onRecordChange.bind(this, { key: "displayName" }),
-          InputStyle: errorReturn.displayName ? ErrorInputStyle : null,
-          iconRigth: errorReturn.displayName ? (
-            <AntdIcon.CloseCircleFilled style={{ color: "red" }} />
-          ) : null,
-        },
-      ],
-      [
-        {
-          type: "label",
-          label: errorReturn.displayName ? "*" + errorReturn.displayName : "",
-          FieldsetStyle: ErrorMsgFieldsetStyle,
-          LabelStyle: ErrorMsgLabelStyle,
-          hide: errorReturn.displayName ? false : true,
-        },
-      ],
-    ];
-    const stepDetails = [
-      {
-        title: "Merchant Login Details",
-        description: "",
-        okText: "Next",
-        onOk: user.uid ? "" : this.handleSignup.bind(this, loginDetails),
-        cancelText: "Close",
-        onCancel: this.handleModal.bind(this, {
-          toggle: true,
-          nextPage: 0,
-          data: null,
-        }),
-        confirmLoading: submitLoading || readSpecifiedRecordLoading, //false x loading, true is loading
-      },
-      {
-        title: "Merchant Information",
-        description: "",
-        okText: "Finish",
-        onOk: this.handleRecord.bind(this, "update", merchant),
-        cancelText: "Back",
-        onCancel: this.handleModal.bind(this, {
-          toggle: false,
-          nextPage: modalCurrentPage - 1,
-          data: null,
-        }),
-        confirmLoading: submitLoading,
-      },
-    ];
-
-    const modalContent = [
-      {
-        content: (
-          <ModalForm
-            formItem={formItem}
-            RowHolderStyle={RowHolderStyle}
-            FieldsetStyle={FieldsetStyle}
-            LabelStyle={LabelStyle}
-            SelectStyle={SelectStyle}
-            ButtonStyle={ButtonStyle}
-            DatePickerStyle={DatePickerStyle}
-            InputStyle={InputStyle}
-          />
-        ),
-      },
-      {
-        content: submitLoading === false && (
-          <ModalForm
-            formItem={formMerchant}
-            FieldsetStyle={FieldsetStyle}
-            LabelStyle={LabelStyle}
-            SelectStyle={SelectStyle}
-            ButtonStyle={ButtonStyle}
-            DatePickerStyle={DatePickerStyle}
-            InputStyle={InputStyle}
-          />
-        ),
-      },
-    ];
 
     return (
       <ScreenHolder>
@@ -445,43 +195,31 @@ class merchants extends Component {
           <ButtonHolders>
             <ActionBtn
               type="primary"
-              onClick={this.handleModal.bind(this, {
-                toggle: true,
-                nextPage: 0,
-                data: null,
-              })}
+              onClick={this.handleModal.bind(this, null)}
             >
-              Add new merchant
+              Add New Merchant
             </ActionBtn>
           </ButtonHolders>
 
-          <StepModal
-            currentPage={modalCurrentPage}
-            visible={modalActive}
-            title={user.uid ? "Update Merchant" : "Add New Merchant"}
-            stepDetails={stepDetails}
-            modalContent={modalContent}
-            closable={true}
-            maskClosable={false}
-            keyboard={false}
-            url={createDetails}
-          />
-          <QRContainer>
-            <QRCode
-              id={"QRCodeCanvas"}
-              value={`https://${createDetails.passcode}/${createDetails.email}`}
-              size={120}
-              includeMargin={true}
-              style={{ borderRadius: 10 }}
-            />
-          </QRContainer>
           <Merchant
-            dataSource={dataSource}
-            loading={loading}
+            dataSource={merchants}
+            loading={readLoading}
             rowSelection={rowSelection}
-            //getColumnSearchProps={this.getColumnSearchProps.bind(this)}
+            getColumnSearchProps={this.getColumnSearchProps.bind(this)}
             handleModal={this.handleModal.bind(this)}
             handleRecord={this.handleRecord.bind(this)}
+            onSelectChange={this.onSelectChange.bind(this)}
+            onRecordChange={this.onRecordChange.bind(this)}
+            onUploadFile={this.onUploadFile.bind(this)}
+            merchant={merchant}
+            userLists={userLists}
+            errorReturn={errorReturn}
+            modalActive={modalActive}
+            submitLoading={submitLoading}
+            uploadLoading={uploadLoading}
+            uploadProgress={uploadProgress}
+            uploadResult={uploadResult}
+            uploadKey={uploadKey}
           />
         </ContentBox>
       </ScreenHolder>
@@ -490,28 +228,16 @@ class merchants extends Component {
 }
 
 const mapStatetoprops = (state) => {
-  const { shop, readSpecifiedRecordLoading, readSpecifiedRecordError } = state.Shops;
-  const shop_shops = state.Shops.shops;
-  const { user } = state.Merchant.user;
-  const { createDetails, isLoading, loading, error } = state.Merchant;
 
-  console.log(state)
+  const users = state.Users.users
 
   return {
-    ...state.MerchantAuth,
-    shop,
-    readSpecifiedRecordLoading,
-    readSpecifiedRecordError,
-    shop_shops,
-    user,
-    createDetails,
-    isLoading,
-    loading,
-    error,
+    ...state.Merchants,
+    users
   };
 };
 
 export default connect(mapStatetoprops, {
   ...actions,
-  readFromDatabaseShops,
-})(merchants);
+  readFromDatabaseUsers,
+})(merchant);
