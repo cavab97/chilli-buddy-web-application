@@ -12,6 +12,7 @@ import { ActionBtn, ButtonHolders } from "./styles";
 import clone from "clone";
 import "react-datepicker/dist/react-datepicker.css";
 import { validation } from "marslab-library-react/utils/validation";
+import uuid from 'react-uuid';
 import moment from "moment";
 
 const readFromDatabaseUsers = actionsUser.readFromDatabase;
@@ -55,9 +56,11 @@ class merchant extends Component {
   handleRecord = async (actionName, record) => {
     let { errorReturn } = this.props;
 
+    if(record.superadmin === [null])
+      record.superadmin = null
+
     const defaultValidate = {
       businessName: { required: true },
-      businessRegistrationNumber: { required: true },
       superadmin: { required: true },
     };
     
@@ -91,8 +94,17 @@ class merchant extends Component {
     this.props.update(merchant);
   };
 
-  onUploadFile({ key = null, target = null }, { file = null }) {
+  /* onUploadFile({ key = null, target = null }, { file = null }) {
     this.props.uploadFile({ key, merchantId: target, file });
+  } */
+
+  onUploadFile({ target = null }, { file = null }) {
+    if(target === null){
+      target = uuid();
+      this.onSelectChange({key: "logo"}, target);
+    }
+    
+    this.props.uploadFile({promotionId: target, file });
   }
 
   urlChange(url) {
@@ -189,6 +201,8 @@ class merchant extends Component {
       onChange: (selectedRowKeys, selectedRows) => {},
     };
 
+    console.log(errorReturn)
+    
     return (
       <ScreenHolder>
         <ContentBox title="Merchant List" onClick={this.onClick.bind(this)}>

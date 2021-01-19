@@ -14,7 +14,8 @@ import {
   RowHolderStyle,
   LabelStyle,
   SelectStyle,
-  UploadStyle
+  UploadStyle,
+  errorStyle
 } from "./styles";
 import moment from "moment";
 
@@ -113,7 +114,7 @@ export default ({
             >
               <i className="ion-android-create" />
             </a>
-            {/* <Popconfirm
+            <Popconfirm
                 title="Are you sure to delete this merchant?"
                 okText="Yes"
                 cancelText="No"
@@ -123,7 +124,7 @@ export default ({
                 <a className="deleteBtn" href="# ">
                   <i className="ion-android-delete" />
                 </a>
-            </Popconfirm> */}
+            </Popconfirm> 
           </ActionWrapper>
         );
       },
@@ -161,7 +162,7 @@ export default ({
     [
       {
         type: "label",
-        label: "Business Registration Number *",
+        label: "Business Registration Number",
       },
     ],
     [
@@ -196,7 +197,7 @@ export default ({
         type: "select",
         //label: "Shop ID *",
         placeholder: "Select User",
-        data: merchant.superadmin,
+        data: merchant.superadmin ? merchant.superadmin : null,
         onChange: (value)=> onSelectChange({ key: "superadmin" },[value]),
         option: userLists,
         optionTitle: "label",
@@ -207,7 +208,7 @@ export default ({
         filterOption: (input, option) => {
           return option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0;
         },
-        InputStyle: errorReturn.superadmin ? ErrorInputStyle : null,
+        SelectStyle: errorReturn.superadmin ? ErrorInputStyle : null,
         iconRigth: errorReturn.superadmin ? (
           <AntdIcon.CloseCircleFilled style={{ color: "red" }} />
         ) : null,
@@ -231,12 +232,21 @@ export default ({
         uploadProgress: uploadProgress,
         uploadResult: uploadResult,
         onChange: onSelectChange.bind(this, { key: "logo" }),
-        defaultFileList: merchant.logo ? merchant.logo : [],
+        defaultFileList: merchant.logo,
         maxFiles: 1,
         label: "Logo (800 x 600)",
         disabled: uploadKey && uploadKey !== "logo",
         UploadStyle: UploadStyle,
       },
+    ],
+    [
+      {
+        type: "errorlabel",
+        label: errorReturn.logo ? "*" + errorReturn.logo : "",
+        FieldsetStyle: errorStyle.fieldsetStyle,
+        LabelStyle: errorStyle.labelStyle,
+        hide: errorReturn.logo ? false : true
+      }
     ],
   ];
 

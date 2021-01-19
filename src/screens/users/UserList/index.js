@@ -124,8 +124,6 @@ class users extends Component {
         phoneUsers.push(data);
     });
 
-    console.log(this.props);
-
     return (
       <ScreenHolder>
         {params.routeID && (
