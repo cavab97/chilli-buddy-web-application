@@ -38,13 +38,16 @@ class users extends Component {
     ) {
       notification("error", nextProps.submitError.message);
     }
+
     if (
       this.props.submitResult.message !== nextProps.submitResult.message &&
       nextProps.submitResult.message
     ) {
+      this.props.readFromDatabase();
       notification("success", nextProps.submitResult.message);
     }
   }
+
 
   onClick = () => {
     if (this.state.innerHide.display === "block") {
@@ -82,7 +85,7 @@ class users extends Component {
 
     const defaultValidate = {
       email: { required: true, type: "email" },
-      password: { required: true, type: "stringLength", max: 6 },
+      password: { required: true, type: "stringLength", min: 6 },
     };
 
     errorReturn = validation(recordCheck, defaultValidate);

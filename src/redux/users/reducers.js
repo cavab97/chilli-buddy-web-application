@@ -74,6 +74,7 @@ export default function reducer(
         readLoading: true,
         readError: false,
       };
+
     case actions.READ_FROM_DATABASE_SUCCESS:
       return {
         ...state,
@@ -81,12 +82,14 @@ export default function reducer(
         users: payload.data,
         readError: false
       };
+
     case actions.READ_FROM_DATABASE_ERROR:
       return {
         ...state,
         readLoading: false,
         readError: payload.error
       };
+
     case actions.LOAD_FROM_FIRESTORE:
       return {
         ...state,
@@ -94,6 +97,7 @@ export default function reducer(
         errorMessage: false,
         modalActive: false,
       };
+
     case actions.LOAD_DELETED_USER_FROM_FIRESTORE:
         return {
           ...state,
@@ -101,6 +105,7 @@ export default function reducer(
           errorMessage: false,
           modalActive: false,
         };
+
     case actions.LOAD_FROM_FIRESTORE_SUCCESS:
       return {
         ...state,
@@ -108,12 +113,14 @@ export default function reducer(
         users: payload.data,
         errorMessage: false,
       };
+
     case actions.LOAD_FROM_FIRESTORE_ERROR:
       return {
         ...state,
         isLoading: false,
         errorMessage: 'There is a loading problem',
       };
+
     case actions.TOGGLE_FIRESTORE_HANDLE_MODAL:
       return {
         ...state,
@@ -136,6 +143,7 @@ export default function reducer(
         submitResult: payload.user,
         isLoggedIn: false,
         user: payload.user,
+        signupModalActive: !state.signupModalActive,
       };
 
     case actions.SIGNUP_ERROR:

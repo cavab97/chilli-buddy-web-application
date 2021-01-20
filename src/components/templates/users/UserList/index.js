@@ -169,19 +169,17 @@ export default ({
             placeholder: "Enter User Email",
             data: loginDetails.email,
             onChange: onLoginRecordChange.bind(this, "email"),
-            InputStyle: errorReturn?.loginDetails?.email ? ErrorInputStyle : null,
-            iconRigth: errorReturn?.loginDetails?.email ? (
-              <AntdIcon.CloseCircleFilled style={{ color: "red" }} />
-            ) : null,
+            InputStyle: errorReturn ? errorReturn.email && ErrorInputStyle : null,
+            iconRigth: errorReturn ? errorReturn.email && <AntdIcon.CloseCircleFilled style={{ color: "red" }} /> : null
           },
         ],
         [
           {
             type: "label",
-            label: errorReturn?.loginDetails ? "*" + errorReturn.loginDetails.email : "",
+            label: errorReturn ? errorReturn.email && "*" + errorReturn.email : null,
             FieldsetStyle: ErrorMsgFieldsetStyle,
             LabelStyle: ErrorMsgLabelStyle,
-            hide: errorReturn?.loginDetails ? false : true,
+            hide: errorReturn ? errorReturn.email ? false : true : null,
           },
         ],
         [
@@ -196,21 +194,17 @@ export default ({
             placeholder: "Enter User Password",
             data: loginDetails.password,
             onChange: onLoginRecordChange.bind(this, "password"),
-            InputStyle: errorReturn ?  errorReturn.loginDetails?.password ? ErrorInputStyle : null : null,
-            iconRigth: errorReturn ? (
-                errorReturn.loginDetails?.password ?
-                    <AntdIcon.CloseCircleFilled style={{ color: "red" }} />
-                    : null
-            ) : null
+            InputStyle: errorReturn ? errorReturn.password && ErrorInputStyle : null,
+            iconRigth: errorReturn ? errorReturn.password && <AntdIcon.CloseCircleFilled style={{ color: "red" }} /> : null
           },
         ],
         [
           {
             type: "label",
-            label: errorReturn?.loginDetails ? "*" + errorReturn?.loginDetails?.password : "",
+            label: errorReturn ? errorReturn.password && "*" + errorReturn.password : null,
             FieldsetStyle: ErrorMsgFieldsetStyle,
             LabelStyle: ErrorMsgLabelStyle,
-            hide: errorReturn?.loginDetails?.password ? false : true,
+            hide: errorReturn ? errorReturn.password ? false : true : null,
           },
         ],
     ];
