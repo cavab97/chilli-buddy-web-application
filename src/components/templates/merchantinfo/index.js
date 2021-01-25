@@ -1,128 +1,96 @@
 import React from "react";
 import { QRCode, Modal, Button,Spin } from "marslab-library-react/components/atoms";
-import { Form } from "marslab-library-react/components/organisms/Form";
-import moment from "moment";
-
-
 import {
     Content,
-    ActionWrapper,
     LabelFieldsetStyle,
     DescFieldsetStyle,
+    Row,
     RowHolderStyle,
     Image,
     QRContainer,
+    MerchantInfoContent,
     ButtonStyle,
     ActionContainer,
     SubContainer,
-    InputStyle
+    InputStyle,
+    TextStyle,
+    RowStyle
 } from "./styles";
+
+function rowContent({label, content, style}) {
+    return (
+        <MerchantInfoContent>
+            <MerchantInfoContent style={RowStyle}>
+                <Row style={style}>
+                    <b>{label}</b>
+                </Row>
+            </MerchantInfoContent>
+            {label !== "QR Code" &&
+                <MerchantInfoContent>
+                    <Row style={style}>
+                        {content}
+                    </Row>
+                </MerchantInfoContent>
+            }
+        </MerchantInfoContent>
+    )
+}
 
 
 export default ({
     loading,
-    dataSource,
     singleDataSource,
     modalActive,
     handleModal,
     photoView,
     onQRCodeDownload,
-    readShopLoading
+    merchant,
 }) => {
     const ActionButton = ButtonStyle(Button);
+    const merchantName = merchant ? merchant.businessName : null
 
-    const formItem = [
-        [
-            {
-                type: "label",
-                label: "Merchant ID:",
-                FieldsetStyle: LabelFieldsetStyle
-            },
-            {
-                type: singleDataSource.photoURL && "image",
-                src: singleDataSource.photoURL,
-                width: 100,
-                height: 100,
-                // onClick: imageModal.bind(this)
-            }
-        ],
-        [
-            {
-                type: "label",
-                label: "Shop Name:",
-                FieldsetStyle: LabelFieldsetStyle
-            },
-            {
-                type: "label",
-                label: "sampleeeeeeeeeee",
-                FieldsetStyle: DescFieldsetStyle
-            }
-        ],
-
-        // [
-        //     {
-        //         type: "label",
-        //         label: "Address",
-        //         FieldsetStyle: LabelFieldsetStyle
-        //     },
-        //     {
-        //         type: "label",
-        //         label:  singleDataSource.address.line1 + ", " +
-        //                 singleDataSource.address.line2 + ", " +
-        //                 singleDataSource.address.postcode + ", " +
-        //                 singleDataSource.address.state + ", " +
-        //                 singleDataSource.address.country,
-        //         FieldsetStyle: DescFieldsetStyle
-        //     }
-        // ],
-
-        [
-            {
-                type: "label",
-                label: "Qr Code:",
-                FieldsetStyle: LabelFieldsetStyle
-            },
-            {
-                type: "Qr",
-                id: "QRCodeCanvas",
-                value: `#`,
-                size: 120,
-                FieldsetStyle: DescFieldsetStyle
-            }
-        ],
-    ];
-
-    if (readShopLoading) {
+    if (loading) {
         return <Spin size="large" style={{ width: "100%" }} />;
+    } else if (loading === false && merchantName === null) {
+        return (
+            <Content>
+                No Merchant Information Found
+            </Content>
+        )
     } else {
         return (
             <Content>
-                <Form
-                    formItem={formItem}
+                {rowContent({
+                    label: "Business Name", 
+                    style: TextStyle, 
+                    content: merchant ? merchant.businessName : ''
+                    })
+                }
 
-                    InputStyle={InputStyle}
-                />
-                {/* <QRContainer>
+                {rowContent({
+                    label: "QR Code", 
+                    style: TextStyle, 
+                    })
+                }
+
+                <QRContainer style={{ paddingLeft: 0 }}>
                     <QRCode
-                        id={"QRCodeCanvas"}
-                        value={`#`}
-                        size={120}
-                        includeMargin={true}
-                        style={{ borderRadius: 10 }}
+                        id="QRCodeCanvas"
+                        value={"chillbuddy:"+merchant.id+merchant.businessName}
+                        size={150}
+                        //includeMargin={true}
+                        style={{ marginLeft: 0, paddingLeft: 0,  }}
                     />
-                </QRContainer> */}
-                <SubContainer>
-                    <ActionContainer>
-                        <ActionButton
-                            id="qrDownloadButton"
-                            onClick={onQRCodeDownload.bind(this)}
-                        >
-                            Save QR Code
-                                </ActionButton>
-                    </ActionContainer>
-                </SubContainer>
+                </QRContainer>
 
-
+                <ActionButton
+                    id="qrDownloadButton"
+                    onClick={onQRCodeDownload.bind(this)} 
+                    style={{ marginLeft: 0, marginTop: 0 }}
+                >
+                    Save QR Code
+                </ActionButton>
+ 
                 <Modal
                     visible={photoView}
                     // onCancel={imageModal.bind(this)}

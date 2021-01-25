@@ -53,6 +53,7 @@ const ActionWrapper = styled.div`
 
 const TextAreaStyle = {
   flex: 0.975,
+  width: "200px"
 };
 
 const Content = styled.div`
@@ -156,5 +157,5 @@ export {
   RowHolderStyle,
   LabelStyle,
   SelectStyle,
-  errorStyle
+  errorStyle,
 };

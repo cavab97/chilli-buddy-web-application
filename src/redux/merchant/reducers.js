@@ -46,10 +46,10 @@ const initState = {
       country: null
     },
     logo: [],
-    shops: [null],
-    superadmin:[null],
-    admins: [null],
-    categories: [null],
+    shops: [],
+    superadmin:[],
+    admins: [],
+    categories: [],
     dateJoined: new Date,
     created: { at: null, by: null },
     deleted: { at: null, by: null },
@@ -81,6 +81,29 @@ export default function reducer(state = initState, { type, payload }) {
             readLoading: false,
             readError: payload.error
         };
+      
+        case actions.READ_FROM_DATABASE_USER_MERCHANT:
+          return {
+              ...state,
+              merchant: initState.merchant,
+              readLoading: true,
+              readError: false,
+          };
+  
+        case actions.READ_FROM_DATABASE_USER_MERCHANT_SUCCESS:
+          return {
+              ...state,
+              readLoading: false,
+              merchant: payload.data ? payload.data[0] : initState.merchant,
+              readError: false
+          };
+  
+        case actions.READ_FROM_DATABASE_USER_MERCHANT_ERROR:
+          return {
+              ...state,
+              readLoading: false,
+              readError: payload.error
+          };
 
       case actions.READ_SPECIFIED_RECORD:
         return {

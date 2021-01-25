@@ -63,3 +63,31 @@ export function readObject({ id }) {
       });
   });
 }
+
+export function readSpecifiedObjects({ id }) {
+  return new Promise((resolve, reject) => {
+    database
+      .readData({ ref: `${objectName}Packaging0/` })
+      .where("deleted.by", "==", null)
+      .where("merchantIds", "", [id])
+      .then(snapshot => {
+
+        const data = {
+          ...snapshot,
+          id: snapshot.id
+        };
+
+        const parent = database.processData({ data });
+        const created = database.processData({ data: data.created });
+        const deleted = database.processData({ data: data.deleted });
+        const updated = database.processData({ data: data.updated });
+
+        const processedData = { ...parent, created, deleted, updated };
+
+        resolve(processedData);
+      })
+      .catch(error => {
+        reject(error);
+      });
+  });
+}

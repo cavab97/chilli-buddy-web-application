@@ -308,14 +308,20 @@ const sidebarOptions = [
   {
     key: "merchantInfo",
     label: "sidebar.merchantInfo",
-    leftIcon: "ion-person-stalker",
-    role: "admin",
+    leftIcon: "ion-android-home",
+    role: "user",
   },
   {
     key: "voucher",
     label: "sidebar.voucherManagement",
     leftIcon: "ion-ios-list",
     role: "admin",
+  },
+  {
+    key: "merchantVoucher",
+    label: "sidebar.voucherManagement",
+    leftIcon: "ion-ios-list",
+    role: "user",
   },
 ];
 

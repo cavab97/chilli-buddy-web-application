@@ -4,15 +4,27 @@ import { palette } from 'styled-theme';
 const Content = styled.div`
   min-width: 200px;
 `;
+
+const Row = styled.div`
+  display: inline-block;  
+`;
+
+const MerchantInfoContent = styled.div`
+
+`;
+
 const ActionContainer = styled.div`
 
 `;
+
+
+
 const QRContainer = styled.div`
     display: flex;
     flex-direction: column;
-    align-items: flex-end;
+    align-items: flex-start;
     margin-bottom: 15px;
-    
+    padding: 0;
 `;
 
 const SubContainer = styled.div`
@@ -109,16 +121,28 @@ const RowHolderStyle = {
     justifyContent: "flex-end"
 }
 
+const TextStyle = {
+  fontSize: 16
+}
+
+const RowStyle = {
+  paddingTop: 15
+}
+
 export {
   Content,
   ActionWrapper,
   LabelFieldsetStyle,
   DescFieldsetStyle,
   RowHolderStyle,
+  MerchantInfoContent,
+  Row,
   Image,
   QRContainer,
   ButtonStyle,
   ActionContainer,
   SubContainer,
-  InputStyle
+  InputStyle,
+  TextStyle,
+  RowStyle
 };

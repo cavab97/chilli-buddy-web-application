@@ -37,6 +37,7 @@ const initState = {
         amount: null,
         title: null,
         description: null,
+        type: null,
         tnc: null,
         usedDate: { at: null, by: null },
         shopIds: [null],

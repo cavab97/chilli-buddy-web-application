@@ -49,6 +49,20 @@ function* readSpecifiedRecord({ payload }) {
   }
 }
 
+function* readSpecifiedUserMerchant({ payload }) {
+  try {
+    const uid = payload.data;
+
+    const merchant = yield call(merchantDataServices.readSubjectObject, { uid });
+
+    yield put(actions.readSpecifiedUserMerchantSuccess(merchant));
+  } catch (error) {
+    console.log(error);
+    yield put(actions.readSpecifiedUserMerchantError(error));
+  }
+}
+
+
 function* submitIntoBackend({ payload }) {
   const { data, actionName } = payload;
   let result = {};
@@ -132,6 +146,7 @@ export default function* rootSaga() {
     takeEvery(actions.READ_FROM_DATABASE, readFromDatabase),
     takeEvery(actions.READ_SPECIFIED_RECORD, readSpecifiedRecord),
     takeEvery(actions.SUBMIT_TO_BACKEND, submitIntoBackend),
-    takeEvery(actions.UPLOAD_TO_STORAGE, uploadToStorage)
+    takeEvery(actions.UPLOAD_TO_STORAGE, uploadToStorage),
+    takeEvery(actions.READ_FROM_DATABASE_USER_MERCHANT, readSpecifiedUserMerchant)
   ]);
 }

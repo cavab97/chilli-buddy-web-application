@@ -41,18 +41,17 @@ export default ({
 }) => {
 
   const columns = [
-    {
-      title: "ID",
-      dataIndex: "id",
-      key: "id",
+    /* {
+      title: "logo ",
+      dataIndex: "logo",
+      key: "logo",
       width: "120x",
       sorter: (a, b) => {
-        if (a.id < b.id) return -1;
+        if (a.logo < b.id) return -1;
         if (a.id > b.id) return 1;
         return 0;
-      },
-      ...getColumnSearchProps("id", "id"),
-    },
+      }, 
+    }, */
     {
       title: "Business Name",
       dataIndex: "businessName",
@@ -98,7 +97,7 @@ export default ({
         if (a.superadmin > b.superadmin) return 1;
         return 0;
       },
-      ...getColumnSearchProps("businessRegistrationNumber", "businessRegistrationNumber"),
+      ...getColumnSearchProps("superadmin", "superadmin"),
     },
     {
       title: "Actions",
@@ -114,7 +113,7 @@ export default ({
             >
               <i className="ion-android-create" />
             </a>
-            <Popconfirm
+            {/* <Popconfirm
                 title="Are you sure to delete this merchant?"
                 okText="Yes"
                 cancelText="No"
@@ -124,7 +123,7 @@ export default ({
                 <a className="deleteBtn" href="# ">
                   <i className="ion-android-delete" />
                 </a>
-            </Popconfirm> 
+            </Popconfirm>  */}
           </ActionWrapper>
         );
       },
@@ -168,7 +167,7 @@ export default ({
     [
       {
         type: "text",
-        placeholder: "Enter Business Registration Numebr",
+        placeholder: "Enter Business Registration Number",
         data: merchant.businessRegistrationNumber,
         onChange: onRecordChange.bind(this, { key: "businessRegistrationNumber" }),
         InputStyle: errorReturn.businessRegistrationNumber ? ErrorInputStyle : null,
@@ -209,9 +208,9 @@ export default ({
           return option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0;
         },
         SelectStyle: errorReturn.superadmin ? ErrorInputStyle : null,
-        iconRigth: errorReturn.superadmin ? (
+        /* iconRigth: errorReturn.superadmin ? (
           <AntdIcon.CloseCircleFilled style={{ color: "red" }} />
-        ) : null,
+        ) : null, */
       },
     ],
     [

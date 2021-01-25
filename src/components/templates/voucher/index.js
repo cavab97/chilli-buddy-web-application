@@ -15,7 +15,8 @@ import {
   RowHolderStyle,
   LabelStyle,
   SelectStyle,
-  errorStyle
+  errorStyle,
+  TextAreaStyle
 } from "./styles";
 import moment from "moment";
 
@@ -29,25 +30,26 @@ export default ({
   onSelectChange,
   onRecordChange,
   voucher,
-  shopLists,
+  merchantLists,
   errorReturn,
   modalActive,
   submitLoading,
+  typeList,
   onDateChange,
 }) => {
   const columns = [
-    {
-      title: "ID",
-      dataIndex: "id",
-      key: "id",
+/*     {
+      title: "Merchant",
+      dataIndex: "merchantName",
+      key: "merchantName",
       width: "120x",
       sorter: (a, b) => {
         if (a.id < b.id) return -1;
         if (a.id > b.id) return 1;
         return 0;
       },
-      ...getColumnSearchProps("id", "id"),
-    },
+      ...getColumnSearchProps("merchantName", "merchantName"),
+    }, */
     {
       title: "Title",
       dataIndex: "title",
@@ -169,7 +171,7 @@ export default ({
         placeholder: "Select Merchant",
         data: voucher.merchantIds,
         onChange: (value)=> onSelectChange({ key: "merchantIds" },[value]),
-        option: shopLists,
+        option: merchantLists,
         optionTitle: "label",
         optionValue: "data",
         showSearch: true,
@@ -223,6 +225,43 @@ export default ({
     [
       {
         type: "label",
+        label: "Type",
+      },
+    ],
+    [
+      {
+        type: "select",
+        //label: "Shop ID *",
+        placeholder: "Select Type",
+        data: voucher.type,
+        onChange: (value)=> onSelectChange({ key: "type" },value),
+        option: typeList,
+        optionTitle: "label",
+        optionValue: "data",
+        showSearch: true,
+        styles: SelectStyle,
+        optionFilterProp: "children",
+        filterOption: (input, option) => {
+          return option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+        },
+        InputStyle: errorReturn.merchantIds ? ErrorInputStyle : null,
+        iconRigth: errorReturn.merchantIds ? (
+          <AntdIcon.CloseCircleFilled style={{ color: "red" }} />
+        ) : null,
+      },
+    ],
+    [
+      {
+        type: "label",
+        label: errorReturn.type ? "*" + errorReturn.type : "",
+        FieldsetStyle: ErrorMsgFieldsetStyle,
+        LabelStyle: ErrorMsgLabelStyle,
+        hide: errorReturn.type ? false : true,
+      },
+    ],
+    [
+      {
+        type: "label",
         label: "Start Date",
       },
     ],
@@ -235,7 +274,7 @@ export default ({
         onChange: onDateChange.bind(this, {
           key: "startDate",
         }),
-        DatePickerStyle: (errorReturn.startDate || errorReturn.endDate) && errorStyle.inputStyle,
+        DatePickerStyle: (errorReturn.startDate) && errorStyle.inputStyle,
       },
     ],
     
@@ -263,6 +302,7 @@ export default ({
         onChange: onDateChange.bind(this, {
           key: "endDate",
         }),
+        DatePickerStyle: (errorReturn.endDate) && errorStyle.inputStyle,
       },
     ],
     [
@@ -277,7 +317,7 @@ export default ({
     [
       {
         type: "text",
-        label: "Voucher Amount *",
+        label: "Voucher Amount",
         placeholder: "Enter Voucher Amount",
         data: voucher.amount,
         onChange: onRecordChange.bind(this, { key: "amount" }),
@@ -298,13 +338,13 @@ export default ({
     ],
     [
       {
-        type: "label",
+        type: !voucher.id && "label",
         label: "Quantity *",
       },
     ],
     [
       {
-        type: "text",
+        type: !voucher.id && "text",
         placeholder: "Enter Quantity",
         data: voucher.quantity,
         onChange: onRecordChange.bind(this, { key: "quantity" }),
@@ -326,24 +366,15 @@ export default ({
     [
       {
         type: "textArea",
-        label: "Description *",
+        label: "Description",
         placeholder: "Enter Description",
         data: voucher.description,
         autoSize: { minRows: 3, maxRows: 3 },
         onChange: onRecordChange.bind(this, { key: "description" }),
-        InputStyle: errorReturn.description ? ErrorInputStyle : null,
+        InputStyle: errorReturn.description ? ErrorInputStyle : TextAreaStyle,
         iconRigth: errorReturn.description ? (
           <AntdIcon.CloseCircleFilled style={{ color: "red" }} />
         ) : null,
-      },
-    ],
-    [
-      {
-        type: "label",
-        label: errorReturn.description ? "*" + errorReturn.description : "",
-        FieldsetStyle: ErrorMsgFieldsetStyle,
-        LabelStyle: ErrorMsgLabelStyle,
-        hide: errorReturn.description ? false : true,
       },
     ],
     [

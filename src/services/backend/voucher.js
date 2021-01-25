@@ -6,8 +6,6 @@ export function create({ data }) {
   return new Promise((resolve, reject) => {
     const apiName = `http${objectName}Create`;
 
-    console.log('here')
-
     const {
       title,
       description,
@@ -16,10 +14,10 @@ export function create({ data }) {
       startDate,
       endDate,
       merchantIds,
-      quantity
+      quantity,
+      type
     } = data;
 
-    console.log(data);
     data = {
       title,
       description,
@@ -28,7 +26,8 @@ export function create({ data }) {
       startDate,
       endDate,
       merchantIds,
-      quantity
+      quantity,
+      type
     };
 
     data = backend.processData({ data });
@@ -57,6 +56,7 @@ export function update({ data }) {
       startDate,
       endDate,
       merchantIds,
+      type
     } = data;
 
     data = {
@@ -68,6 +68,7 @@ export function update({ data }) {
       startDate,
       endDate,
       merchantIds,
+      type
     };
 
     data = backend.processData({ data });
