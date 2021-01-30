@@ -1,13 +1,13 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import actions from "../../redux/vouchers/actions";
-import actionsMerchant from "../../redux/merchant/actions";
+import actions from "../../../redux/vouchers/actions";
+import actionsMerchant from "../../../redux/merchant/actions";
 import { notification } from "marslab-library-react/components/organisms";
 import { ScreenHolder } from "marslab-library-react/components/molecules";
 import ContentBox from "marslab-library-react/components/organisms/ContentBox";
 import { SearchOutlined } from "@ant-design/icons";
 import { Form as ModalForm } from "marslab-library-react/components/organisms/Form";
-import Voucher from "../../components/templates/voucher";
+import Voucher from "../../../components/templates/voucher";
 import { ActionBtn, ButtonHolders } from "./styles";
 import clone from "clone";
 import "react-datepicker/dist/react-datepicker.css";
@@ -26,6 +26,7 @@ class voucher extends Component {
     this.props.readFromDatabase();
     this.props.readFromDatabaseMerchants();
   }
+  
   componentWillReceiveProps(nextProps) {
     if (
       this.props.submitError.message !== nextProps.submitError.message &&
@@ -54,15 +55,13 @@ class voucher extends Component {
   handleRecord = async (actionName, record) => {
     let { errorReturn } = this.props;
 
-    console.log(record)
 
     const defaultValidate = {
       title: { required: true, type: "stringLength", max: 80 },
-      description: { required: true, type: "stringLength", min: 1 },
-      startTime: { type: "time" },
-      endTime: { type: "time", before: moment() },
+      startDate: record.endDate ? { type: "time", required: true } : { type: "time" },
+      endDate: record.startDate ? { type: "time", required: true }: { type: "time" },
       merchantIds: { required: true },
-      amount: { required: true, type: "number", decimalPlace: 2 },
+      amount: record.amount ? { type: "number", decimalPlace: 2 } : {},
       quantity: { required: true, type: "number" }
     };
     
@@ -197,17 +196,10 @@ class voucher extends Component {
     };
 
     vouchers.forEach((voucher) => {
-      if (voucher.startDate && voucher.endDate)
-        if (voucher.endDate <= moment().endOf('day'))
-          voucher["status"] = "Expired";
-        else if (voucher.startDate <= moment().endOf('day') 
-        && voucher.endDate >= moment().endOf('day'))
-          voucher["status"] = "Active";
-        else 
-          voucher["status"] = "Awaiting";
-      else 
-        voucher["status"] = "Active";
-    });
+      voucher["status"] = voucher.active ? 'Active' : 'Inactive'
+    }); 
+
+    console.log(voucher)
 
     return (
       <ScreenHolder>

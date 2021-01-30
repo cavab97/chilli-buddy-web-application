@@ -1,14 +1,11 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import merchantActions from "../../redux/covid19Shop/actions";
-import userActions from "../../redux/users/actions";
-import { QRCode } from "marslab-library-react/components/atoms";
-// import merchantActions from "../../redux/covid19Shop/actions";
-// import userActions from "../../../redux/users/actions";
+import userActions from "../../../redux/users/actions";
+import actions from "../../../redux/merchant/actions";
 import { notification } from "marslab-library-react/components/organisms";
 import { ScreenHolder } from "marslab-library-react/components/molecules";
 import ContentBox from "marslab-library-react/components/organisms/ContentBox";
-import Merchantinfo from "../../components/templates/merchantinfo";
+import Merchantinfo from "../../../components/templates/merchantInfo";
 
 import {
 
@@ -17,8 +14,6 @@ import {
 import clone from "clone";
 import "react-datepicker/dist/react-datepicker.css";
 import { validation } from "marslab-library-react/utils/validation";
-const readMerchant = merchantActions.readFromDatabase;
-
 
 class merchantsInfo extends Component {
   constructor(props) {
@@ -26,10 +21,10 @@ class merchantsInfo extends Component {
   }
 
   componentDidMount() {
-    this.props.readFromDatabase();
-    this.props.readMerchant();
-    
+    const uid = this.props.uid
+    this.props.readSpecifiedUserMerchant(uid); 
   }
+
   componentWillReceiveProps(nextProps) {
     // if (
     //   this.props.submitError.message !== nextProps.submitError.message &&
@@ -62,10 +57,6 @@ class merchantsInfo extends Component {
       actionName = "update";
     }
 
-
-
-    // errorReturn = validation(recordCheck, defaultValidate);
-
     this.props.errorUpdate(errorReturn);
     console.log(errorReturn);
 
@@ -87,9 +78,7 @@ class merchantsInfo extends Component {
     this.props.errorUpdate(errorReturn);
 
     if (errorReturn.errorNo === 0) {
-      console.log("hi");
       this.props.signup(loginDetails);
-      console.log("bye");
     }
   };
 
@@ -144,7 +133,7 @@ class merchantsInfo extends Component {
   onQRCodeDownload = async () => {
     // get gogogain image
     const gogogainLogo = document.createElement("img");
-    gogogainLogo.src = require("../../assets/images/chilibuddyLogo.png");
+    gogogainLogo.src = require("../../../assets/images/chilibuddyLogo.png");
     await this.getImage(gogogainLogo);
 
     // get source code
@@ -167,11 +156,15 @@ class merchantsInfo extends Component {
 
     // word
     context.fillStyle = "#FFFFFF";
-    context.font = (45*ratio) + "px Arial";
-    context.fillText("Power by Chilli Buddy", 145*ratio, 650*ratio);
+    context.font = (36*ratio) + "px Arial";
+    context.fillText("Powered by ChilliBuddy", 145*ratio, 650*ratio);
+
+    // white background
+    context.fillStyle = "#ffffff";
+    context.fillRect(30*ratio,30*ratio,540*ratio,540*ratio);
     
     // QRcode & gogogainLogo
-    context.drawImage(qrCodeElement,30*ratio,30*ratio,540*ratio,540*ratio);
+    context.drawImage(qrCodeElement,60*ratio,60*ratio,480*ratio,480*ratio);
     context.drawImage(gogogainLogo,30*ratio,590*ratio,100*ratio,100*ratio);
 
     const qrCodeUrl = canvas
@@ -196,7 +189,7 @@ class merchantsInfo extends Component {
       advertisements,
       modalCurrentPage,
       submitLoading,
-      isLoading,
+      readLoading,
       readSpecifiedRecordLoading,
       errorReturn,
       shop_shops,
@@ -204,35 +197,17 @@ class merchantsInfo extends Component {
       loginDetails,
       loading,
       error,
-      readShopLoading
+      readShopLoading,
+      merchants
     } = this.props;
-
-    const { advertisement } = clone(this.props);
-    const optionUrl = this.urlChange(url);
-    const dataSource = [];
-
-    const shopLists =
-      shop_shops &&
-      Object.values(shop_shops).map((shops) => {
-        return { data: shops.id, label: shops.title };
-      });
-
- 
-
-    const rowSelection = {
-      onChange: (selectedRowKeys, selectedRows) => {},
-    };
-
 
     return (
       <ScreenHolder>
         <ContentBox title="Merchant Info " onClick={this.onClick.bind(this)}>
           <Merchantinfo
-            dataSource={dataSource}
-            readShopLoading={readShopLoading}
             singleDataSource={user}
-            loading={this.props.isLoading}
-            rowSelection={rowSelection}
+            loading={merchants.readLoading}
+            merchant={merchants.merchant}
             handleModal={this.handleModal.bind(this)}
             handleRecord={this.handleRecord.bind(this)}
             onQRCodeDownload={this.onQRCodeDownload.bind(this)}
@@ -244,21 +219,35 @@ class merchantsInfo extends Component {
 }
 
 const mapStatetoprops = state => {
-    const { 
-      user,
-      users,
-      modalActive 
-    } = state.Users;
-  
-    const readUserLoading = state.Users.readLoading;
-  
-    const { covid19Shops } = state.Covid19Shop;
-    const readMerchantLoading = state.Covid19Shop.readLoading;
-    const readShopLoading = state.Covid19Shop.readSpecifiedRecordLoading;
-  
-    return { user, users, readUserLoading, modalActive, covid19Shops, readShopLoading };
-  }
-  
-  export default connect(
-    mapStatetoprops,{...userActions,readMerchant}
-  )(merchantsInfo);
+  const { 
+    user,
+    users,
+    modalActive 
+  } = state.Users;
+
+  const uid = state.Auth.user.idTokenResult.claims.user_id
+
+  const readUserLoading = state.Users.readLoading;
+
+  const { covid19Shops } = state.Covid19Shop;
+  const readMerchantLoading = state.Covid19Shop.readLoading;
+  const readShopLoading = state.Covid19Shop.readSpecifiedRecordLoading;
+
+  const merchants = state.Merchants;
+
+  return { 
+    user, 
+    users, 
+    readUserLoading, 
+    modalActive, 
+    covid19Shops, 
+    readShopLoading,
+    uid,
+    merchants
+  };
+}
+
+export default connect(
+  mapStatetoprops,
+  { ...actions }
+)(merchantsInfo);

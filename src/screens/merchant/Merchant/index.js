@@ -1,13 +1,13 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import actions from "../../redux/merchant/actions";
-import actionsUser from "../../redux/users/actions";
+import actions from "../../../redux/merchant/actions";
+import actionsUser from "../../../redux/users/actions";
 import { notification } from "marslab-library-react/components/organisms";
 import { ScreenHolder } from "marslab-library-react/components/molecules";
 import ContentBox from "marslab-library-react/components/organisms/ContentBox";
 import { SearchOutlined } from "@ant-design/icons";
 import { Form as ModalForm } from "marslab-library-react/components/organisms/Form";
-import Merchant from "../../components/templates/merchant";
+import Merchant from "../../../components/templates/merchant";
 import { ActionBtn, ButtonHolders } from "./styles";
 import clone from "clone";
 import "react-datepicker/dist/react-datepicker.css";
@@ -55,9 +55,6 @@ class merchant extends Component {
 
   handleRecord = async (actionName, record) => {
     let { errorReturn } = this.props;
-
-    if(record.superadmin === [null])
-      record.superadmin = null
 
     const defaultValidate = {
       businessName: { required: true },
@@ -200,8 +197,6 @@ class merchant extends Component {
     const rowSelection = {
       onChange: (selectedRowKeys, selectedRows) => {},
     };
-
-    console.log(errorReturn)
     
     return (
       <ScreenHolder>

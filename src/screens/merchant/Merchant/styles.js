@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { palette } from "styled-theme";
 import { Button } from "marslab-library-react/components/atoms";
-import Table from "../antTable.style";
+import Table from "../../antTable.style";
 
 const TableWrapper = styled(Table)`
   @media only screen and (min-width: 780px) and (max-width: 1680px) {

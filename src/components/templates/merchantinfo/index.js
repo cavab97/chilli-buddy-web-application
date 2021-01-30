@@ -76,7 +76,7 @@ export default ({
                 <QRContainer style={{ paddingLeft: 0 }}>
                     <QRCode
                         id="QRCodeCanvas"
-                        value={"chillbuddy:"+merchant.id+merchant.businessName}
+                        value={"chillibuddy:"+merchant.id}
                         size={150}
                         //includeMargin={true}
                         style={{ marginLeft: 0, paddingLeft: 0,  }}
