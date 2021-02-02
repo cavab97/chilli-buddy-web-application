@@ -1,56 +1,58 @@
-const DOCUMENT = 'SHOPS_SETTINGS_CATEGORIES';
+const DOCUMENT = "SHOPS_SETTINGS_CATEGORIES";
 
 const actions = {
-  LOAD_FROM_FIRESTORE: DOCUMENT + 'LOAD_FROM_FIRESTORE',
-  LOAD_DELETED_DISPOSABLE_ITEM_FROM_FIRESTORE: DOCUMENT + 'LOAD_DELETED_DISPOSABLE_ITEM_FROM_FIRESTORE',
-  LOAD_FROM_FIRESTORE_SUCCESS: DOCUMENT + 'LOAD_FROM_FIRESTORE_SUCCESS',
-  LOAD_FROM_FIRESTORE_ERROR: DOCUMENT + 'LOAD_FROM_FIRESTORE_ERROR',
+  LOAD_FROM_FIRESTORE: DOCUMENT + "LOAD_FROM_FIRESTORE",
+  LOAD_DELETED_DISPOSABLE_ITEM_FROM_FIRESTORE:
+    DOCUMENT + "LOAD_DELETED_DISPOSABLE_ITEM_FROM_FIRESTORE",
+  LOAD_FROM_FIRESTORE_SUCCESS: DOCUMENT + "LOAD_FROM_FIRESTORE_SUCCESS",
+  LOAD_FROM_FIRESTORE_ERROR: DOCUMENT + "LOAD_FROM_FIRESTORE_ERROR",
 
-  LOAD_SPECIFY_FROM_FIRESTORE: DOCUMENT + 'LOAD_SPECIFY_FROM_FIRESTORE',
-  LOAD_SPECIFY_FROM_FIRESTORE_SUCCESS: DOCUMENT + 'LOAD_SPECIFY_FROM_FIRESTORE_SUCCESS',
-  LOAD_SPECIFY_FROM_FIRESTORE_ERROR: DOCUMENT + 'LOAD_SPECIFY_FROM_FIRESTORE_ERROR',
+  LOAD_SPECIFY_FROM_FIRESTORE: DOCUMENT + "LOAD_SPECIFY_FROM_FIRESTORE",
+  LOAD_SPECIFY_FROM_FIRESTORE_SUCCESS: DOCUMENT + "LOAD_SPECIFY_FROM_FIRESTORE_SUCCESS",
+  LOAD_SPECIFY_FROM_FIRESTORE_ERROR: DOCUMENT + "LOAD_SPECIFY_FROM_FIRESTORE_ERROR",
 
-  SAVE_INTO_FIRESTORE: DOCUMENT + 'SAVE_INTO_FIRESTORE',
-  
-  SAVE_INTO_FIRESTORE_ERROR: DOCUMENT + 'SAVE_INTO_FIRESTORE_ERROR',
-  RESET_FIRESTORE_DOCUMENTS: DOCUMENT + 'RESET_FIRESTORE_DOCUMENTS',
-  RESET_FIRESTORE_DOCUMENTS_ERROR: DOCUMENT + 'RESET_FIRESTORE_DOCUMENTS_ERROR',
+  SAVE_INTO_FIRESTORE: DOCUMENT + "SAVE_INTO_FIRESTORE",
 
-  TOGGLE_FIRESTORE_HANDLE_MODAL: DOCUMENT + 'TOGGLE_FIRESTORE_HANDLE_MODAL',
-  FIRESTORE_UPDATE: DOCUMENT + 'FIRESTORE_UPDATE',
+  SAVE_INTO_FIRESTORE_ERROR: DOCUMENT + "SAVE_INTO_FIRESTORE_ERROR",
+  RESET_FIRESTORE_DOCUMENTS: DOCUMENT + "RESET_FIRESTORE_DOCUMENTS",
+  RESET_FIRESTORE_DOCUMENTS_ERROR: DOCUMENT + "RESET_FIRESTORE_DOCUMENTS_ERROR",
+
+  TOGGLE_FIRESTORE_HANDLE_MODAL: DOCUMENT + "TOGGLE_FIRESTORE_HANDLE_MODAL",
+  FIRESTORE_UPDATE: DOCUMENT + "FIRESTORE_UPDATE",
+  DELETE_CATEGORIES_ERROR: DOCUMENT + "DELETE_CATEGORIES_ERROR",
 
   loadFromFireStore: () => {
     return { type: actions.LOAD_FROM_FIRESTORE };
   },
 
-  loadFromFireStoreSuccess: data => ({
+  loadFromFireStoreSuccess: (data) => ({
     type: actions.LOAD_FROM_FIRESTORE_SUCCESS,
-    payload: { data},
+    payload: { data },
   }),
 
-  loadFromFireStoreError: error => ({
+  loadFromFireStoreError: (error) => ({
     type: actions.LOAD_FROM_FIRESTORE_ERROR,
     payload: { error },
   }),
 
   loadSpecifyFromFireStore: (id) => ({
     type: actions.LOAD_SPECIFY_FROM_FIRESTORE,
-    payload: { id }
+    payload: { id },
   }),
 
-  loadSpecifyFromFireStoreSuccess: data => ({
+  loadSpecifyFromFireStoreSuccess: (data) => ({
     type: actions.LOAD_SPECIFY_FROM_FIRESTORE_SUCCESS,
     payload: { data },
   }),
 
-  loadSpecifyFromFireStoreError: error => ({
+  loadSpecifyFromFireStoreError: (error) => ({
     type: actions.LOAD_SPECIFY_FROM_FIRESTORE_ERROR,
     payload: { error },
   }),
 
-  saveIntoFireStore: (data, actionName = 'insert') => ({
+  saveIntoFireStore: (data, actionName = "insert") => ({
     type: actions.SAVE_INTO_FIRESTORE,
-    payload: { data, actionName},
+    payload: { data, actionName },
   }),
 
   toggleModal: (data = null) => ({
@@ -58,12 +60,12 @@ const actions = {
     payload: { data },
   }),
 
-  update: data => ({
+  update: (data) => ({
     type: actions.FIRESTORE_UPDATE,
     payload: { data },
   }),
 
-  saveIntoFireStoreError: error => ({
+  saveIntoFireStoreError: (error) => ({
     type: actions.SAVE_INTO_FIRESTORE_ERROR,
     payload: { error },
   }),
@@ -72,9 +74,13 @@ const actions = {
     type: actions.RESET_FIRESTORE_DOCUMENTS,
   }),
 
-  resetFireStoreDocumentsError: error => ({
+  resetFireStoreDocumentsError: (error) => ({
     type: actions.RESET_FIRESTORE_DOCUMENTS_ERROR,
     payload: { error },
+  }),
+
+  deleteCategoriesError: () => ({
+    type: actions.DELETE_CATEGORIES_ERROR,
   }),
 };
 export default actions;

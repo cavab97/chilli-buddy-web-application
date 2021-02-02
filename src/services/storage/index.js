@@ -9,6 +9,7 @@ import * as transactionStorageServices from "./transaction"
 import * as settingInfoStorageServices from "./info"
 import * as promotionStorageServices from "./promotion"
 import * as advertisementStorageServices from "./advertisement"
+import * as merchantStorageServices from "./merchant"
 
 export { 
     shopStorageServices, 
@@ -21,5 +22,6 @@ export {
     transactionStorageServices,
     settingInfoStorageServices,
     promotionStorageServices,
-    advertisementStorageServices
+    advertisementStorageServices,
+    merchantStorageServices
 }

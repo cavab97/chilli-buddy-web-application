@@ -21,13 +21,13 @@ export default ({
 }) => {
   const categoriesArray = [];
 
-  //Shop category in shop list
-  //   Object.keys(shopCategories).map((category, index) => {
-  //     console.log(shopCategories[category].label);
-  //     return categoriesArray.push({
-  //       ...shopCategories[category].label,
-  //     });
+  // //Shop category in shop list
+  // Object.keys(shopCategories).map((category, index) => {
+  //   console.log(shopCategories[category].label);
+  //   return categoriesArray.push({
+  //     ...shopCategories[category].label,
   //   });
+  // });
 
   const columns = [
     {
@@ -54,23 +54,85 @@ export default ({
       },
       ...getColumnSearchProps("displayTitle"),
     },
-    // {  //display shop category in shop list
-    //   title: "Category",
-    //   dataIndex: "categories",
-    //   key: "categories",
-    //   width: "120x",
-    //   //   render: (data) => {
-    //   //     //console.log(data);
-    //   //     if (data === ["1576652646288"]) return "yes";
-    //   //     //console.log(data);
-    //   //   },
-    //   sorter: (a, b) => {
-    //     if (a.categories < b.categories) return -1;
-    //     if (a.categories > b.categories) return 1;
-    //     return 0;
-    //   },
-    //   ...getColumnSearchProps("categories"),
-    // },
+    {
+      //display shop category in shop list
+      title: "Category",
+      dataIndex: "categories",
+      key: "categories",
+      width: "120x",
+      filters: [
+        {
+          text: "中餐 | Chinese",
+          value: "中餐 | Chinese",
+        },
+        {
+          text: "西餐 | Western",
+          value: "西餐 | Western",
+        },
+        {
+          text: "Cafe",
+          value: "Cafe",
+        },
+        {
+          text: "中國菜 | China",
+          value: "中國菜 | China",
+        },
+        {
+          text: "日本餐 | Japanese",
+          value: "日本餐 | Japanese",
+        },
+        {
+          text: "韓國 | Korean",
+          value: "韓國 | Korean",
+        },
+        {
+          text: "泰國 | Thai",
+          value: "泰國 | Thai",
+        },
+        {
+          text: "台灣 | Taiwan",
+          value: "台灣 | Taiwan",
+        },
+        {
+          text: "小酒館 | Bistro",
+          value: "小酒館 | Bistro",
+        },
+        {
+          text: "火鍋 | Steamboat",
+          value: "火鍋 | Steamboat",
+        },
+        {
+          text: "本地美食 | Local cuisine",
+          value: "本地美食 | Local cuisine",
+        },
+        {
+          text: "飲料店 | Beverage",
+          value: "飲料店 | Beverage",
+        },
+        {
+          text: "餐車 | Food Truck",
+          value: "餐車 | Food Truck",
+        },
+        {
+          text: "碌碌 | Lok Lok",
+          value: "碌碌 | Lok Lok",
+        },
+        {
+          text: "特色美食 | Speciality cuisine",
+          value: "特色美食 | Speciality cuisine",
+        },
+        {
+          text: "Other category",
+          value: "Other category",
+        },
+      ],
+      onFilter: (value, record) => record.categories.indexOf(value) === 0,
+      sorter: (a, b) => {
+        if (a.categories < b.categories) return -1;
+        if (a.categories > b.categories) return 1;
+        return 0;
+      },
+    },
     // {
     //     title: "Promotion Status",
     //     dataIndex: "isPromote",
