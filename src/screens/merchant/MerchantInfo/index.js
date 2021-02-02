@@ -5,7 +5,7 @@ import actions from "../../../redux/merchant/actions";
 import { notification } from "marslab-library-react/components/organisms";
 import { ScreenHolder } from "marslab-library-react/components/molecules";
 import ContentBox from "marslab-library-react/components/organisms/ContentBox";
-import Merchantinfo from "../../../components/templates/merchantInfo";
+import Merchantinfo from "../../../components/templates/merchantInfo/index";
 
 import {
 
