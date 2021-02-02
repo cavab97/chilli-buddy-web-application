@@ -125,36 +125,7 @@ export default ({
         return 0;
       },
       ...getColumnSearchProps("used", "used"),
-    }, 
-    {
-      title: "Actions",
-      key: "action",
-      width: "60px",
-      className: "noWrapCell",
-      render: (text, row) => {
-        return (
-          <ActionWrapper>
-            <a
-              onClick={handleModal.bind(this, row)}
-              href="# "
-            >
-              <i className="ion-android-create" />
-            </a>
-            <Popconfirm
-                title="Are you sure to delete this voucher?"
-                okText="Yes"
-                cancelText="No"
-                placement="topRight"
-                onConfirm={handleRecord.bind(this, 'delete', row)}
-              >
-                <a className="deleteBtn" href="# ">
-                  <i className="ion-android-delete" />
-                </a>
-            </Popconfirm>
-          </ActionWrapper>
-        );
-      },
-    },
+    }
   ];
 
   const formItem = [

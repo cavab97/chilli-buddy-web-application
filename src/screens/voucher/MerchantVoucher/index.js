@@ -7,14 +7,12 @@ import { ScreenHolder } from "marslab-library-react/components/molecules";
 import ContentBox from "marslab-library-react/components/organisms/ContentBox";
 import { SearchOutlined } from "@ant-design/icons";
 import { Form as ModalForm } from "marslab-library-react/components/organisms/Form";
-import Voucher from "../../../components/templates/voucher";
+import Voucher from "../../../components/templates/voucherInfo";
 import { ActionBtn, ButtonHolders } from "./styles";
 import clone from "clone";
 import "react-datepicker/dist/react-datepicker.css";
 import { validation } from "marslab-library-react/utils/validation";
 import moment from "moment";
-
-const readFromDatabaseMerchants = actionsMerchant.readFromDatabase;
 
 class voucher extends Component {
   constructor(props) {
@@ -24,7 +22,7 @@ class voucher extends Component {
   componentDidMount() {
     //this.props.loadFromFireStore();
     this.props.readFromDatabase();
-    this.props.readFromDatabaseMerchants();
+
   }
   
   componentWillReceiveProps(nextProps) {
@@ -185,6 +183,12 @@ class voucher extends Component {
 
     const optionUrl = this.urlChange(url);
 
+    const uid = this.props.uid
+
+    let count = 0;
+
+    let voucherList = [];
+
     const merchantLists =
     merchants &&
       Object.values(merchants).map((merchant) => {
@@ -197,24 +201,20 @@ class voucher extends Component {
 
     vouchers.forEach((voucher) => {
       voucher["status"] = voucher.active ? 'Active' : 'Inactive'
+      voucher["used"] = voucher.claimed ? 'Used' : "Not Used"
+      if (voucher.merchant && voucher.merchant[0] && voucher.merchant[0].superadmin && voucher.merchant[0].superadmin[0]) {
+        if (voucher.merchant[0].superadmin[0] === uid) {
+          voucherList.push(voucher)
+        }
+      }
     }); 
-
-    console.log(voucher)
 
     return (
       <ScreenHolder>
         <ContentBox title="Voucher List" onClick={this.onClick.bind(this)}>
-          <ButtonHolders>
-            <ActionBtn
-              type="primary"
-              onClick={this.handleModal.bind(this, null)}
-            >
-              Add New Voucher
-            </ActionBtn>
-          </ButtonHolders>
 
           <Voucher
-            dataSource={vouchers}
+            dataSource={voucherList}
             loading={readLoading}
             rowSelection={rowSelection}
             getColumnSearchProps={this.getColumnSearchProps.bind(this)}
@@ -239,6 +239,7 @@ const mapStatetoprops = (state) => {
   const { merchant, readSpecifiedRecordLoading, readSpecifiedRecordError } = state.Merchants;
   const merchants = state.Merchants.merchants;
   const { user } = state.MerchantAuth.user;
+  const uid = state.Auth.user.idTokenResult.claims.user_id
 
   return {
     ...state.Vouchers,
@@ -247,10 +248,10 @@ const mapStatetoprops = (state) => {
     readSpecifiedRecordError,
     merchants,
     user,
+    uid
   };
 };
 
 export default connect(mapStatetoprops, {
   ...actions,
-  readFromDatabaseMerchants
 })(voucher);

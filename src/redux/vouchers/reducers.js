@@ -200,6 +200,29 @@ export default function reducer(state = initState, { type, payload }) {
                 readError: payload.error
             };
 
+        case actions.READ_SPECIFIED_MERCHANT_RECORD:
+            return {
+                ...state,
+                vouchers: [],
+                readLoading: true,
+                readError: false
+            };
+
+        case actions.READ_SPECIFIED_MERCHANT_RECORD_SUCCESS:
+            return {
+                ...state,
+                readLoading: false,
+                vouchers: payload.data,
+                readError: false
+            };
+
+        case actions.READ_SPECIFIED_MERCHANT_RECORD_ERROR:
+            return {
+                ...state,
+                readLoading: false,
+                readError: payload.error
+            };
+
         case actions.SUBMIT_TO_BACKEND:
             return {
                 ...state,

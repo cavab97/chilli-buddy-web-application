@@ -9,6 +9,10 @@ const actions = {
   READ_SPECIFIED_RECORD_SUCCESS: type + "READ_SPECIFIED_RECORD_SUCCESS",
   READ_SPECIFIED_RECORD_ERROR: type + "READ_SPECIFIED_RECORD_ERROR",
 
+  READ_SPECIFIED_MERCHANT_RECORD: type + "READ_SPECIFIED_MERCHANT_RECORD",
+  READ_SPECIFIED_MERCHANT_RECORD_SUCCESS: type + "READ_SPECIFIED_MERCHANT_RECORD_SUCCESS",
+  READ_SPECIFIED_MERCHANT_RECORD_ERROR: type + "READ_SPECIFIED_MERCHANT_RECORD_ERROR",
+
   SUBMIT_TO_BACKEND: type + "SUBMIT_TO_BACKEND",
   SUBMIT_TO_BACKEND_ERROR: type + "SUBMIT_TO_BACKEND_ERROR",
   SUBMIT_TO_BACKEND_SUCCESS: type + "SUBMIT_TO_BACKEND_SUCCESS",
@@ -51,6 +55,20 @@ const actions = {
 
   readSpecifiedRecordError: (error) => ({
     type: actions.READ_SPECIFIED_RECORD_ERROR,
+    payload: { error },
+  }),
+
+  readSpecifiedMerchantRecord: (uid) => {
+    return { type: actions.READ_SPECIFIED_MERCHANT_RECORD, payload: { uid } };
+  },
+
+  readSpecifiedMerchantRecordSuccess: (data) => ({
+    type: actions.READ_SPECIFIED_MERCHANT_RECORD_SUCCESS,
+    payload: { data },
+  }),
+
+  readSpecifiedMerchantRecordError: (error) => ({
+    type: actions.READ_SPECIFIED_MERCHANT_RECORD_ERROR,
     payload: { error },
   }),
 

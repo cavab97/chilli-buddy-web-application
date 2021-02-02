@@ -198,6 +198,7 @@ class voucher extends Component {
 
     vouchers.forEach((voucher) => {
       voucher["status"] = voucher.active ? 'Active' : 'Inactive'
+      voucher["used"] = voucher.claimed ? 'Used' : 'Not Used'
     }); 
 
     return (

@@ -287,12 +287,12 @@ const sidebarOptions = [
       },
     ],
   },
-  {
+  /* {
     key: "visitorMerchantList",
     label: "sidebar.visitorMerchantList",
     leftIcon: "ion-ios-list",
     role: "admin",
-  },
+  }, */
   {
     key: "visitorRecord",
     label: "sidebar.visitorList",
