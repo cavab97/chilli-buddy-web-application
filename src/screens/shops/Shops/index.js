@@ -140,20 +140,63 @@ class ShopsScreen extends Component {
     //console.log(shopCategories);  //display shop category in shop list
 
     Object.keys(shops).map((shop, index) => {
-      // const categoriesArray = shops[shop].categories;   //display shop category in shop list
-      // const categoryId = categoriesArray.toString();
+      const categoriesArray = shops[shop].categories; //display shop category in shop list
+      const categoryId = categoriesArray.toString();
 
-      // function getLabel(id) {
-      //   if (id.data === categoryId) {
-      //     categorylabel.push(id.label);
-      //   }
-      // }
-      // shopCategories.filter(getLabel);
-      // console.log(categorylabel);  //end display shop category in shop list
+      function getCategoryLabel() {
+        switch (categoryId) {
+          case "1607328160755":
+            return "中餐 | Chinese";
+
+          case "1607328179507":
+            return "西餐 | Western";
+
+          case "1607328192328":
+            return "Cafe";
+
+          case "1607328203811":
+            return "中國菜 | China";
+
+          case "1607328215133":
+            return "日本餐 | Japanese";
+
+          case "1607328226309":
+            return "韓國 | Korean";
+
+          case "1607328240049":
+            return "泰國 | Thai";
+
+          case "1607328250980":
+            return "台灣 | Taiwan";
+
+          case "1607328262228":
+            return "小酒館 | Bistro";
+
+          case "1607328271931":
+            return "火鍋 | Steamboat";
+
+          case "1607328282884":
+            return "本地美食 | Local cuisine";
+
+          case "1607328292779":
+            return "飲料店 | Beverage";
+
+          case "1607328302362":
+            return "餐車 | Food Truck";
+
+          case "1607328342357":
+            return "碌碌 | Lok Lok";
+
+          case "1607328353437":
+            return "特色美食 | Speciality cuisine";
+          default:
+            return "Other category";
+        }
+      }
+
       return dataSource.push({
         ...shops[shop],
-        //categories: categorylabel,  //display shop category in shop list
-        //categories: categoryId === "1576652646288" ? "Food & Beverage" : "other",
+        categories: getCategoryLabel(categoryId), //display shop category in shop list
         // isPromote: shops[shop].isPromote ? "Active" :  "Inactive"
       });
     });
