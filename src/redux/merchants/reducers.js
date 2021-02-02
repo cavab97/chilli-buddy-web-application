@@ -1,44 +1,41 @@
-import actions from './actions';
+import actions from "./actions";
 
 const initState = {
   isLoading: false,
   errorMessage: false,
   merchants: {},
   modalActive: false,
-  checkingUserError:false,
-  isCheckingUser:false,
-  checkingUserResult:{},
+  checkingUserError: false,
+  isCheckingUser: false,
+  checkingUserResult: {},
   merchant: {
     key: null,
-    status: '',
-    id: '',
-    logo:'',
-    name: '',
-    businessRegNo:'',
-    superAdminName:'',
-    superAdminIC:'',
-    superAdminID:'',
-    email:'',
-    phone:'',
+    status: "",
+    id: "",
+    logo: "",
+    name: "",
+    businessRegNo: "",
+    superAdminName: "",
+    superAdminIC: "",
+    superAdminID: "",
+    email: "",
+    phone: "",
     shopList: [],
     createAt: new Date().getTime(),
-    likes: '',
-    dateJoined:'',
-    address:{
-      line1:"",
-      line2:"",
-      country:"",
-      states:"",
-      postcode:"",
+    likes: "",
+    dateJoined: "",
+    address: {
+      line1: "",
+      line2: "",
+      country: "",
+      states: "",
+      postcode: "",
     },
     deleted_at: null, // soft delete
   },
 };
 
-export default function reducer(
-  state = initState,
-  { type, payload, newRecord }
-) {
+export default function reducer(state = initState, { type, payload, newRecord }) {
   switch (type) {
     case actions.LOAD_FROM_FIRESTORE:
       return {
@@ -65,38 +62,38 @@ export default function reducer(
       return {
         ...state,
         isLoading: false,
-        errorMessage: 'There is a loading problem',
+        errorMessage: "There is a loading problem",
       };
     case actions.TOGGLE_FIRESTORE_HANDLE_MODAL:
       return {
         ...state,
         modalActive: !state.modalActive,
-        checkingUserResult:{},
-        checkingUserError:false,
-        isCheckingUser:false,
+        checkingUserResult: {},
+        checkingUserError: false,
+        isCheckingUser: false,
         merchant: payload.data == null ? initState.merchant : payload.data,
       };
     case actions.USER_ID_CHECK:
-        return {
-          ...state,
-          isCheckingUser: true,
-          checkingUserError: false,
+      return {
+        ...state,
+        isCheckingUser: true,
+        checkingUserError: false,
       };
 
     case actions.USER_ID_CHECK_SUCCESS:
-        return {
-          ...state,
-          isCheckingUser: false,
-          checkingUserError: false,
-          checkingUserResult: payload.data,
-    };
+      return {
+        ...state,
+        isCheckingUser: false,
+        checkingUserError: false,
+        checkingUserResult: payload.data,
+      };
     case actions.USER_ID_CHECK_ERROR:
-        return {
-          ...state,
-          isCheckingUser: false,
-          checkingUserResult:{},
-          checkingUserError: payload.error,
-    };
+      return {
+        ...state,
+        isCheckingUser: false,
+        checkingUserResult: {},
+        checkingUserError: payload.error,
+      };
     case actions.FIRESTORE_UPDATE:
       return {
         ...state,

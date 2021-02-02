@@ -55,6 +55,44 @@ const RowHolderStyle = {
     justifyContent: "flex-end"
 }
 
+const ErrorInputStyle = {
+  borderRadius: 4,
+  borderColor: "red",
+  width: "100%",
+}
+
+const ErrorMsgFieldsetStyle = {
+  marginTop: -10,
+  paddingLeft: 5,
+}
+
+const ErrorMsgLabelStyle = {
+  fontSize: 13,
+  color: "red",
+}
+
+const InputStyle = {
+  borderRadius: 4,
+};
+
+const FieldsetStyle = {
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "flex-start",
+  marginBottom: 10,
+};
+
+const LabelStyle = {
+  fontSize: 13,
+  lineHeight: 1.5,
+  fontWeight: 500,
+  padding: 0,
+};
+
+const ButtonStyle = {
+  width: 100,
+};
+
 export {
   Content,
   ActionWrapper,
@@ -62,4 +100,11 @@ export {
   DescFieldsetStyle,
   RowHolderStyle,
   Image,
+  ErrorInputStyle,
+  ErrorMsgFieldsetStyle,
+  ErrorMsgLabelStyle,
+  InputStyle,
+  FieldsetStyle,
+  LabelStyle,
+  ButtonStyle
 };

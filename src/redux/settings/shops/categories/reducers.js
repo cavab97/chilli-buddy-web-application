@@ -1,4 +1,4 @@
-import actions from './actions';
+import actions from "./actions";
 
 const initState = {
   isLoading: false,
@@ -7,21 +7,17 @@ const initState = {
   modalActive: false,
   category: {
     key: null,
-    title:'',
-    tags:[],
-    no:'',
-    id:'',
+    title: "",
+    tags: [],
+    no: "",
+    id: "",
     created_at: new Date().getTime(),
     deleted_at: null, // soft delete
   },
 };
 
-export default function reducer(
-  state = initState,
-  { type, payload, newRecord }
-) {
+export default function reducer(state = initState, { type, payload, newRecord }) {
   switch (type) {
-
     case actions.LOAD_FROM_FIRESTORE:
       return {
         ...state,
@@ -47,7 +43,7 @@ export default function reducer(
       return {
         ...state,
         isLoading: false,
-        errorMessage: 'There is a loading problem',
+        errorMessage: "There is a loading problem",
       };
     case actions.LOAD_SPECIFY_FROM_FIRESTORE:
       return {
@@ -67,7 +63,7 @@ export default function reducer(
       return {
         ...state,
         isLoading: false,
-        errorMessage: 'There is a loading problem',
+        errorMessage: "There is a loading problem",
       };
     case actions.TOGGLE_FIRESTORE_HANDLE_MODAL:
       return {
@@ -79,6 +75,11 @@ export default function reducer(
       return {
         ...state,
         category: payload.data,
+      };
+    case actions.DELETE_CATEGORIES_ERROR:
+      return {
+        ...state,
+        errorMessage: "There are shops using this category",
       };
     default:
       return state;
