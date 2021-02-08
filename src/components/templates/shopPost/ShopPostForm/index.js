@@ -16,6 +16,7 @@ export default ({
   dataSource,
   errorReturn,
   onRecordChange,
+  onTextEditorChange,
   // onUploadFile,
   onSubmit,
   onSubmitLoading,
@@ -48,13 +49,46 @@ export default ({
         hide: errorReturn.title ? false : true
       }
     ],
-    [
+   /*  [
       {
         type: "textArea",
         label: "Description *: ",
         placeholder: "Enter description",
         data: dataSource.description,
         onChange: onRecordChange.bind(this, { key: "description" }),
+        TextAreaStyle: errorReturn.description && errorStyle.textareaStyle,
+        iconRigth: errorReturn.description && <AntdIcon.CloseCircleFilled style={{ color: "red" }}/>
+      }
+    ],
+    [
+      {
+        type: "errorlabel",
+        label: errorReturn.description && "* " + errorReturn.description,
+        FieldsetStyle: errorStyle.fieldsetStyle,
+        LabelStyle: errorStyle.labelStyle,
+        hide: errorReturn.description ? false : true
+      }
+    ],
+    [
+      {
+        type: dataSource.id && "confirmButton",
+        title : "Are you sure to delete this Post ?",
+        okText: "Yes",
+        onConfirm : onDelete,
+        loading: onDeleteLoading,
+        cancelText: "No",
+        buttonText: "Delete",
+        FieldsetStyle: ButtonFieldsetStyle,
+        ButtonStyle: ButtonStyle
+      }
+    ], */
+    [
+      {
+        type: "textEditor",
+        label: "Description *: ",
+        placeholder: "Enter description",
+        data: dataSource.description,
+        onChange: onTextEditorChange.bind(this, { key: "description" }),
         TextAreaStyle: errorReturn.description && errorStyle.textareaStyle,
         iconRigth: errorReturn.description && <AntdIcon.CloseCircleFilled style={{ color: "red" }}/>
       }

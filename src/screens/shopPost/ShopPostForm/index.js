@@ -109,11 +109,20 @@ class ShopForm extends Component {
 
   onRecordChange = ({ key, nestedKey }, event) => {
     let { post } = clone(this.props);
+
     if (key && nestedKey) post[key][nestedKey] = event.target.value;
     else if (key) post[key] = event.target.value;
 
     this.props.update(post);
   };
+
+  onTextEditorChange = ({key}, content) => {
+    let { post } = clone(this.props);
+
+    if (key) post[key] = content;
+
+    this.props.update(post);
+  }
 
   // onUploadFile({ key = null, target = null },{ file = null} ){
   //   this.props.uploadFile({ key, shopId: target, file });
@@ -155,6 +164,7 @@ class ShopForm extends Component {
               dataSource={post}
               errorReturn={errorReturn}
               onRecordChange={this.onRecordChange.bind(this)}
+              onTextEditorChange={this.onTextEditorChange.bind(this)}
               // onUploadFile={this.onUploadFile.bind(this)}
               onSubmit={
                 post.id ? 

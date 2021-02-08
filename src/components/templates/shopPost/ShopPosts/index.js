@@ -48,11 +48,13 @@ export default ({
       dataIndex: "description",
       key: "description",
       width: "120x",
-      sorter: (a, b) => {
-        if (a.description < b.description) return -1;
-        if (a.description > b.description) return 1;
-        return 0;
-      }
+      render: (text, row) => {
+        return (
+          <p
+            dangerouslySetInnerHTML={{ __html: row.description }}
+          />
+        );
+      },
     },
     {
       title: "Created At",
