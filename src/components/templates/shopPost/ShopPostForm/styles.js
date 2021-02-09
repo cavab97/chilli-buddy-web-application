@@ -36,9 +36,15 @@ const errorStyle = {
   }
 }
 
+const UploadStyle = {
+  marginTop: 10,
+  width: "100%",
+}
+
 export {
   ButtonFieldsetStyle,
   ButtonStyle,
   TextAreaStyle,
-  errorStyle
+  errorStyle,
+  UploadStyle
 };

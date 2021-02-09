@@ -10,6 +10,9 @@ export function create({ data }, shopID) {
       id,
       title,
       description,
+      startTime,
+      endTime,
+      coverPhoto,
       images,
       shopIds,
     } = data;
@@ -20,6 +23,9 @@ export function create({ data }, shopID) {
       id,
       title,
       description,
+      startTime,
+      endTime,
+      coverPhoto,
       images,
       shopIds,
     };
@@ -45,6 +51,9 @@ export function update({ data }) {
       id,
       title,
       description,
+      startTime,
+      endTime,
+      coverPhoto,
       images,
     } = data;
 
@@ -52,6 +61,9 @@ export function update({ data }) {
       id,
       title,
       description,
+      startTime,
+      endTime,
+      coverPhoto,
       images,
     };
 

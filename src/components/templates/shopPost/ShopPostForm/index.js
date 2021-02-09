@@ -7,6 +7,7 @@ import { Form } from "marslab-library-react/components/organisms/Form";
 import {
   ButtonFieldsetStyle,
   ButtonStyle,
+  UploadStyle,
   TextAreaStyle,
   errorStyle
 } from "./styles";
@@ -22,11 +23,18 @@ export default ({
   onSubmitLoading,
   onDelete,
   onDeleteLoading,
-  // uploadKey,
-  // uploadLoading,
-  // uploadProgress,
-  // uploadResult,
+  onUploadFile,
+  onSelectChange,
+  onDateChange,
+  uploadKey,
+  uploadLoading,
+  uploadProgress,
+  uploadResult,
 }) => {
+
+  if (dataSource.coverPhoto === undefined) {
+    dataSource.coverPhoto = []
+  }
 
   const formItem = [
     [
@@ -101,6 +109,73 @@ export default ({
         LabelStyle: errorStyle.labelStyle,
         hide: errorReturn.description ? false : true
       }
+    ],
+    [
+      {
+        type: "label",
+        label: "Post Period *:",
+        FieldsetStyle: { flex: 0.5, marginTop: 50 }
+      },
+      {
+        type: "dateRange",
+        data: [dataSource.startTime, dataSource.endTime],
+        placeholder: ["Start Date", "End Date"],
+        showTime: false,
+        onChange: onDateChange.bind(this, {
+          key: "startTime",
+          secondKey: "endTime"
+        }),
+        //disabled: dataSource.started.at && dataSource.started.at,
+        FieldsetStyle: { flex: 0.985, marginTop: 50 },
+        DatePickerStyle: (errorReturn.startTime || errorReturn.endTime) && errorStyle.inputStyle,
+        iconRigth: (errorReturn.startTime || errorReturn.endTime) && <AntdIcon.CloseCircleFilled style={{ color: "red" }}/>
+      }
+    ],
+    [
+      {
+        type: "errorlabel",
+        label: errorReturn.startTime ? "* promotion period cannot be empty" : errorReturn.endTime && "* end time must after current time",
+        FieldsetStyle: errorStyle.fieldsetStyle,
+        LabelStyle: errorStyle.labelStyle,
+        hide: errorReturn.startTime ? false : true
+      }
+    ],
+    [
+      {
+        type: dataSource.id && "horizontalLine",
+      },
+    ],
+    [
+      {
+        type: dataSource.id && "upload",
+        uploadType: "pictureWall",
+        onUploadFile: onUploadFile.bind(this, { key: "coverPhoto", target: dataSource.id }),
+        uploadLoading: uploadLoading,
+        uploadProgress: uploadProgress,
+        uploadResult: uploadResult,
+        onChange: onSelectChange.bind(this, { key: "coverPhoto" }),
+        defaultFileList: dataSource.coverPhoto,
+        maxFiles: 1,
+        label: "Cover Photo (800 x 600)",
+        disabled: uploadKey && uploadKey !== "coverPhoto",
+        UploadStyle: UploadStyle,
+      },
+    ],
+    [
+      {
+        type: dataSource.id && "upload",
+        uploadType: "pictureWall",
+        onUploadFile: onUploadFile.bind(this, { key: "images", target: dataSource.id }),
+        uploadLoading: uploadLoading,
+        uploadProgress: uploadProgress,
+        uploadResult: uploadResult,
+        onChange: onSelectChange.bind(this, { key: "images" }),
+        defaultFileList: dataSource.images,
+        maxFiles: 20,
+        label: "Images (800 x 600)",
+        disabled: uploadKey && uploadKey !== "images",
+        UploadStyle: UploadStyle,
+      },
     ],
     [
       {

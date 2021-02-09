@@ -35,6 +35,11 @@ const initState = {
     id: null,
     title: null,
     description: null,
+    startTime: null,
+    endTime: null,
+    ended: { at: null, by: null, boolean: false },
+    started: { at: null, by: null, boolean: false },
+    coverPhoto: [],
     images: [],
     shopIds: [],
     shop: {

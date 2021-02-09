@@ -7,6 +7,7 @@ import { ScreenHolder } from 'marslab-library-react/components/molecules';
 import ContentBox from "marslab-library-react/components/organisms/ContentBox";
 import InnerSidebar from "marslab-library-react/components/organisms/InnerSideBar";
 import clone from "clone";
+import moment from "moment";
 
 import { notification } from "marslab-library-react/components/organisms";
 
@@ -97,6 +98,8 @@ class ShopForm extends Component {
     const defaultValidate = {
       title: { required: true, type: "stringLength", max: 50 },
       description: { required: true },
+      startTime: { required: true },
+      endTime: { required: true, type: "time", before: moment() },
     };
 
     errorReturn = validation(post, defaultValidate);
@@ -124,9 +127,29 @@ class ShopForm extends Component {
     this.props.update(post);
   }
 
-  // onUploadFile({ key = null, target = null },{ file = null} ){
-  //   this.props.uploadFile({ key, shopId: target, file });
-  // }
+  onSelectChange = ({ key, nestedKey }, value) => {
+    let { post } = clone(this.props);
+    // if (key === "categories") {
+    //   shop["tags"] = [];
+    // }
+    if (key && nestedKey) post[key][nestedKey] = value;
+    else if (key) post[key] = value;
+    this.props.update(post);
+  };
+
+  onUploadFile({ key = null, target = null },{ file = null} ){
+     this.props.uploadFile({ key, shopId: target, file });
+  }
+
+  onDateChange({ key, secondKey }, date, dateString) {
+    let { post } = clone(this.props);
+
+    if (key && secondKey){
+      post[key] = date[0];
+      post[secondKey] = date[1];
+    }
+    this.props.update(post);
+  }
 
   render() {
     const { url, params } = this.props.match;
@@ -134,6 +157,10 @@ class ShopForm extends Component {
         readSpecifiedRecordLoading,
         submitLoading,
         errorReturn,
+        uploadKey,
+        uploadLoading,
+        uploadProgress,
+        uploadResult
     } = this.props;
     const optionUrl = this.urlCheck(params.shopPostID, url);
 
@@ -163,9 +190,10 @@ class ShopForm extends Component {
               loading={readSpecifiedRecordLoading}
               dataSource={post}
               errorReturn={errorReturn}
+              onSelectChange={this.onSelectChange.bind(this)}
               onRecordChange={this.onRecordChange.bind(this)}
               onTextEditorChange={this.onTextEditorChange.bind(this)}
-              // onUploadFile={this.onUploadFile.bind(this)}
+              onUploadFile={this.onUploadFile.bind(this)}
               onSubmit={
                 post.id ? 
                   this.handleRecord.bind(this, "update", post) : 
@@ -173,11 +201,12 @@ class ShopForm extends Component {
               }
               onSubmitLoading={submitLoading}
               onDelete={this.handleRecord.bind(this, "delete", post)}
+              onDateChange={this.onDateChange.bind(this)}
               onDeleteLoading={submitLoading}
-              // uploadKey={uploadKey}
-              // uploadLoading={uploadLoading}
-              // uploadProgress={uploadProgress}
-              // uploadResult={uploadResult}
+              uploadKey={uploadKey}
+              uploadLoading={uploadLoading}
+              uploadProgress={uploadProgress}
+              uploadResult={uploadResult}
             />
           </ContentBox>
       </ScreenHolder>
